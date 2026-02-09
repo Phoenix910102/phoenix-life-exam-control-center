@@ -1,0 +1,9 @@
+{
+  "name": "Phoenix Life & Exam Control Center",
+  "short_name": "PhoenixCC",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#fff8e1",
+  "theme_color": "#f97316",
+  "icons": []
+}
