@@ -63,18 +63,18 @@ export default function ConsolePage() {
   return (
     <div className="space-y-4">
       <Card className="space-y-2">
-        <h2 className="text-lg font-semibold">1) Test Helel API</h2>
+        <h2 className="text-lg font-semibold">1. 測試 Helel API</h2>
         <div className="grid gap-2 md:grid-cols-2">
           <select className="h-10 rounded border border-border bg-white px-3" value={helelTrigger} onChange={(e) => setHelelTrigger(e.target.value)}>
-            <option value="task_publish">task_publish</option>
-            <option value="task_nudge">task_nudge</option>
-            <option value="study_prompt">study_prompt</option>
-            <option value="life_prompt">life_prompt</option>
+            <option value="task_publish">任務發布</option>
+            <option value="task_nudge">任務提醒</option>
+            <option value="study_prompt">讀書提示</option>
+            <option value="life_prompt">生活提示</option>
           </select>
           <select className="h-10 rounded border border-border bg-white px-3" value={helelIntensity} onChange={(e) => setHelelIntensity(e.target.value)}>
-            <option value="gentle">gentle</option>
-            <option value="standard">standard</option>
-            <option value="strict">strict</option>
+            <option value="gentle">溫柔</option>
+            <option value="standard">標準</option>
+            <option value="strict">嚴格</option>
           </select>
         </div>
         <select
@@ -85,12 +85,12 @@ export default function ConsolePage() {
           {models.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
         </select>
         <Textarea value={helelSummary} onChange={(e) => setHelelSummary(e.target.value)} />
-        <Button onClick={callHelel}>Send</Button>
+        <Button onClick={callHelel}>送出</Button>
         <p className="text-sm">{helelOutput}</p>
       </Card>
 
       <Card className="space-y-2">
-        <h2 className="text-lg font-semibold">2) Quick add Task</h2>
+        <h2 className="text-lg font-semibold">2. 快速新增任務</h2>
         <Input value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} />
         <Button
           onClick={async () => {
@@ -107,21 +107,21 @@ export default function ConsolePage() {
             const data = await resp.json();
             if (data.task) {
               await addTask(data.task);
-              notify("Task inserted", data.helel?.message ?? "done");
+              notify("任務已新增", data.helel?.message ?? "完成");
             }
           }}
         >
-          Insert Task
+          新增任務
         </Button>
       </Card>
 
       <Card className="space-y-2">
-        <h2 className="text-lg font-semibold">3) Quick add Question</h2>
-        <Input value={qSubject} onChange={(e) => setQSubject(e.target.value)} placeholder="subject" />
-        <Input value={qTopic} onChange={(e) => setQTopic(e.target.value)} placeholder="topic" />
-        <Textarea value={qStem} onChange={(e) => setQStem(e.target.value)} placeholder="stem" />
-        <Textarea value={qOptions} onChange={(e) => setQOptions(e.target.value)} placeholder="one option per line" />
-        <Input value={qAnswer} onChange={(e) => setQAnswer(e.target.value)} placeholder="answer" />
+        <h2 className="text-lg font-semibold">3. 快速新增題目</h2>
+        <Input value={qSubject} onChange={(e) => setQSubject(e.target.value)} placeholder="科目" />
+        <Input value={qTopic} onChange={(e) => setQTopic(e.target.value)} placeholder="主題" />
+        <Textarea value={qStem} onChange={(e) => setQStem(e.target.value)} placeholder="題幹" />
+        <Textarea value={qOptions} onChange={(e) => setQOptions(e.target.value)} placeholder="每行一個選項" />
+        <Input value={qAnswer} onChange={(e) => setQAnswer(e.target.value)} placeholder="答案" />
         <div className="flex gap-2">
           <Button
             onClick={async () => {
@@ -144,11 +144,11 @@ export default function ConsolePage() {
               const data = await resp.json();
               if (data.question) {
                 await upsertQuestion(data.question);
-                notify("Question inserted", data.question.questionId);
+                notify("題目已新增", data.question.questionId);
               }
             }}
           >
-            Insert Structured
+            新增結構化題目
           </Button>
           <Button
             variant="outline"
@@ -161,19 +161,19 @@ export default function ConsolePage() {
               const data = await resp.json();
               if (data.question) {
                 await upsertQuestion(data.question);
-                notify("Raw parsed + inserted", data.warnings?.join("; ") ?? "done");
+                notify("原始文字已解析並新增", data.warnings?.join("; ") ?? "完成");
               }
             }}
           >
-            Parse Raw + Insert
+            解析原始文字並新增
           </Button>
         </div>
-        <Textarea value={rawText} onChange={(e) => setRawText(e.target.value)} placeholder="raw text parser" />
+        <Textarea value={rawText} onChange={(e) => setRawText(e.target.value)} placeholder="貼上原始題目文字" />
       </Card>
 
       <Card className="space-y-2">
-        <h2 className="text-lg font-semibold">4) Inbox batch import</h2>
-        <Textarea value={inboxText} onChange={(e) => setInboxText(e.target.value)} placeholder="paste text" />
+        <h2 className="text-lg font-semibold">4. 批次匯入題目</h2>
+        <Textarea value={inboxText} onChange={(e) => setInboxText(e.target.value)} placeholder="貼上題目文字" />
         <div className="flex gap-2">
           <Button
             onClick={async () => {
@@ -184,24 +184,24 @@ export default function ConsolePage() {
               });
               const data = await resp.json();
               setInboxPreview(data.questions ?? []);
-              notify("Preview ready", `questions=${(data.questions ?? []).length}`);
+              notify("預覽完成", `題數=${(data.questions ?? []).length}`);
             }}
           >
-            Preview Parse
+            預覽解析
           </Button>
           <Button
             variant="outline"
             onClick={async () => {
               await bulkUpsertQuestions(inboxPreview);
-              notify("Bulk insert complete", `${inboxPreview.length} items`);
+              notify("批次新增完成", `${inboxPreview.length} 題`);
             }}
           >
-            Confirm Insert
+            確認新增
           </Button>
         </div>
         <div className="max-h-52 overflow-auto rounded border border-border p-2 text-sm">
           {inboxPreview.map((q) => <p key={q.questionId}>{q.questionId} | {q.subject} | {q.topic}</p>)}
-          {inboxPreview.length === 0 && <p>No preview yet.</p>}
+          {inboxPreview.length === 0 && <p>尚未產生預覽。</p>}
         </div>
       </Card>
     </div>

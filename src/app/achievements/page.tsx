@@ -17,9 +17,9 @@ export default function AchievementsPage() {
 
   return (
     <Card className="space-y-2">
-      <h2 className="text-lg font-semibold">Achievements</h2>
+      <h2 className="text-lg font-semibold">成就</h2>
       {items.map((a) => <p key={a.id} className="text-sm">{a.id} @ {a.unlockedAt}</p>)}
-      {items.length === 0 && <p className="text-sm">No achievements yet.</p>}
+      {items.length === 0 && <p className="text-sm">目前還沒有解鎖成就。</p>}
     </Card>
   );
 }

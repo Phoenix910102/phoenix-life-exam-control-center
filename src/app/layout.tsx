@@ -5,8 +5,8 @@ import { Toaster } from "sonner";
 import { AppShell } from "@/components/ui/app-shell";
 
 export const metadata: Metadata = {
-  title: "Phoenix Life & Exam Control Center",
-  description: "Local-first Life + Exam dashboard",
+  title: "Phoenix 生活與考試控制台",
+  description: "本機優先的生活與考試儀表板",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

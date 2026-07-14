@@ -25,10 +25,10 @@ export default function DashboardPage() {
 
   return (
     <main className="grid gap-4 md:grid-cols-2">
-      <Card><h2 className="font-semibold">Life Summary</h2><p>今日專注指數: {stats.gameFocus}</p></Card>
-      <Card><h2 className="font-semibold">Study Summary</h2><p>題庫題數: {stats.questions}</p><p>測驗次數: {stats.exams}</p></Card>
-      <Card><h2 className="font-semibold">Task Summary</h2><p>{stats.done}/{stats.tasks} completed</p></Card>
-      <Card><h2 className="font-semibold">Quick Note</h2><p>在 /console 直接新增任務與題目。</p></Card>
+      <Card><h2 className="font-semibold">生活摘要</h2><p>今日專注指數：{stats.gameFocus}</p></Card>
+      <Card><h2 className="font-semibold">讀書摘要</h2><p>題庫題數：{stats.questions}</p><p>測驗次數：{stats.exams}</p></Card>
+      <Card><h2 className="font-semibold">任務摘要</h2><p>已完成 {stats.done}/{stats.tasks} 件</p></Card>
+      <Card><h2 className="font-semibold">快速提醒</h2><p>可以到「控制台」直接新增任務與題目。</p></Card>
     </main>
   );
 }

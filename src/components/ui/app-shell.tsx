@@ -6,15 +6,16 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 
 const links = [
-  ["/dashboard", "Dashboard"],
-  ["/life", "Life"],
-  ["/meds", "Meds"],
-  ["/tasks", "Tasks"],
-  ["/exams", "Exams"],
-  ["/games", "Games"],
-  ["/achievements", "Achievements"],
-  ["/settings", "Settings"],
-  ["/console", "Console"],
+  ["/dashboard", "總覽"],
+  ["/life", "生活紀錄"],
+  ["/meds", "用藥"],
+  ["/tasks", "任務"],
+  ["/exams", "考試"],
+  ["/games", "小遊戲"],
+  ["/guzheng", "古箏聽音"],
+  ["/achievements", "成就"],
+  ["/settings", "設定"],
+  ["/console", "控制台"],
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -22,8 +23,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-6">
-      <header className="mb-6 rounded-xl border border-border bg-white/80 p-4 backdrop-blur">
-        <h1 className="text-xl font-semibold">Phoenix Life & Exam Control Center</h1>
+      <header className="mb-6 rounded-xl border border-border bg-white/90 p-4 shadow-sm backdrop-blur">
+        <h1 className="text-xl font-semibold">Phoenix 生活與考試控制台</h1>
         <nav className="mt-3 flex flex-wrap gap-2">
           {links.map(([href, label]) => (
             <Link

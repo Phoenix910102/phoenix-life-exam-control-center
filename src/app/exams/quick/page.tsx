@@ -8,6 +8,7 @@ import type { Question } from "@/types/question";
 import type { ExamAttempt } from "@/types/exam";
 import { addExamAttempt } from "@/lib/db/repository";
 import { newId } from "@/lib/utils/id";
+import { answerKey, isQuestionAnswerCorrect } from "@/lib/exams/answer";
 
 export default function QuickExamPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -30,15 +31,13 @@ export default function QuickExamPage() {
 
   const submitAnswer = async (chosen: string) => {
     if (!current) return;
-    const correct = Array.isArray(current.answer)
-      ? current.answer.includes(chosen)
-      : String(current.answer ?? "") === chosen;
+    const correct = isQuestionAnswerCorrect(current, chosen);
 
     const nextResp = [
       ...responses,
       {
         questionId: current.questionId,
-        chosenAnswer: chosen,
+        chosenAnswer: answerKey(chosen),
         isCorrect: correct,
         timeSpentSec: Math.round((Date.now() - qStart) / 1000),
       },
@@ -76,20 +75,20 @@ export default function QuickExamPage() {
   if (finished) {
     return (
       <Card className="space-y-2">
-        <h2 className="text-lg font-semibold">Exam Complete</h2>
-        <p>Score: {finished.results.score.toFixed(1)}</p>
-        <p>Correct: {finished.results.correctCount}/{finished.results.totalQuestions}</p>
+        <h2 className="text-lg font-semibold">測驗完成</h2>
+        <p>分數：{finished.results.score.toFixed(1)}</p>
+        <p>答對：{finished.results.correctCount}/{finished.results.totalQuestions}</p>
       </Card>
     );
   }
 
   if (!current) {
-    return <Card>Question bank is empty. Import JSONL in Settings first.</Card>;
+    return <Card>題庫是空的，請先到「設定」匯入 JSONL。</Card>;
   }
 
   return (
     <Card className="space-y-3">
-      <h2 className="text-lg font-semibold">Quick Exam ({progress})</h2>
+      <h2 className="text-lg font-semibold">快速測驗（{progress}）</h2>
       <p className="text-sm">{current.stem}</p>
       <div className="grid gap-2">
         {(current.options ?? ["A", "B", "C", "D"]).map((opt) => (

@@ -18,16 +18,19 @@ export default function ExamsPage() {
   return (
     <div className="space-y-4">
       <Card>
-        <h2 className="text-lg font-semibold">Exam System</h2>
-        <p className="text-sm">Run a quick exam of 10 questions.</p>
-        <Link href="/exams/quick" className="mt-2 inline-block rounded bg-primary px-3 py-2 text-sm text-primary-foreground">Start Quick Exam</Link>
+        <h2 className="text-lg font-semibold">考試系統</h2>
+        <p className="text-sm">進行快速練習、AIAP 官方公告題或非官方模擬／仿真題訓練。</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Link href={{ pathname: "/exams/past" }} className="inline-block rounded bg-primary px-3 py-2 text-sm text-primary-foreground">AIAP 題庫訓練</Link>
+          <Link href="/exams/quick" className="inline-block rounded border border-border bg-white px-3 py-2 text-sm">快速測驗</Link>
+        </div>
       </Card>
       <Card>
-        <h3 className="font-semibold">Repair Pool</h3>
+        <h3 className="font-semibold">錯題修復池</h3>
         {repairPool.map((x) => (
-          <p key={x.questionId} className="text-sm">{x.questionId} - severity {x.severity} / wrong {x.wrongCount}</p>
+          <p key={x.questionId} className="text-sm">{x.questionId} - 嚴重度 {x.severity} / 錯 {x.wrongCount} 次</p>
         ))}
-        {repairPool.length === 0 && <p className="text-sm">No wrong index yet.</p>}
+        {repairPool.length === 0 && <p className="text-sm">目前沒有錯題紀錄。</p>}
       </Card>
     </div>
   );

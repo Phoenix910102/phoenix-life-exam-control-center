@@ -112,24 +112,24 @@ export default function GamesPage() {
     <div className="grid gap-4 md:grid-cols-2">
       <motion.div whileHover={{ rotateY: 4 }} transition={{ duration: 0.25 }}>
         <Card className="space-y-2">
-          <h3 className="font-semibold">focus_bet (60s)</h3>
-          <p className="text-sm">離開頁面或Quit即失敗。</p>
-          {!focusRunning ? <Button onClick={startFocusBet}>Start</Button> : <Button variant="outline" onClick={() => finishFocusBet(true)}>Quit</Button>}
-          <p className="text-xs">interruptions: {focusInterruption}</p>
+          <h3 className="font-semibold">專注賭注（60 秒）</h3>
+          <p className="text-sm">離開頁面或主動放棄即失敗。</p>
+          {!focusRunning ? <Button onClick={startFocusBet}>開始</Button> : <Button variant="outline" onClick={() => finishFocusBet(true)}>放棄</Button>}
+          <p className="text-xs">中斷次數：{focusInterruption}</p>
         </Card>
       </motion.div>
 
-      <motion.div animate={{ boxShadow: ["0 0 0px #f97316", "0 0 20px #f59e0b", "0 0 0px #f97316"] }} transition={{ repeat: Infinity, duration: 2 }}>
+      <motion.div animate={{ boxShadow: ["0 0 0px #059669", "0 0 18px #34d399", "0 0 0px #059669"] }} transition={{ repeat: Infinity, duration: 2 }}>
         <Card className="space-y-2">
-          <h3 className="font-semibold">tap_lock (15-30s)</h3>
+          <h3 className="font-semibold">節拍鎖定（15-30 秒）</h3>
           <p className="text-sm">依節拍點擊卡片。</p>
-          {!tapRunning ? <Button onClick={startTapLock}>Start</Button> : <Button onClick={onTap}>Tap</Button>}
-          <p className="text-xs">missed: {missed}, avgDeviationMs: {Math.round(deviation)}</p>
+          {!tapRunning ? <Button onClick={startTapLock}>開始</Button> : <Button onClick={onTap}>點擊</Button>}
+          <p className="text-xs">錯過：{missed}，平均偏差 ms：{Math.round(deviation)}</p>
         </Card>
       </motion.div>
 
       <Card className="md:col-span-2">
-        <p className="text-sm">Indices updated at: {generatedAt || "-"}</p>
+        <p className="text-sm">指數更新時間：{generatedAt || "-"}</p>
       </Card>
     </div>
   );

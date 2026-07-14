@@ -24,18 +24,18 @@ export default function LifePage() {
       bodyState,
       noteForHelel,
     });
-    notify("Life log saved", "已寫入今日紀錄");
+    notify("生活紀錄已儲存", "已寫入今日紀錄");
   };
 
   return (
     <Card className="space-y-3">
-      <h2 className="text-lg font-semibold">Life Logging</h2>
-      <Input value={sleepHours} onChange={(e) => setSleepHours(e.target.value)} placeholder="Sleep hours" />
-      <Input value={waterIntakeMl} onChange={(e) => setWaterIntakeMl(e.target.value)} placeholder="Water intake ml" />
-      <Input value={moodTag} onChange={(e) => setMoodTag(e.target.value)} placeholder="Mood tag" />
-      <Input value={bodyState} onChange={(e) => setBodyState(e.target.value)} placeholder="Body state" />
-      <Textarea value={noteForHelel} onChange={(e) => setNoteForHelel(e.target.value)} placeholder="noteForHelel" />
-      <Button onClick={onSave}>Save Daily Log</Button>
+      <h2 className="text-lg font-semibold">生活紀錄</h2>
+      <Input value={sleepHours} onChange={(e) => setSleepHours(e.target.value)} placeholder="睡眠時數" />
+      <Input value={waterIntakeMl} onChange={(e) => setWaterIntakeMl(e.target.value)} placeholder="喝水量 ml" />
+      <Input value={moodTag} onChange={(e) => setMoodTag(e.target.value)} placeholder="心情標籤" />
+      <Input value={bodyState} onChange={(e) => setBodyState(e.target.value)} placeholder="身體狀態" />
+      <Textarea value={noteForHelel} onChange={(e) => setNoteForHelel(e.target.value)} placeholder="給 AI 助手的備註" />
+      <Button onClick={onSave}>儲存今日紀錄</Button>
     </Card>
   );
 }

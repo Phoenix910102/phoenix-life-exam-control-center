@@ -15,7 +15,7 @@ export default function TasksPage() {
 
   return (
     <Card className="space-y-3">
-      <h2 className="text-lg font-semibold">Tasks</h2>
+      <h2 className="text-lg font-semibold">任務清單</h2>
       {tasks.map((task) => (
         <div key={task.id} className="flex items-center justify-between rounded border border-border p-2">
           <div>
@@ -30,11 +30,11 @@ export default function TasksPage() {
               await refreshTasks();
             }}
           >
-            {task.done ? "Undo" : "Done"}
+            {task.done ? "復原" : "完成"}
           </Button>
         </div>
       ))}
-      {tasks.length === 0 && <p className="text-sm">No tasks yet. Add from /console.</p>}
+      {tasks.length === 0 && <p className="text-sm">目前沒有任務，可以到「控制台」新增。</p>}
     </Card>
   );
 }

@@ -36,16 +36,16 @@ export default function SettingsPage() {
       return questionSchema.parse({ ...raw, questionId: raw.questionId ?? newId("q") });
     });
     await bulkUpsertQuestions(parsed);
-    notify("Question bank imported", `${parsed.length} questions`);
+    notify("題庫已匯入", `${parsed.length} 題`);
   };
 
-  if (!settings) return <Card>Loading settings...</Card>;
+  if (!settings) return <Card>設定載入中...</Card>;
 
   return (
     <div className="space-y-4">
       <Card className="space-y-3">
-        <h2 className="text-lg font-semibold">Models</h2>
-        <label className="text-sm">Helel model</label>
+        <h2 className="text-lg font-semibold">模型設定</h2>
+        <label className="text-sm">AI 助手訊息模型</label>
         <select
           className="h-10 rounded border border-border bg-white px-3 text-sm"
           value={settings.models.helelModel}
@@ -54,7 +54,7 @@ export default function SettingsPage() {
           {models.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
         </select>
 
-        <label className="text-sm">Parser model</label>
+        <label className="text-sm">題目解析模型</label>
         <select
           className="h-10 rounded border border-border bg-white px-3 text-sm"
           value={settings.models.parserModel}
@@ -79,18 +79,18 @@ export default function SettingsPage() {
             setHelelPreview(`${data.message ?? ""} ${data.cta ?? ""}`.trim());
           }}
         >
-          Test
+          測試
         </Button>
         <p className="text-sm">{helelPreview}</p>
       </Card>
 
       <Card className="space-y-3">
-        <h2 className="text-lg font-semibold">Question Bank Import (JSONL)</h2>
+        <h2 className="text-lg font-semibold">題庫匯入（JSONL）</h2>
         <Input type="file" accept=".jsonl,.txt" onChange={(e) => e.target.files?.[0] && onImportJsonl(e.target.files[0])} />
       </Card>
 
       <Card className="space-y-3">
-        <h2 className="text-lg font-semibold">Export</h2>
+        <h2 className="text-lg font-semibold">匯出</h2>
         <div className="flex gap-2">
           <Button
             onClick={async () => {
@@ -99,7 +99,7 @@ export default function SettingsPage() {
               setGeneratedAt(new Date().toLocaleString());
             }}
           >
-            Download Snapshot
+            下載快照
           </Button>
           <Button
             variant="outline"
@@ -109,10 +109,10 @@ export default function SettingsPage() {
               setGeneratedAt(new Date().toLocaleString());
             }}
           >
-            Download Full Backup
+            下載完整備份
           </Button>
         </div>
-        <p className="text-sm">generated at: {generatedAt || "-"}</p>
+        <p className="text-sm">產生時間：{generatedAt || "-"}</p>
       </Card>
     </div>
   );
