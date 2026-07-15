@@ -1,0 +1,1246 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#11100f" />
+  <title>罪責之骨｜刑法總則上課系統</title>
+  <style>
+:root{
+  --bg:#11100f;
+  --bg2:#171513;
+  --panel:#1d1a17;
+  --panel2:#24201c;
+  --text:#e8e3da;
+  --muted:#a89f93;
+  --soft:#776e64;
+  --line:rgba(232,227,218,.13);
+  --gold:#c8a96a;
+  --red:#8b2635;
+  --red2:#c14953;
+  --silver:#bfc3c7;
+  --green:#8ab59a;
+  --shadow:0 28px 70px rgba(0,0,0,.42);
+  --radius:24px;
+  --mono:"SFMono-Regular","Consolas","Liberation Mono",monospace;
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:var(--sans);
+  background:
+    radial-gradient(circle at 80% 8%, rgba(139,38,53,.26), transparent 32rem),
+    radial-gradient(circle at 12% 20%, rgba(200,169,106,.12), transparent 24rem),
+    linear-gradient(135deg,#0e0d0c,#181411 60%,#100f0e);
+  letter-spacing:.02em;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:linear-gradient(to bottom, black, transparent 85%);
+}
+.sigil{
+  position:fixed;
+  width:640px;height:640px;
+  right:-220px;top:-180px;
+  border:1px solid rgba(200,169,106,.14);
+  border-radius:50%;
+  pointer-events:none;
+  opacity:.8;
+}
+.sigil::before,.sigil::after{content:"";position:absolute;border:1px solid rgba(200,169,106,.12);border-radius:50%;inset:70px}.sigil::after{inset:150px;border-color:rgba(193,73,83,.12)}
+.app-rail{
+  position:fixed;
+  z-index:20;
+  left:18px;top:18px;bottom:18px;
+  width:86px;
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:rgba(18,16,14,.72);
+  backdrop-filter: blur(18px);
+  box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:14px 10px;
+}
+.brand-mark{
+  width:54px;height:54px;border-radius:18px;
+  display:grid;place-items:center;
+  font-family:var(--serif);font-weight:900;font-size:28px;
+  color:#12100e;background:linear-gradient(135deg,#d9c591,#9b743b);
+  box-shadow:0 10px 30px rgba(200,169,106,.2);
+  margin-bottom:8px;
+}
+.rail-btn{
+  width:62px;min-height:48px;
+  border:1px solid transparent;
+  border-radius:18px;
+  background:transparent;color:var(--muted);
+  cursor:pointer;
+  transition:.2s ease;
+  font-size:13px;
+}
+.rail-btn span{display:block;line-height:1.2}
+.rail-btn:hover,.rail-btn.is-active{border-color:rgba(200,169,106,.32);color:var(--text);background:rgba(200,169,106,.08)}
+.app-shell{margin-left:124px;max-width:1440px;padding:28px 34px 80px}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:10px 4px 26px;
+}
+.eyebrow{color:var(--gold);font:700 12px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.16em;margin:0 0 6px}
+h1{font-family:var(--serif);font-size:clamp(38px,5vw,76px);line-height:1;margin:0;font-weight:900;letter-spacing:.08em}
+.top-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+select,.ghost-btn,input,textarea{
+  color:var(--text);background:rgba(29,26,23,.8);border:1px solid var(--line);border-radius:15px;padding:12px 14px;font:inherit;
+}
+select{min-width:290px}.ghost-btn{cursor:pointer}.ghost-btn:hover{border-color:rgba(200,169,106,.38);background:rgba(200,169,106,.08)}
+.view{display:none}.view.is-visible{display:block;animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{
+  min-height:430px;
+  border:1px solid var(--line);
+  border-radius:36px;
+  background:linear-gradient(135deg,rgba(29,26,23,.92),rgba(17,16,15,.68));
+  box-shadow:var(--shadow);
+  padding:42px;
+  position:relative;overflow:hidden;
+}
+.hero::after{content:"§";position:absolute;right:52px;bottom:-70px;font:900 280px/1 var(--serif);color:rgba(200,169,106,.06)}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;position:relative;z-index:1}.hero h2{font:900 clamp(34px,4vw,66px)/1.08 var(--serif);margin:0 0 16px}.hero p{color:var(--muted);font-size:18px;line-height:1.85;max-width:720px}.status-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.stat-card{border:1px solid var(--line);border-radius:22px;padding:20px;background:rgba(255,255,255,.035)}.stat-card strong{font:800 34px/1 var(--serif);display:block;color:var(--gold)}.stat-card span{color:var(--muted);font-size:13px}
+.section-title{font:900 32px/1.2 var(--serif);margin:42px 0 18px}.subtle{color:var(--muted);line-height:1.8}.roadmap{display:grid;grid-template-columns:repeat(9,minmax(126px,1fr));gap:12px;align-items:stretch;margin-top:26px}.road-node{border:1px solid var(--line);background:rgba(29,26,23,.76);border-radius:22px;padding:18px;min-height:190px;cursor:pointer;transition:.2s ease;position:relative;overflow:hidden}.road-node::before{content:attr(data-level);font:700 11px/1 var(--mono);color:var(--gold);letter-spacing:.08em}.road-node h3{font:900 22px/1.2 var(--serif);margin:16px 0 10px}.road-node p{font-size:13px;color:var(--muted);line-height:1.55}.road-node:hover{transform:translateY(-5px);border-color:rgba(200,169,106,.38);background:rgba(43,37,31,.82)}.road-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.pill{font:700 11px/1 var(--mono);border:1px solid var(--line);border-radius:999px;padding:6px 8px;color:var(--silver);background:rgba(255,255,255,.03)}.pill.red{color:#ffb6bd;border-color:rgba(193,73,83,.35);background:rgba(139,38,53,.12)}.pill.gold{color:#f1d79c;border-color:rgba(200,169,106,.35);background:rgba(200,169,106,.1)}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr) 300px;gap:20px}.toc,.neural,.panel{border:1px solid var(--line);background:rgba(29,26,23,.72);border-radius:26px;box-shadow:0 18px 50px rgba(0,0,0,.22)}.toc,.neural{position:sticky;top:22px;align-self:start;max-height:calc(100vh - 44px);overflow:auto;padding:16px}.toc button{width:100%;text-align:left;border:0;background:transparent;color:var(--muted);padding:12px;border-radius:14px;cursor:pointer;font-size:14px}.toc button:hover,.toc button.is-active{color:var(--text);background:rgba(200,169,106,.08)}.toc small{font-family:var(--mono);color:var(--gold);margin-right:8px}.chapter-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(36,32,28,.86),rgba(25,23,20,.76));border-radius:30px;padding:32px;box-shadow:var(--shadow);margin-bottom:22px}.chapter-card h2{font:900 42px/1.15 var(--serif);margin:0 0 10px}.chapter-no{font:700 13px/1 var(--mono);color:var(--gold);letter-spacing:.14em}.lead{font-size:18px;line-height:1.85;color:var(--muted);border-left:3px solid var(--red2);padding-left:18px}.one-line{font:700 20px/1.6 var(--serif);color:#f2e7d8;margin:18px 0}.article-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.article{border:1px solid var(--line);border-radius:18px;padding:14px;background:rgba(255,255,255,.025)}.article code{font-family:var(--mono);color:var(--gold);display:block;margin-bottom:8px}.article span{color:var(--muted);line-height:1.6}.info-list{display:grid;gap:10px;margin:18px 0}.info-list li{list-style:none;border-left:3px solid rgba(200,169,106,.55);padding:10px 14px;background:rgba(255,255,255,.03);border-radius:0 14px 14px 0;color:var(--text);line-height:1.65}.example,.issue,.trap-box{border-radius:22px;padding:20px;margin:18px 0;line-height:1.8}.example{border:1px solid rgba(200,169,106,.24);background:rgba(200,169,106,.08)}.issue{border:1px solid rgba(191,195,199,.2);background:rgba(191,195,199,.07)}.trap-box{border:1px solid rgba(193,73,83,.32);background:rgba(139,38,53,.14)}.block-title{font:800 13px/1 var(--mono);letter-spacing:.12em;color:var(--gold);margin:0 0 10px;text-transform:uppercase}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{font:700 12px/1 var(--mono);padding:7px 10px;border-radius:999px;background:rgba(139,38,53,.16);border:1px solid rgba(193,73,83,.32);color:#ffc2c7}.neural h3{font:900 22px/1.25 var(--serif);margin:0 0 16px}.neural dl{display:grid;gap:12px}.neural dt{font:700 11px/1 var(--mono);color:var(--gold);letter-spacing:.12em}.neural dd{margin:4px 0 0;color:var(--muted);line-height:1.55}.source-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}.source{border:1px solid var(--line);border-radius:18px;padding:16px;background:rgba(255,255,255,.03)}.source strong{display:block;margin-bottom:8px}.source p{font-size:13px;color:var(--muted);line-height:1.55}.source a{color:var(--gold);font-family:var(--mono);font-size:12px;text-decoration:none}
+.lesson-wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px}.slide{min-height:620px;border:1px solid var(--line);border-radius:36px;background:linear-gradient(135deg,rgba(29,26,23,.9),rgba(13,12,11,.82));box-shadow:var(--shadow);padding:46px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}.slide::before{content:attr(data-slide);position:absolute;right:36px;top:28px;font:700 13px/1 var(--mono);color:var(--gold)}.slide h2{font:900 clamp(36px,4vw,64px)/1.12 var(--serif);margin:0 0 20px}.slide p,.slide li{font-size:22px;line-height:1.8;color:var(--text)}.slide .muted{color:var(--muted)}.lesson-controls{display:flex;gap:10px;margin-top:14px}.action-btn{border:1px solid rgba(200,169,106,.28);background:rgba(200,169,106,.09);color:var(--text);padding:13px 16px;border-radius:16px;cursor:pointer;font-weight:700}.action-btn:hover{background:rgba(200,169,106,.16)}.lesson-side{padding:22px}.progress{height:10px;background:rgba(255,255,255,.05);border-radius:999px;overflow:hidden;margin:12px 0 20px}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--red2),var(--gold));width:0%}.duel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.duel-card{border:1px solid var(--line);border-radius:28px;padding:24px;background:rgba(29,26,23,.74);box-shadow:0 18px 50px rgba(0,0,0,.2)}.duel-card h3{font:900 28px/1.2 var(--serif);margin:0 0 12px}.signal{color:var(--gold);font-family:var(--mono);font-size:13px;line-height:1.6}.side{border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;background:rgba(255,255,255,.025)}.side strong{color:#fff}.verdict{border-left:3px solid var(--red2);padding:14px 16px;background:rgba(139,38,53,.12);border-radius:0 16px 16px 0;line-height:1.7}.exam-grid,.trap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.exam-card,.trap-card,.quiz-card,.diag-card{border:1px solid var(--line);background:rgba(29,26,23,.78);border-radius:24px;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,.18)}.exam-card h3,.trap-card h3{font:900 26px/1.2 var(--serif);margin:8px 0 10px}.tag{display:inline-flex;font:800 12px/1 var(--mono);color:#ffc2c7;background:rgba(139,38,53,.16);border:1px solid rgba(193,73,83,.35);border-radius:999px;padding:7px 10px}.reveal{display:none;margin-top:12px;padding:14px;border-radius:16px;background:rgba(200,169,106,.08);line-height:1.7}.reveal.is-visible{display:block}.diag-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.diag-steps label{display:block;border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:rgba(255,255,255,.025);cursor:pointer}.diag-output{white-space:pre-line;line-height:1.75;color:var(--text);background:rgba(0,0,0,.18);border-radius:20px;padding:18px}.trap-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}.trap-form textarea{grid-column:1 / -1;min-height:90px;resize:vertical}.trap-card strong{display:block;color:var(--gold);margin-bottom:6px}.trap-card p{color:var(--muted);line-height:1.65}.quiz-options{display:grid;gap:10px;margin-top:18px}.quiz-options button{text-align:left;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03);color:var(--text);padding:15px;cursor:pointer}.quiz-options button:hover{border-color:rgba(200,169,106,.35)}.quiz-options button.correct{border-color:rgba(138,181,154,.7);background:rgba(138,181,154,.15)}.quiz-options button.wrong{border-color:rgba(193,73,83,.7);background:rgba(193,73,83,.15)}.quiz-result{margin-top:16px;line-height:1.7;color:var(--muted)}
+@media(max-width:1180px){.roadmap{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}.toc,.neural{position:static;max-height:none}.source-list{grid-template-columns:repeat(2,1fr)}.lesson-wrap,.diag-grid{grid-template-columns:1fr}.duel-grid,.exam-grid,.trap-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.app-rail{left:8px;right:8px;top:auto;bottom:8px;width:auto;height:70px;flex-direction:row;justify-content:space-around;border-radius:22px;padding:8px}.brand-mark{display:none}.rail-btn{width:auto;min-height:48px;padding:0 8px}.app-shell{margin-left:0;padding:18px 14px 100px}.topbar,.hero-grid{display:block}.top-actions{margin-top:18px}.roadmap,.article-grid,.source-list,.status-cards{grid-template-columns:1fr}.hero,.chapter-card,.slide{padding:24px}.slide{min-height:520px}.slide p,.slide li{font-size:18px}select{min-width:100%;max-width:100%}.trap-form{grid-template-columns:1fr}}
+@media print{.app-rail,.top-actions,.toc,.neural,.lesson-controls{display:none!important}.app-shell{margin:0;padding:0}.view{display:block!important}.hero,.chapter-card,.panel,.slide,.duel-card,.exam-card,.trap-card,.quiz-card,.diag-card{box-shadow:none;border-color:#bbb;background:white;color:#111}.view:not(#reader){display:none!important}body{background:white;color:#111}.lead,.subtle,.article span{color:#333}}
+
+</style>
+</head>
+<body>
+  <div class="sigil" aria-hidden="true"></div>
+  <aside class="app-rail" aria-label="主選單">
+    <div class="brand-mark">刑</div>
+    <button class="rail-btn is-active" data-view="home" title="總地圖"><span>地圖</span></button>
+    <button class="rail-btn" data-view="reader" title="法典閱讀"><span>閱讀</span></button>
+    <button class="rail-btn" data-view="lesson" title="上課模式"><span>上課</span></button>
+    <button class="rail-btn" data-view="duel" title="爭點決鬥"><span>爭點</span></button>
+    <button class="rail-btn" data-view="exam" title="考古反射"><span>考古</span></button>
+    <button class="rail-btn" data-view="diagnostic" title="三階層診斷器"><span>診斷</span></button>
+    <button class="rail-btn" data-view="traps" title="陷阱本"><span>陷阱</span></button>
+    <button class="rail-btn" data-view="quiz" title="快問快答"><span>測驗</span></button>
+  </aside>
+  <main class="app-shell">
+    <header class="topbar">
+      <div><p class="eyebrow">Criminal Law General Principles｜Phoenix</p><h1>罪責之骨</h1></div>
+      <div class="top-actions"><select id="chapterSelect" aria-label="選擇章節"></select><button id="printBtn" class="ghost-btn">列印 / 存 PDF</button></div>
+    </header>
+    <section id="home" class="view is-visible"></section><section id="reader" class="view"></section><section id="lesson" class="view"></section><section id="duel" class="view"></section><section id="exam" class="view"></section><section id="diagnostic" class="view"></section><section id="traps" class="view"></section><section id="quiz" class="view"></section>
+  </main>
+  <template id="chipTemplate"><span class="chip"></span></template>
+  <script>
+window.CRL_DATA = {
+  meta: {
+    title: "罪責之骨｜刑法總則上課系統",
+    subtitle: "犯罪成立三階層 × 爭點拆解 × 考古題反射 × 陷阱本",
+    version: "V1.0 靜態網頁版",
+    updated: "2026-05-29",
+    note: "本系統為國考學習與上課輔助用途；正式作答請以現行條文、最新實務與考選部公告為準。"
+  },
+  roadmap: [
+    { id: "act", title: "行為", level: "前提", freq: "高", risk: "中", desc: "先排除睡眠、反射、絕對強制等非刑法行為。" },
+    { id: "elements", title: "構成要件", level: "一階", freq: "極高", risk: "高", desc: "客觀要件、主觀要件、因果、客觀歸責。" },
+    { id: "wrong", title: "錯誤論", level: "一階／三階", freq: "極高", risk: "極高", desc: "構成要件錯誤、包攝錯誤、禁止錯誤、容許構成要件錯誤。" },
+    { id: "illegality", title: "違法性", level: "二階", freq: "高", risk: "高", desc: "正當防衛、緊急避難、承諾、依法令行為。" },
+    { id: "culpability", title: "責任", level: "三階", freq: "高", risk: "高", desc: "責任能力、違法性意識、期待可能性、原因自由行為。" },
+    { id: "attempt", title: "未遂", level: "階段", freq: "中高", risk: "中", desc: "著手、不能未遂、中止未遂。" },
+    { id: "participation", title: "共犯", level: "多人犯罪", freq: "高", risk: "高", desc: "共同正犯、教唆、幫助、身分犯、過剩行為。" },
+    { id: "competition", title: "罪數", level: "效果前", freq: "高", risk: "極高", desc: "想像競合、法條競合、吸收、數罪併罰。" },
+    { id: "sanction", title: "刑罰／沒收", level: "效果", freq: "中高", risk: "中高", desc: "累犯、緩刑、自首、易科罰金、犯罪所得沒收。" }
+  ],
+  chapters: [
+    {
+      id: "ch00",
+      no: "00",
+      title: "刑法總則地圖：它到底在管什麼",
+      layer: "全局定位",
+      oneLine: "刑法總則是所有犯罪共通的文法；分則說哪種行為是罪，總則說這個人能不能被罰、怎麼罰。",
+      lead: "這一章先給妳位置感。不要一開始就背所有條文，而是先知道每一種題目要被放進哪個抽屜：法律適用、刑法行為、故意過失、阻卻違法、責任、未遂、共犯、罪數或效果。",
+      articles: [
+        { art: "第1–2條", key: "罪刑法定、從舊從輕、沒收適用裁判時法" },
+        { art: "第12–17條", key: "故意、過失、不作為、違法性錯誤、加重結果犯" },
+        { art: "第18–20條", key: "年齡、精神障礙、原因自由行為、瘖啞" },
+        { art: "第21–24條", key: "依法令、業務正當、正當防衛、緊急避難" },
+        { art: "第25–31條", key: "未遂、不能未遂、中止未遂、正犯與共犯" },
+        { art: "第38–38-2條", key: "違禁物、犯罪工具、犯罪所得、過苛調節" },
+        { art: "第47、55、57、62、74條", key: "累犯、想像競合、量刑、自首、緩刑" }
+      ],
+      bullets: [
+        "先問卡在哪一層，不要把所有概念混在同一段。",
+        "題幹出現『誤以為』『不知道』『相信不會發生』，大多先貼錯誤論標籤。",
+        "題幹出現『警察來了』『自己後悔』『主動送醫』，多半在考未遂或中止。",
+        "題幹出現『一行為、多罪名、同時』，先想刑法第55條想像競合。"
+      ],
+      example: "看到甲開車撞人後逃逸，不要只想『肇逃』。先問：有沒有駕駛行為？事故與死傷是否可歸責？主觀是否認識事故？是否另有過失傷害或公共危險？最後才處理罪數。",
+      traps: ["把刑總當法條清單背，會導致題目一變形就失去方向。", "分則題也常在考總則，尤其是錯誤論、共犯、未遂、罪數。"],
+      exams: ["111-T3", "111-T4", "112-T5", "113-T9", "113-T11"],
+      quiz: { q: "刑法總則和刑法分則最大的分工是什麼？", a: "分則定義個別犯罪；總則處理所有犯罪共通的成立、歸責、階段、參與、罪數與效果。" }
+    },
+    {
+      id: "ch01",
+      no: "01",
+      title: "犯罪成立三階層：所有題目的主控台",
+      layer: "核心流程",
+      oneLine: "犯罪成立要依序檢查：刑法行為 → 構成要件該當性 → 違法性 → 責任。",
+      lead: "三階層不是裝飾，是解題秩序。只要順序不亂，妳就不會把『有無故意』寫成『有無防衛』，也不會把『不知法律』誤寫成『沒有行為』。",
+      articles: [
+        { art: "學理前提、第15條", key: "刑法行為與不作為" },
+        { art: "第12–17條", key: "故意、過失、錯誤、不作為、加重結果" },
+        { art: "第21–24條", key: "阻卻違法事由" },
+        { art: "第16、18–20條", key: "違法性意識與責任能力" }
+      ],
+      bullets: [
+        "構成要件像犯罪模型：行為、客體、結果、因果、主觀。",
+        "違法性問法律是否允許；正當防衛和緊急避難在這一層。",
+        "責任問能否責備行為人；年齡、精神障礙、違法性錯誤都在這一層。",
+        "題目若問犯罪是否成立，完整答案應至少交代卡點在哪一層。"
+      ],
+      example: "甲揮拳打乙，乙受傷。先認定甲有刑法行為，再看是否該當傷害罪，接著問有無正當防衛，最後問甲是否有責任能力與違法性認識。",
+      issue: "故意、過失到底放構成要件還是責任？國考上較穩的寫法，是先在構成要件層處理主觀構成要件，再於責任層處理責任能力與違法性意識。",
+      traps: ["不成立犯罪不等於沒有行為。", "構成要件該當只是初步不法，不能直接等於犯罪成立。"],
+      exams: ["112-T6", "112-T7", "113-T8"],
+      quiz: { q: "三階層中，正當防衛應放在哪一層？", a: "違法性層。它不是否定行為，也不是否定故意，而是可能阻卻違法。" }
+    },
+    {
+      id: "ch02",
+      no: "02",
+      title: "刑法行為與構成要件該當性",
+      layer: "前提／一階",
+      oneLine: "刑法不處罰思想，也不處罰單純壞人；刑法處罰外在可歸責的行為。",
+      lead: "先排除不是刑法行為的狀態，再問行為是否『長得像』某個犯罪構成要件。這裡最重要的是不要急著判斷善惡，而是先拆客觀要件與主觀要件。",
+      articles: [
+        { art: "第12條", key: "非故意或過失，不罰；過失處罰以特別規定為限" },
+        { art: "第13條", key: "直接故意與間接故意" },
+        { art: "第14條", key: "無認識過失與有認識過失" },
+        { art: "第15條", key: "不作為與保證人地位" }
+      ],
+      bullets: [
+        "刑法行為：受意思支配或至少能歸屬於人的外在舉止。",
+        "非刑法行為：純反射、昏迷、睡眠中無意識動作、絕對強制下的身體移動。",
+        "客觀構成要件：主體、客體、行為、結果、因果關係、客觀歸責。",
+        "主觀構成要件：故意、過失、意圖、目的、不法所有意圖等。"
+      ],
+      example: "甲睡覺翻身壓傷乙，第一個問題不是傷害故意，而是甲當下是否有刑法上的行為。若是無意識身體動作，原則上先排除刑法行為。",
+      issue: "不作為犯的難點不是『沒做事』，而是為什麼這個人有法律上防止義務。保證人地位常來自法令、契約、危險前行為或密切共同生活關係。",
+      traps: ["看到沒有救人，不要直接成立犯罪；先找保證人地位。", "睡夢中行為通常不是刑法行為，但若事前自行招致危險，可能轉入原因自由行為。"],
+      exams: ["112-T7", "113-T6"],
+      quiz: { q: "母親明知幼兒溺水卻不救，刑法上最先要補哪個概念？", a: "不作為犯與保證人地位。母親有法律上防止義務，能防止而不防止時，可能與積極行為同視。" }
+    },
+    {
+      id: "ch03",
+      no: "03",
+      title: "因果關係、客觀歸責、加重結果犯",
+      layer: "一階深水區",
+      oneLine: "因果關係只問有沒有連結；客觀歸責才問這個結果能不能算到行為人頭上。",
+      lead: "很多題目會設計『結果真的發生了，但要不要歸責』。條件理論只能當第一層篩網；真正得分關鍵是能否說出風險創造、風險實現與規範保護目的。",
+      articles: [
+        { art: "第15條", key: "不作為結果歸責" },
+        { art: "第17條", key: "加重結果犯之預見可能性" }
+      ],
+      bullets: [
+        "條件理論：若無甲行為，結果是否仍會發生？",
+        "客觀歸責：行為是否製造法所不容許風險，且該風險是否實現於結果。",
+        "保護目的關聯：結果是否正是該規範要避免的危害。",
+        "加重結果犯：基本故意犯 + 較重結果 + 對較重結果至少有預見可能。"
+      ],
+      example: "甲毆打乙，乙逃跑時慌亂跌入施工坑洞截肢。要問截肢是否是甲傷害行為所創造風險的實現，以及甲對該重傷結果是否有客觀預見可能性。",
+      issue: "被害人逃跑或第三人介入不一定切斷歸責；要看是否異常、是否自我負責、是否仍在原危險範圍內。",
+      traps: ["有因果關係不必然有客觀歸責。", "加重結果犯不是結果一發生就成立，仍要檢查預見可能性。"],
+      exams: ["112-T4", "113-T5", "113-T6"],
+      quiz: { q: "傷害致死罪中，死亡結果一定要出於行為人故意嗎？", a: "不必。基本傷害行為是故意，死亡作為加重結果至少須有預見可能性。" }
+    },
+    {
+      id: "ch04",
+      no: "04",
+      title: "故意、過失與錯誤論",
+      layer: "一階／三階交界",
+      oneLine: "錯誤論的核心是：他到底是不知道事實，還是不知道法律怎麼評價這個事實。",
+      lead: "這是刑總最容易被考爛的章節。妳要先學會題幹信號：『以為是自己傘』是事實錯誤；『知道是別人的鸚鵡但以為動物非財物』是包攝錯誤；『以為對方正在攻擊』是容許構成要件錯誤。",
+      articles: [
+        { art: "第12條", key: "故意過失為處罰基礎" },
+        { art: "第13條", key: "直接故意、間接故意" },
+        { art: "第14條", key: "無認識過失、有認識過失" },
+        { art: "第16條", key: "不知法律與違法性錯誤" }
+      ],
+      bullets: [
+        "直接故意：知道會發生，而且要它發生。",
+        "間接故意：知道可能發生，發生也不違背本意。",
+        "有認識過失：知道可能發生，但確信不會發生。",
+        "構成要件錯誤阻卻故意；包攝錯誤通常轉入違法性錯誤。"
+      ],
+      example: "甲知道鸚鵡是乙的，也知道自己正在毒死它，只是以為動物不是刑法上的財物。甲不是不知道事實，而是法律包攝錯誤，不能直接說沒有毀損故意。",
+      issue: "容許構成要件錯誤四說：嚴格罪責理論、限制罪責理論、限制法律效果罪責理論、負面構成要件要素理論。考試安全寫法是先定位為誤認阻卻違法事實，再交代理論效果。",
+      traps: ["『不知法律』很難直接免責；第16條要求有正當理由且無法避免。", "客體錯誤與打擊錯誤不要混：前者認錯人，後者打偏。"],
+      exams: ["111-T3", "111-T4", "112-T5", "113-T9"],
+      quiz: { q: "甲以為拿的是自己的傘，實際拿走乙的傘，這比較像哪種錯誤？", a: "構成要件事實錯誤，因為甲不知道客體是他人之物，可能阻卻竊盜故意。" }
+    },
+    {
+      id: "ch05",
+      no: "05",
+      title: "違法性：防衛、避難、承諾",
+      layer: "二階",
+      oneLine: "符合構成要件只代表初步不法；違法性層要問法律是否允許這個行為。",
+      lead: "違法性層最常出現三大題型：正當防衛、緊急避難、被害人承諾。三者都可能讓看似犯罪的行為不罰，但判斷基準完全不同。",
+      articles: [
+        { art: "第21條", key: "依法令行為、上級命令" },
+        { art: "第22條", key: "業務上正當行為" },
+        { art: "第23條", key: "正當防衛與防衛過當" },
+        { art: "第24條", key: "緊急避難與避難過當" }
+      ],
+      bullets: [
+        "正當防衛：現在不法侵害、防衛自己或他人權利、必要性、防衛意思。",
+        "緊急避難：生命、身體、自由、財產之緊急危難；不得已；利益衡量。",
+        "被害人承諾：法益可處分、承諾能力、真意、事前或當時存在、不違公序。",
+        "依法令行為：若明知上級命令違法，不得主張不罰。"
+      ],
+      example: "乙持刀衝向甲，甲推開乙使乙跌傷。甲仍該當傷害構成要件，但可能因正當防衛阻卻違法。",
+      issue: "正當防衛原則上不需要嚴格利益衡量，因為法不向不法讓步；緊急避難則多是無辜法益相撞，所以要看避難利益是否優越或至少相當。",
+      traps: ["防衛對象應是現在不法侵害者，不是無辜第三人。", "被害人承諾不能無限上綱；生命法益原則不能承諾放棄。"],
+      exams: ["111-T5", "112-T6", "113-T7"],
+      quiz: { q: "正當防衛和緊急避難最大差別？", a: "正當防衛是對現在不法侵害者；緊急避難常是無辜法益衝突，因此更重視利益衡量。" }
+    },
+    {
+      id: "ch06",
+      no: "06",
+      title: "責任：責任能力、違法性意識、期待可能性",
+      layer: "三階",
+      oneLine: "責任層問的不是行為像不像犯罪，而是法律能不能責備這個人。",
+      lead: "責任層是最抽象但很會考的地方。妳要記住三句話：有沒有責任能力？有沒有違法性認識可能？當時能不能期待他守法？",
+      articles: [
+        { art: "第16條", key: "違法性錯誤與不知法律" },
+        { art: "第18條", key: "年齡責任能力" },
+        { art: "第19條", key: "精神障礙、心智缺陷、原因自由行為" },
+        { art: "第21條第2項", key: "上級命令與明知違法" }
+      ],
+      bullets: [
+        "未滿14歲人之行為不罰；14歲以上未滿18歲得減輕。",
+        "精神障礙致不能辨識違法或欠缺依辨識行為能力者，不罰。",
+        "故意或過失自行招致無責任狀態者，不能直接主張第19條免責。",
+        "無期待可能性通常是補充性抗辯，不要濫用。"
+      ],
+      example: "甲喝酒前已決定犯罪，故意喝到失控後實行。不能讓甲用『我犯罪時沒有責任能力』逃開，因為他是自己招致無責任狀態。",
+      issue: "上級命令若明顯違法，下級公務員不得以服從命令阻卻違法；但是否還有期待可能性問題，須個案判斷壓力程度。",
+      traps: ["原因自由行為不是只要喝酒犯罪都成立；要看招致無責任狀態是否故意或過失。", "不知法律不是魔法字，第16條的門檻高。"],
+      exams: ["112-T7", "113-T8", "113-T9"],
+      quiz: { q: "第16條的核心門檻是什麼？", a: "除有正當理由而無法避免者外，不得因不知法律免責；但可按情節減輕。" }
+    },
+    {
+      id: "ch07",
+      no: "07",
+      title: "未遂、不能未遂、中止未遂",
+      layer: "犯罪階段",
+      oneLine: "未遂的核心不是結果沒發生，而是已經著手卻沒有既遂。",
+      lead: "未遂題最常考三個字：著手、危險、己意。著手區分預備與未遂；危險區分不能未遂是否不罰；己意區分中止未遂與障礙未遂。",
+      articles: [
+        { art: "第25條", key: "普通未遂：已著手而不遂" },
+        { art: "第26條", key: "不能未遂：不能發生結果且無危險，不罰" },
+        { art: "第27條", key: "中止未遂：因己意中止或防止結果" }
+      ],
+      bullets: [
+        "著手：行為已直接進入法益危險。",
+        "障礙未遂：因外力沒有完成，例如警察到場、被害人逃脫。",
+        "中止未遂：行為人因己意停手或防止結果。",
+        "不能未遂：客觀上不能發生結果且無危險，才不罰。"
+      ],
+      example: "甲刺乙後後悔，主動叫救護車並救活乙，可能成立中止未遂；若甲只是因警察巡邏經過才離開，通常不是己意。",
+      issue: "己意不是『任何停手』。若停手原因是害怕被抓、工具壞掉、外力阻止，通常是障礙未遂而非中止未遂。",
+      traps: ["準備工具不是必然著手。", "中止未遂不只主觀後悔，還要客觀中止或防止結果。"],
+      exams: ["111-T8", "111-T9", "112-T9"],
+      quiz: { q: "甲因警察巡邏經過而停止殺人，通常是中止未遂嗎？", a: "通常不是。這較像因外在障礙而未遂，不是出於己意中止。" }
+    },
+    {
+      id: "ch08",
+      no: "08",
+      title: "正犯與共犯",
+      layer: "多人犯罪",
+      oneLine: "共犯題先問誰支配犯罪，再問誰只是引發或幫助犯罪。",
+      lead: "多人犯罪不要只看誰在現場。把風可能是共同正犯，也可能只是幫助犯；教唆不是幫忙，而是讓本來沒有犯意的人產生犯意。",
+      articles: [
+        { art: "第28條", key: "共同正犯" },
+        { art: "第29條", key: "教唆犯" },
+        { art: "第30條", key: "幫助犯" },
+        { art: "第31條", key: "身分犯參與" }
+      ],
+      bullets: [
+        "共同正犯：犯意聯絡 + 行為分擔，重點在功能性犯罪支配。",
+        "教唆犯：使他人產生犯意並實行犯罪。",
+        "幫助犯：給物理或心理助力；正犯不知幫助仍可成立。",
+        "過剩行為：超出共同犯意範圍者，其他人原則不負責。"
+      ],
+      example: "甲乙約好偷車，甲開鎖，乙把風。乙沒有親手拿車，但把風是計畫核心分工，可能成立共同正犯。若丙只是事前借工具，多往幫助犯思考。",
+      issue: "共同正犯脫離需要在犯罪完成前有效消除自己貢獻或防止結果，不能只是不到場。",
+      traps: ["在場不等於共同正犯；不在場也不一定排除共同正犯。", "教唆犯要正犯著手，才有可罰的教唆既遂問題。"],
+      exams: ["111-T10", "111-T11", "113-T31"],
+      quiz: { q: "幫助犯是否以正犯知道有人幫助為必要？", a: "不必要。刑法第30條明定雖他人不知幫助之情者亦同。" }
+    },
+    {
+      id: "ch09",
+      no: "09",
+      title: "罪數與競合",
+      layer: "犯罪成立後的整理",
+      oneLine: "罪數不是拿來判斷犯罪成不成立，而是犯罪成立後要算一罪還是數罪。",
+      lead: "罪數題的危險在於太早處理。正確順序是先把各罪成立與否判完，再整理法條競合、想像競合、吸收或數罪併罰。",
+      articles: [
+        { art: "第50–53條", key: "數罪併罰與定應執行刑" },
+        { art: "第55條", key: "一行為觸犯數罪名，從一重處斷" }
+      ],
+      bullets: [
+        "法條競合：看似多法條，其實只適用一個最適切法條。",
+        "想像競合：一行為觸犯數罪名，從一重處斷。",
+        "數罪併罰：數行為成立數罪，定應執行刑。",
+        "吸收關係：低度或手段行為被高度或目的行為吸收。"
+      ],
+      example: "甲偽造私文書後再拿去使用。偽造與行使高度連結，實務常論以行使偽造私文書，偽造行為被吸收。",
+      issue: "想像競合的一行為判斷，不只是自然動作數量，也要看社會觀念上的行為單一性與犯罪計畫關聯。",
+      traps: ["不要看到兩個罪名就直接數罪併罰。", "從一重處斷不是其中一罪消失，而是科刑處理從一重。"],
+      exams: ["111-T15", "112-T3", "112-T11", "112-T12"],
+      quiz: { q: "刑法第55條的效果是什麼？", a: "一行為觸犯數罪名者，從一重處斷，但不得科以較輕罪名所定最輕本刑以下之刑。" }
+    },
+    {
+      id: "ch10",
+      no: "10",
+      title: "刑罰、累犯、緩刑、自首、沒收",
+      layer: "法律效果",
+      oneLine: "犯罪成立後，還要處理刑如何加減、能否緩刑、自首、以及犯罪所得是否剝奪。",
+      lead: "刑罰章不是背數字而已，國考很愛考法律效果的精細差異：累犯加重、緩刑條件、自首時間點、犯罪所得沒收性質。",
+      articles: [
+        { art: "第38–38-2條", key: "沒收、追徵、過苛調節" },
+        { art: "第47條", key: "累犯" },
+        { art: "第57條", key: "責任為基礎之量刑" },
+        { art: "第62條", key: "自首" },
+        { art: "第74條", key: "緩刑" }
+      ],
+      bullets: [
+        "累犯：徒刑執行完畢或一部赦免後五年內，故意再犯有期徒刑以上之罪。",
+        "自首：對未發覺之罪自首而受裁判者，得減輕其刑。",
+        "沒收：重點在回復合法財產秩序，不要一律當刑罰。",
+        "犯罪所得已合法發還被害人者，不予宣告沒收或追徵。"
+      ],
+      example: "甲販毒收入100萬元，主張買毒成本60萬元應扣除。若交易自身即為法所禁止，不法沾染通常及於全部所得，成本不當然扣除。",
+      issue: "釋字775號對累犯的關鍵不是否定累犯制度，而是指出若不分情節一律加重最低本刑，可能導致個案罪刑不相當。",
+      traps: ["自首不是投案就好，重點是犯罪尚未被偵查機關發覺。", "沒收不是只有犯罪工具；犯罪所得與第三人取得也很常考。"],
+      exams: ["112-T1", "112-T13", "113-T10", "113-T11", "113-T13"],
+      quiz: { q: "犯罪所得沒收的核心目的之一是什麼？", a: "剝奪不法所得、回復合法財產秩序，使任何人不得保有犯罪所得。" }
+    }
+  ],
+  debates: [
+    {
+      title: "容許構成要件錯誤：誤想防衛怎麼處理？",
+      signal: "題幹出現：甲誤以為乙正在攻擊丙，實際上並無不法侵害。",
+      sides: [
+        { name: "嚴格罪責理論", claim: "仍有故意，只是違法性錯誤；依第16條判斷是否可避免。", exam: "寫起來嚴格，但結論可能較不利於行為人。" },
+        { name: "限制罪責理論", claim: "類似構成要件錯誤，阻卻故意；有過失規定時再論過失。", exam: "國考常見答案架構，便於說明『誤認阻卻違法事實』。" },
+        { name: "限制法律效果罪責理論", claim: "故意構成要件仍在，但阻卻故意責任；效果上接近過失。", exam: "適合寫進爭點對照，精準但要避免太長。" },
+        { name: "負面構成要件要素理論", claim: "阻卻違法事由不存在也是整體不法構成要件之一；誤認即欠缺整體不法故意。", exam: "理論性強，選擇題常拿來當選項。" }
+      ],
+      verdict: "考試寫法：先定位為容許構成要件錯誤，再列學說效果；若題目未要求深入，採限制罪責理論或限制法律效果罪責理論說明即可。"
+    },
+    {
+      title: "包攝錯誤 vs 構成要件錯誤",
+      signal: "題幹出現：行為人知道所有事實，但誤判某法律概念的涵攝範圍。",
+      sides: [
+        { name: "構成要件錯誤", claim: "不知道構成要件事實，故阻卻故意。", exam: "例：以為拿的是自己傘，實際是他人傘。" },
+        { name: "包攝錯誤", claim: "知道事實，只是不知道法律如何評價，通常不阻卻故意。", exam: "例：知道鸚鵡是乙的，但以為動物不是財物。" }
+      ],
+      verdict: "口訣：不知道『事實』才走構成要件錯誤；知道事實但誤判『法律概念』，往包攝錯誤／違法性錯誤處理。"
+    },
+    {
+      title: "正當防衛 vs 緊急避難",
+      signal: "題幹出現：為保護法益而侵害他人法益。先問對象是否為不法侵害者。",
+      sides: [
+        { name: "正當防衛", claim: "對現在不法侵害者防衛，原則不做嚴格利益衡量。", exam: "乙持刀攻擊，甲反擊推倒乙。" },
+        { name: "緊急避難", claim: "法益衝突下的不得已行為，需利益衡量。", exam: "為逃猛犬撞破無辜第三人的門。" }
+      ],
+      verdict: "先看侵害來源：人為不法侵害 → 防衛；自然危難或無辜法益衝突 → 避難。"
+    },
+    {
+      title: "共同正犯 vs 幫助犯",
+      signal: "題幹出現：把風、借工具、接應、事前分工。",
+      sides: [
+        { name: "共同正犯", claim: "犯意聯絡 + 行為分擔，參與犯罪核心支配。", exam: "把風若是竊盜計畫核心分工，可能是共同正犯。" },
+        { name: "幫助犯", claim: "提供物理或心理助力，但不共同支配犯罪。", exam: "事前借工具、提供資訊，多半先想幫助。" }
+      ],
+      verdict: "不要只看有沒有在現場；看他是否參與犯罪計畫並分擔核心功能。"
+    }
+  ],
+  examCards: [
+    { tag: "111-T3", topic: "故意與錯誤", signal: "認錯客體、打擊錯誤、事後發現結果符合期待。", ask: "看到『誤以為是仇人』先判斷是客體錯誤還是打擊錯誤。", answer: "客體錯誤通常不阻卻同一法益故意；打擊錯誤常拆成對目標未遂與對實際客體過失。" },
+    { tag: "111-T4", topic: "容許構成要件錯誤", signal: "誤以為乙追殺丙，實際上在拍電影。", ask: "本題不是單純正當防衛，而是誤認防衛事實。", answer: "定位為容許構成要件錯誤，依不同學說處理故意或罪責效果。" },
+    { tag: "112-T5", topic: "包攝錯誤", signal: "知道鸚鵡是乙的，但以為動物非財物。", ask: "他錯的是事實還是法律評價？", answer: "法律評價／包攝錯誤，不是構成要件事實錯誤。" },
+    { tag: "112-T7", topic: "原因自由行為", signal: "服用安眠藥後夢遊毆人。", ask: "先問睡夢中是否有刑法行為，再問事前服藥是否有故意或過失招致。", answer: "要檢查原因自由行為；不可直接跳成故意傷害。" },
+    { tag: "113-T5", topic: "傷害致重傷／客觀歸責", signal: "毆打後逃跑掉入坑洞截肢。", ask: "截肢結果是否可歸責於原傷害行為？", answer: "重點在風險實現與客觀預見可能性。" },
+    { tag: "113-T7", topic: "被害人承諾", signal: "承諾作為超法規阻卻違法事由。", ask: "承諾能力與法益可處分性要分開。", answer: "承諾能力不以民法行為能力為準；生命法益原則不可承諾放棄。" },
+    { tag: "113-T10", topic: "自首", signal: "犯罪未被發覺前主動申告，但是否承認犯罪或逃匿。", ask: "自首核心是未發覺與接受裁判。", answer: "申告後逃匿可能否定自首適用；想像競合中未發覺重罪也可能有自首問題。" },
+    { tag: "113-T11", topic: "犯罪所得沒收", signal: "相對總額原則、犯罪成本扣除。", ask: "沒收是不是刑罰？成本能不能扣？", answer: "犯罪所得沒收非刑罰或類似刑罰；不法交易成本不當然扣除。" }
+  ],
+  traps: [
+    { wrong: "不成立犯罪 = 沒有刑法行為。", fix: "不成立可能卡在構成要件、違法性、責任、處罰條件或罪數效果。", cue: "題目問『不成立』時先標明卡點。" },
+    { wrong: "不知道法律禁止，所以一定無罪。", fix: "第16條門檻高：除有正當理由而無法避免，不得免責；只是得減輕。", cue: "看到『不知法律』先想第16條。" },
+    { wrong: "有因果關係就一定要負責。", fix: "還要檢查客觀歸責：風險創造、風險實現、保護目的關聯。", cue: "題幹有逃跑、自摔、第三人介入時要警覺。" },
+    { wrong: "正當防衛要完全利益衡量。", fix: "正當防衛強調法不向不法讓步；但仍受必要性、過當與權利濫用限制。", cue: "對不法侵害者 → 防衛；對無辜第三人 → 避難。" },
+    { wrong: "把風一定只是幫助犯。", fix: "若把風是共同犯罪計畫中的核心分工，可能成立共同正犯。", cue: "看功能性支配，不只看是否親手實行。" }
+  ],
+  quizBank: [
+    { q: "刑法第12條的基本命題是什麼？", options: ["行為非出於故意或過失者，不罰", "行為後法律變更一律用新法", "正當防衛不罰", "犯罪所得一律沒收"], a: 0, why: "第12條建立故意、過失作為處罰基礎；過失處罰以特別規定為限。" },
+    { q: "甲知道鸚鵡是乙的，但以為動物不是財物而毒死，較精準定位為？", options: ["構成要件事實錯誤", "包攝錯誤／違法性錯誤方向", "不能未遂", "緊急避難"], a: 1, why: "甲知道事實，只是誤判法律概念涵攝範圍。" },
+    { q: "正當防衛主要處理於犯罪成立三階層的哪一層？", options: ["刑法行為", "構成要件", "違法性", "罪數"], a: 2, why: "正當防衛屬阻卻違法事由。" },
+    { q: "加重結果犯對於加重結果至少要求什麼？", options: ["直接故意", "間接故意", "預見可能性", "不法所有意圖"], a: 2, why: "刑法第17條：不能預見加重結果時，不適用加重其刑規定。" },
+    { q: "中止未遂最關鍵的主觀要件是？", options: ["因己意", "因警察來", "因工具壞掉", "因被害人逃走"], a: 0, why: "第27條要求因己意中止或防止結果。" },
+    { q: "幫助犯是否以正犯知道有人幫助為必要？", options: ["必要", "不必要", "只限財產犯罪必要", "只限故意犯必要"], a: 1, why: "第30條明文：雖他人不知幫助之情者，亦同。" },
+    { q: "一行為觸犯數罪名，原則效果為？", options: ["一律無罪", "從一重處斷", "全部併科", "只罰最先成立之罪"], a: 1, why: "刑法第55條規定一行為觸犯數罪名者，從一重處斷。" },
+    { q: "犯罪所得已實際合法發還被害人者，沒收效果為？", options: ["仍一律沒收", "不予宣告沒收或追徵", "只沒收一半", "改科罰金"], a: 1, why: "刑法第38條之1第5項。" },
+    { q: "累犯的基本時間要件是徒刑執行完畢或一部赦免後幾年內？", options: ["1年", "2年", "3年", "5年"], a: 3, why: "第47條規定五年以內故意再犯有期徒刑以上之罪。" },
+    { q: "自首的核心時間點是？", options: ["犯罪完成後任何時間", "犯罪尚未被偵查機關發覺前", "法院判決前", "執行前"], a: 1, why: "第62條：對於未發覺之罪自首而受裁判者，得減輕其刑。" }
+  ],
+  sources: [
+    { name: "全國法規資料庫｜中華民國刑法", desc: "現行條文、修正日期與總則條文。", url: "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001" },
+    { name: "憲法法庭 111 年憲判字第 18 號", desc: "犯罪所得沒收、相對總額原則、非刑罰性質。", url: "https://cons.judicial.gov.tw/docdata.aspx?fid=77&id=345270" },
+    { name: "司法院釋字第 775 號", desc: "累犯加重最低本刑與罪刑相當、比例原則。", url: "https://cons.judicial.gov.tw/docdata.aspx?fid=100&id=310956" },
+    { name: "使用者上傳資料", desc: "陳介中《刑法第一堂》、111–113 年司法官／律師第一試刑法題與標準答案。", url: "" }
+  ]
+};
+
+</script>
+  <script>
+const DATA = window.CRL_DATA;
+let state = { view: 'home', chapter: 0, slide: 0, quizIndex: 0, quizScore: 0, answered: false };
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+const esc = s => String(s ?? '').replace(/[&<>'"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[m]));
+
+function init(){
+  renderChapterSelect();
+  renderHome();
+  renderReader();
+  renderLesson();
+  renderDuel();
+  renderExam();
+  renderDiagnostic();
+  renderTraps();
+  renderQuiz();
+  bindGlobal();
+}
+function bindGlobal(){
+  $$('.rail-btn').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+  $('#chapterSelect').addEventListener('change', e => { state.chapter = Number(e.target.value); state.slide = 0; renderReader(); renderLesson(); setView(state.view === 'home' ? 'reader' : state.view); });
+  $('#printBtn').addEventListener('click', () => window.print());
+}
+function setView(view){
+  state.view = view;
+  $$('.view').forEach(v => v.classList.toggle('is-visible', v.id === view));
+  $$('.rail-btn').forEach(b => b.classList.toggle('is-active', b.dataset.view === view));
+  if(view === 'lesson') renderLesson();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function renderChapterSelect(){
+  $('#chapterSelect').innerHTML = DATA.chapters.map((c,i)=>`<option value="${i}">${c.no}｜${esc(c.title)}</option>`).join('');
+}
+function renderHome(){
+  $('#home').innerHTML = `
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">${esc(DATA.meta.version)} · ${esc(DATA.meta.updated)}</p>
+          <h2>刑法總則，不再是一堆抽象名詞。</h2>
+          <p>這是一套為妳設計的上課型網頁：先用總地圖建立位置感，再用閱讀模式打底、上課模式逐屏推進、爭點決鬥拆學說、考古題反射抓題幹信號。</p>
+          <div class="chips">
+            <span class="chip">三階層主控台</span><span class="chip">爭點決鬥</span><span class="chip">考古反射</span><span class="chip">陷阱本</span>
+          </div>
+        </div>
+        <div class="status-cards">
+          <div class="stat-card"><strong>${DATA.chapters.length}</strong><span>總則章節</span></div>
+          <div class="stat-card"><strong>${DATA.debates.length}</strong><span>核心爭點</span></div>
+          <div class="stat-card"><strong>${DATA.examCards.length}</strong><span>考古題型卡</span></div>
+          <div class="stat-card"><strong>${DATA.quizBank.length}</strong><span>Quick Quiz</span></div>
+        </div>
+      </div>
+    </div>
+    <h2 class="section-title">刑法總則作戰地圖</h2>
+    <p class="subtle">點擊節點會自動帶妳進入對應章節。每個節點都標示考頻與易錯程度，妳先建立全局，再進細節。</p>
+    <div class="roadmap">${DATA.roadmap.map((r,i)=>`
+      <article class="road-node" data-level="${esc(r.level)}" data-road-index="${i}">
+        <h3>${esc(r.title)}</h3><p>${esc(r.desc)}</p>
+        <div class="road-meta"><span class="pill gold">考頻 ${esc(r.freq)}</span><span class="pill red">易錯 ${esc(r.risk)}</span></div>
+      </article>`).join('')}
+    </div>
+    <h2 class="section-title">資料來源</h2>
+    <div class="source-list">${DATA.sources.map(s=>`
+      <div class="source"><strong>${esc(s.name)}</strong><p>${esc(s.desc)}</p>${s.url?`<a target="_blank" rel="noreferrer" href="${esc(s.url)}">OPEN SOURCE</a>`:''}</div>
+    `).join('')}</div>
+  `;
+  $$('.road-node').forEach((node, i)=>node.addEventListener('click',()=>{ state.chapter = Math.min(i+1, DATA.chapters.length-1); $('#chapterSelect').value=state.chapter; renderReader(); renderLesson(); setView('reader'); }));
+}
+function chapterToc(active=state.chapter){
+  return `<nav class="toc"><p class="block-title">Chapters</p>${DATA.chapters.map((c,i)=>`<button class="${i===active?'is-active':''}" data-chapter="${i}"><small>${c.no}</small>${esc(c.title)}</button>`).join('')}</nav>`;
+}
+function neural(c){
+  return `<aside class="neural"><h3>本章神經索引</h3><dl>
+    <div><dt>所在層級</dt><dd>${esc(c.layer)}</dd></div>
+    <div><dt>一句話</dt><dd>${esc(c.oneLine)}</dd></div>
+    <div><dt>核心條文</dt><dd>${c.articles.map(a=>esc(a.art)).join('、')}</dd></div>
+    <div><dt>考古標籤</dt><dd><div class="chips">${c.exams.map(e=>`<span class="chip">${esc(e)}</span>`).join('')}</div></dd></div>
+    <div><dt>上課提問</dt><dd>${esc(c.quiz.q)}</dd></div>
+  </dl></aside>`;
+}
+function renderReader(){
+  const c = DATA.chapters[state.chapter];
+  $('#reader').innerHTML = `<div class="layout">${chapterToc()}<article class="chapter-card">
+    <p class="chapter-no">CHAPTER ${esc(c.no)}</p>
+    <h2>${esc(c.title)}</h2>
+    <p class="one-line">${esc(c.oneLine)}</p>
+    <p class="lead">${esc(c.lead)}</p>
+    <p class="block-title">🗺️ 條文地圖</p>
+    <div class="article-grid">${c.articles.map(a=>`<div class="article"><code>${esc(a.art)}</code><span>${esc(a.key)}</span></div>`).join('')}</div>
+    <p class="block-title">🏗️ 概念框架</p>
+    <ul class="info-list">${c.bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
+    <div class="example"><p class="block-title">簡單例子</p>${esc(c.example)}</div>
+    ${c.issue?`<div class="issue"><p class="block-title">⚖️ 爭點</p>${esc(c.issue)}</div>`:''}
+    <div class="trap-box"><p class="block-title">⚠️ 易錯陷阱</p>${c.traps.map(t=>`<p>・${esc(t)}</p>`).join('')}</div>
+    <p class="block-title">🎯 考古連結</p><div class="chips">${c.exams.map(e=>`<span class="chip">${esc(e)}</span>`).join('')}</div>
+    <div class="example"><p class="block-title">✏️ Rékaí 問妳一句</p><strong>${esc(c.quiz.q)}</strong><p class="subtle">${esc(c.quiz.a)}</p></div>
+  </article>${neural(c)}</div>`;
+  $('#reader .toc').addEventListener('click', e=>{const b=e.target.closest('button[data-chapter]'); if(!b) return; state.chapter=Number(b.dataset.chapter); $('#chapterSelect').value=state.chapter; renderReader(); renderLesson();});
+}
+function slideHTML(c){
+  const slides = [
+    {t:`${c.no}｜${c.title}`, p:c.oneLine, sub:c.lead},
+    {t:'條文地圖', html:`<div class="article-grid">${c.articles.map(a=>`<div class="article"><code>${esc(a.art)}</code><span>${esc(a.key)}</span></div>`).join('')}</div>`},
+    {t:'概念框架', html:`<ul>${c.bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>`},
+    {t:'簡單例子', p:c.example},
+    {t:'爭點 / 陷阱', html:`${c.issue?`<p>${esc(c.issue)}</p>`:''}<ul>${c.traps.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`},
+    {t:'考古題信號', html:`<p class="muted">看到這些標籤，就把題幹先貼到本章。</p><div class="chips">${c.exams.map(e=>`<span class="chip">${esc(e)}</span>`).join('')}</div>`},
+    {t:'我問妳一句', p:c.quiz.q, sub:c.quiz.a}
+  ];
+  const s = slides[state.slide] || slides[0];
+  return {total:slides.length, html:`<div class="slide" data-slide="${state.slide+1}/${slides.length}"><h2>${esc(s.t)}</h2>${s.html || `<p>${esc(s.p)}</p>${s.sub?`<p class="muted">${esc(s.sub)}</p>`:''}`}</div>`};
+}
+function renderLesson(){
+  const c = DATA.chapters[state.chapter];
+  const s = slideHTML(c);
+  $('#lesson').innerHTML = `<div class="lesson-wrap"><div><div id="slideMount">${s.html}</div><div class="lesson-controls"><button class="action-btn" id="prevSlide">上一屏</button><button class="action-btn" id="nextSlide">下一屏</button><button class="ghost-btn" id="toReader">展開閱讀</button></div></div><aside class="panel lesson-side"><p class="block-title">上課模式</p><h3>${esc(c.title)}</h3><div class="progress"><span style="width:${((state.slide+1)/s.total)*100}%"></span></div><p class="subtle">一次只亮一個變數。妳不用吞整章，跟著屏幕走：定位、條文、框架、例子、爭點、考古、提問。</p><div class="chips">${c.exams.map(e=>`<span class="chip">${esc(e)}</span>`).join('')}</div></aside></div>`;
+  $('#prevSlide').addEventListener('click',()=>{state.slide=Math.max(0,state.slide-1);renderLesson();});
+  $('#nextSlide').addEventListener('click',()=>{state.slide=Math.min(s.total-1,state.slide+1);renderLesson();});
+  $('#toReader').addEventListener('click',()=>setView('reader'));
+}
+function renderDuel(){
+  $('#duel').innerHTML = `<h2 class="section-title">爭點決鬥模式</h2><p class="subtle">每個爭點都用左右對戰拆解：A 說什麼、B 說什麼、考試安全寫法是什麼。</p><div class="duel-grid">${DATA.debates.map(d=>`
+    <article class="duel-card"><h3>${esc(d.title)}</h3><p class="signal">${esc(d.signal)}</p>${d.sides.map(s=>`<div class="side"><strong>${esc(s.name)}</strong><p>${esc(s.claim)}</p><p class="subtle">${esc(s.exam)}</p></div>`).join('')}<div class="verdict">${esc(d.verdict)}</div></article>`).join('')}</div>`;
+}
+function renderExam(){
+  $('#exam').innerHTML = `<h2 class="section-title">考古題反射模式</h2><p class="subtle">先不要背答案。每張卡訓練妳看到題幹信號就知道該貼哪個刑總標籤。</p><div class="exam-grid">${DATA.examCards.map((e,i)=>`
+    <article class="exam-card"><span class="tag">${esc(e.tag)}</span><h3>${esc(e.topic)}</h3><p class="signal">題幹信號：${esc(e.signal)}</p><p>${esc(e.ask)}</p><button class="ghost-btn" data-reveal="${i}">顯示反射答案</button><div class="reveal" id="reveal-${i}">${esc(e.answer)}</div></article>`).join('')}</div>`;
+  $$('[data-reveal]').forEach(b=>b.addEventListener('click',()=>$('#reveal-'+b.dataset.reveal).classList.toggle('is-visible')));
+}
+function renderDiagnostic(){
+  $('#diagnostic').innerHTML = `<h2 class="section-title">三階層診斷器</h2><p class="subtle">輸入一個簡短案例，勾選妳目前判斷。我會輸出一份答題骨架，逼妳按順序檢查。</p><div class="diag-grid"><div class="diag-card"><textarea id="caseText" placeholder="例：甲誤以為乙正在攻擊丙，拿石頭砸乙，事後發現乙丙在拍電影。"></textarea><div class="diag-steps">
+  ${['有刑法行為','構成要件可能該當','有因果與客觀歸責問題','可能有阻卻違法事由','可能有責任能力／違法性錯誤問題','可能有未遂／共犯／罪數問題'].map((x,i)=>`<label><input type="checkbox" value="${i}"> ${x}</label>`).join('')}
+  </div><button class="action-btn" id="runDiag">生成答題骨架</button></div><div class="diag-card"><p class="block-title">輸出</p><div id="diagOutput" class="diag-output">妳的診斷會出現在這裡。</div></div></div>`;
+  $('#runDiag').addEventListener('click',()=>{
+    const text = $('#caseText').value.trim() || '（未輸入案例）';
+    const checked = $$('#diagnostic input:checked').map(i=>Number(i.value));
+    const lines = [`案例：${text}`,'','答題骨架：','1. 刑法行為：先確認是否為有意識或可歸屬於人的外在舉止。','2. 構成要件：列出可能罪名，檢查客觀要件與主觀要件。','3. 因果／歸責：若有結果犯，檢查條件關係、風險創造與風險實現。','4. 違法性：檢查正當防衛、緊急避難、承諾、依法令或業務正當。','5. 責任：檢查責任能力、違法性意識、期待可能性與原因自由行為。','6. 罪數／效果：最後處理未遂、共犯、競合、刑罰與沒收。','','妳已標記：'];
+    const names=['刑法行為','構成要件','因果與客觀歸責','違法性','責任','未遂／共犯／罪數'];
+    lines.push(checked.length?checked.map(i=>'・'+names[i]).join('\n'):'尚未勾選。請先不要急著下結論。');
+    $('#diagOutput').textContent = lines.join('\n');
+  });
+}
+function getUserTraps(){ try{return JSON.parse(localStorage.getItem('crl_traps')||'[]')}catch{return[]} }
+function setUserTraps(x){ localStorage.setItem('crl_traps',JSON.stringify(x)); }
+function renderTraps(){
+  const all=[...DATA.traps,...getUserTraps()];
+  $('#traps').innerHTML = `<h2 class="section-title">陷阱本</h2><p class="subtle">這裡不是普通錯題本，而是專門收「我原本以為」與「下次看到什麼字要警覺」。新增內容會存在妳的瀏覽器 localStorage。</p><div class="trap-form"><input id="trapWrong" placeholder="我原本以為……"><input id="trapCue" placeholder="下次看到什麼字要警覺……"><textarea id="trapFix" placeholder="正確位置／為什麼會錯……"></textarea><button class="action-btn" id="addTrap">加入陷阱本</button><button class="ghost-btn" id="clearTraps">清空我新增的陷阱</button></div><div class="trap-grid">${all.map(t=>`<article class="trap-card"><strong>我原本以為</strong><p>${esc(t.wrong)}</p><strong>正確位置</strong><p>${esc(t.fix)}</p><strong>下次警覺</strong><p>${esc(t.cue)}</p></article>`).join('')}</div>`;
+  $('#addTrap').addEventListener('click',()=>{const wrong=$('#trapWrong').value.trim(), fix=$('#trapFix').value.trim(), cue=$('#trapCue').value.trim(); if(!wrong||!fix) return; const items=getUserTraps(); items.unshift({wrong,fix,cue:cue||'未設定'}); setUserTraps(items); renderTraps();});
+  $('#clearTraps').addEventListener('click',()=>{setUserTraps([]);renderTraps();});
+}
+function renderQuiz(){
+  const q = DATA.quizBank[state.quizIndex];
+  $('#quiz').innerHTML = `<h2 class="section-title">Quick Quiz</h2><div class="quiz-card"><p class="block-title">${state.quizIndex+1}/${DATA.quizBank.length}｜目前得分 ${state.quizScore}</p><h3>${esc(q.q)}</h3><div class="quiz-options">${q.options.map((o,i)=>`<button data-opt="${i}">${esc(o)}</button>`).join('')}</div><div class="quiz-result" id="quizResult"></div><div class="lesson-controls"><button class="ghost-btn" id="resetQuiz">重新開始</button><button class="action-btn" id="nextQuiz">下一題</button></div></div>`;
+  $$('#quiz [data-opt]').forEach(btn=>btn.addEventListener('click',()=>{
+    if(state.answered) return;
+    state.answered=true;
+    const i=Number(btn.dataset.opt);
+    if(i===q.a){state.quizScore++; btn.classList.add('correct');} else {btn.classList.add('wrong'); $(`#quiz [data-opt="${q.a}"]`).classList.add('correct');}
+    $('#quizResult').innerHTML = `<strong>${i===q.a?'正確':'再抓一次題幹信號。'}</strong><br>${esc(q.why)}`;
+  }));
+  $('#nextQuiz').addEventListener('click',()=>{state.quizIndex=(state.quizIndex+1)%DATA.quizBank.length; state.answered=false; renderQuiz();});
+  $('#resetQuiz').addEventListener('click',()=>{state.quizIndex=0; state.quizScore=0; state.answered=false; renderQuiz();});
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+<!-- Criminal Rose Floating Console START -->
+<style>
+#crf-console,#crf-vine,#crf-hydration-overlay{box-sizing:border-box}
+#crf-console *,#crf-vine *,#crf-hydration-overlay *{box-sizing:border-box}
+#crf-console{
+  --crf-cream:rgba(255,250,244,.82);
+  --crf-glass:rgba(255,255,255,.18);
+  --crf-purple:#4d276f;
+  --crf-rose:#b43a4a;
+  --crf-gold:#d8b56f;
+  --crf-dark:#251722;
+  --crf-muted:#776878;
+  position:fixed;
+  right:18px;
+  bottom:104px;
+  z-index:99970;
+  width:min(390px,calc(100vw - 24px));
+  max-height:min(78vh,760px);
+  color:var(--crf-dark);
+  border:1px solid rgba(216,181,111,.32);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 14% 8%,rgba(180,58,74,.20),transparent 30%),
+    radial-gradient(circle at 82% 4%,rgba(116,67,163,.18),transparent 32%),
+    linear-gradient(135deg,rgba(255,250,244,.78),rgba(234,222,250,.58));
+  backdrop-filter:blur(18px) saturate(1.25);
+  box-shadow:0 24px 70px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.55);
+  overflow:hidden;
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+#crf-console.crf-collapsed{width:min(330px,calc(100vw - 24px));max-height:158px}
+#crf-console.crf-dragging{transition:none!important;opacity:.96}
+.crf-ripple{position:absolute;inset:-40%;pointer-events:none;opacity:.28;background:radial-gradient(circle,transparent 0 48%,rgba(180,58,74,.18) 49% 50%,transparent 52%) 0 0/150px 150px;animation:crfRipple 18s linear infinite}
+.crf-shell{position:relative;z-index:1;padding:12px}
+.crf-top{display:grid;grid-template-columns:94px minmax(0,1fr) auto;gap:10px;align-items:center;cursor:grab;user-select:none;touch-action:none}
+#crf-console.crf-dragging .crf-top{cursor:grabbing}
+.crf-avatar{position:relative;width:94px;height:64px;border-radius:19px;display:grid;place-items:center;background:rgba(255,255,255,.35);border:1px solid rgba(77,39,111,.18);overflow:hidden}
+.crf-avatar img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(37,23,34,.18));animation:crfFloat 3.3s ease-in-out infinite}
+.crf-avatar span{display:none;font-size:28px}.crf-avatar.failed img{display:none}.crf-avatar.failed span{display:block}
+.crf-percent{position:absolute;right:-5px;bottom:-5px;min-width:44px;height:30px;border-radius:999px;padding:7px 8px;background:linear-gradient(135deg,var(--crf-rose),var(--crf-purple));color:white;font-size:12px;font-weight:950;text-align:center;border:2px solid rgba(255,255,255,.9)}
+.crf-title{margin:0;font-size:16px;line-height:1.2;color:var(--crf-dark);font-weight:950;letter-spacing:0}
+.crf-status{margin:4px 0 0;font-size:12px;line-height:1.35;color:var(--crf-muted);font-weight:850}
+.crf-note{margin:4px 0 0;font-size:11px;line-height:1.35;color:var(--crf-muted)}
+.crf-toggle,.crf-btn{border:1px solid rgba(77,39,111,.22);border-radius:999px;background:rgba(255,255,255,.70);color:var(--crf-dark);font:inherit;font-size:12px;font-weight:900;line-height:1.1;padding:8px 10px;cursor:pointer;box-shadow:0 5px 14px rgba(37,23,34,.08)}
+.crf-toggle:hover,.crf-btn:hover{background:#fff;border-color:rgba(180,58,74,.34)}
+.crf-btn.primary{color:#fff;background:linear-gradient(135deg,var(--crf-rose),var(--crf-purple));border-color:rgba(180,58,74,.35)}
+.crf-btn.blue{background:linear-gradient(135deg,#e8f8ff,#efeaff);border-color:rgba(96,165,250,.34)}
+.crf-btn.gold{background:linear-gradient(135deg,#fff5d6,#e9c77d);border-color:rgba(216,181,111,.45)}
+.crf-btn.danger{color:#7e1d35}
+.crf-panel{display:grid;gap:10px;margin-top:10px;max-height:calc(min(78vh,760px) - 112px);overflow:auto;padding-right:4px}
+#crf-console.crf-collapsed .crf-panel{display:none}
+.crf-mini-route{position:relative;height:64px;margin-top:8px;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(236,224,250,.28));border:1px solid rgba(77,39,111,.14);overflow:visible}
+.crf-mini-route:before{content:"";position:absolute;left:14px;right:14px;bottom:12px;height:9px;border-radius:999px;background:linear-gradient(90deg,rgba(121,104,130,.42),rgba(171,144,192,.34))}
+.crf-mini-fill{position:absolute;left:14px;bottom:12px;width:calc((100% - 28px) * var(--crf-ratio,.01));height:9px;border-radius:999px;background:linear-gradient(90deg,var(--crf-rose),#b85da2,var(--crf-purple));box-shadow:0 0 16px rgba(180,58,74,.24);transition:width .45s ease}
+.crf-mini-runner{position:absolute;left:var(--crf-runner-left,14px);bottom:5px;width:128px;height:70px;transition:left .45s ease;filter:drop-shadow(0 8px 12px rgba(37,23,34,.22));z-index:2}
+.crf-mini-runner img{width:100%;height:100%;object-fit:contain}.crf-mini-runner span{display:none;font-size:28px}.crf-mini-runner.failed img{display:none}.crf-mini-runner.failed span{display:grid;place-items:center;width:100%;height:100%}
+.crf-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.crf-stat,.crf-card{border:1px solid rgba(77,39,111,.15);border-radius:15px;background:rgba(255,255,255,.52);padding:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
+.crf-stat b{display:block;color:var(--crf-rose);font-size:18px;line-height:1;font-variant-numeric:tabular-nums}.crf-stat span{display:block;margin-top:4px;color:var(--crf-muted);font-size:10px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crf-card h3{margin:0 0 8px;font-size:13px;line-height:1.25;color:var(--crf-dark)}.crf-soft{color:var(--crf-muted);font-size:12px;line-height:1.45}.crf-actions{display:flex;gap:7px;flex-wrap:wrap}
+.crf-chapters{display:grid;gap:7px}.crf-chapter{border:1px solid rgba(77,39,111,.14);border-radius:14px;background:rgba(255,255,255,.46);overflow:hidden}.crf-chapter[hidden]{display:none}.crf-chapter.done{opacity:.62}
+.crf-summary{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px;cursor:pointer}.crf-summary::-webkit-details-marker{display:none}
+.crf-ch-title{min-width:0;font-size:12px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crf-chip{font-size:10px;font-weight:900;color:#fff;background:linear-gradient(135deg,#3b1d4f,var(--crf-rose));border-radius:999px;padding:4px 7px;white-space:nowrap}
+.crf-items{display:grid;gap:6px;padding:0 9px 9px}.crf-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px;align-items:center;font-size:12px}.crf-item input,.crf-summary input{accent-color:var(--crf-rose)}.crf-item span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crf-item:has(input:checked) span{text-decoration:line-through;color:rgba(37,23,34,.52)}
+.crf-hydration{border-color:rgba(96,165,250,.32);background:linear-gradient(135deg,rgba(232,248,255,.76),rgba(246,236,255,.58))}.crf-hydration.warning{border-color:rgba(216,181,111,.45);background:linear-gradient(135deg,rgba(255,246,218,.84),rgba(255,240,246,.62))}.crf-hydration.danger{border-color:rgba(126,29,53,.42);background:linear-gradient(135deg,rgba(255,229,237,.86),rgba(235,225,255,.70))}
+.crf-time{font-size:19px;font-weight:950;color:var(--crf-purple);font-variant-numeric:tabular-nums;line-height:1}
+#crf-vine{
+  --crf-vine-ratio:.01;
+  position:fixed;left:120px;right:20px;bottom:18px;z-index:99960;height:78px;padding:10px 16px 8px;border:1px solid rgba(216,181,111,.26);border-radius:24px;background:linear-gradient(135deg,rgba(255,250,244,.28),rgba(70,32,91,.22));backdrop-filter:blur(12px);box-shadow:0 18px 50px rgba(0,0,0,.24);pointer-events:none}
+.crf-vine-track{position:absolute;left:20px;right:20px;bottom:18px;height:12px;border-radius:999px;background:linear-gradient(90deg,rgba(118,104,128,.62),rgba(88,72,92,.56));overflow:hidden}.crf-vine-fill{height:100%;width:calc(var(--crf-vine-ratio) * 100%);border-radius:999px;background:linear-gradient(90deg,#8b2635,#c14953,#6f3aa0);box-shadow:0 0 18px rgba(193,73,83,.35);transition:width .45s ease}
+.crf-vine-node{position:absolute;bottom:13px;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.72);border:1px solid rgba(216,181,111,.35);transform:translateX(-50%);display:grid;place-items:center;font-size:12px}.crf-vine-node.done{background:radial-gradient(circle,#ffd98a,#b43a4a 65%);color:#fff;box-shadow:0 0 14px rgba(216,181,111,.42)}
+.crf-runner{position:absolute;left:var(--crf-runner-left,20px);bottom:17px;width:176px;height:96px;transition:left .45s ease;filter:drop-shadow(0 12px 16px rgba(0,0,0,.32));z-index:2}.crf-runner img{width:100%;height:100%;object-fit:contain;animation:crfRunFloat 2.8s ease-in-out infinite}.crf-runner span{display:none}.crf-runner.failed img{display:none}.crf-runner.failed span{display:grid;place-items:center;width:100%;height:100%;font-size:32px}
+#crf-hydration-overlay{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(circle at 20% 30%,rgba(125,211,252,.18),transparent 28%),radial-gradient(circle at 70% 60%,rgba(186,230,253,.16),transparent 32%),rgba(15,23,42,.08);backdrop-filter:blur(1px);animation:crfHydrationPulse 2.4s ease-in-out infinite}
+#crf-hydration-overlay[hidden]{display:none!important}#crf-hydration-overlay.takeover{pointer-events:auto;background:radial-gradient(circle at 30% 20%,rgba(125,211,252,.26),transparent 30%),radial-gradient(circle at 75% 70%,rgba(59,130,246,.18),transparent 34%),rgba(15,23,42,.18)}
+.crf-hydration-card{pointer-events:auto;padding:26px 32px;border-radius:26px;border:1px solid rgba(186,230,253,.72);background:rgba(255,255,255,.74);box-shadow:0 20px 60px rgba(15,23,42,.22);text-align:center;color:#1e1b4b;max-width:min(430px,calc(100vw - 34px))}
+#crf-hydration-overlay:not(.takeover) .crf-hydration-card{pointer-events:none}.crf-hydration-title{font-size:42px;font-weight:950;letter-spacing:.12em}.crf-hydration-subtitle{margin-top:8px;font-size:16px;color:#475569;line-height:1.5}.crf-hydration-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px;pointer-events:auto}.crf-hydration-actions[hidden]{display:none!important}
+@keyframes crfRipple{to{transform:translate3d(150px,90px,0)}}@keyframes crfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes crfRunFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}@keyframes crfHydrationPulse{0%,100%{opacity:.58}50%{opacity:1}}
+@media(max-width:760px){#crf-console{right:10px;bottom:172px;width:min(340px,calc(100vw - 20px))}#crf-console:not(.crf-collapsed){max-height:58vh}.crf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#crf-vine{left:10px;right:10px;bottom:86px;height:70px}.crf-runner{width:138px;height:76px}.crf-mini-runner{width:108px}}
+@media print{#crf-console,#crf-vine,#crf-hydration-overlay{display:none!important}}
+@media(prefers-reduced-motion:reduce){.crf-ripple,.crf-avatar img,.crf-runner img,.crf-mini-runner img,#crf-hydration-overlay{animation:none!important}.crf-mini-fill,.crf-vine-fill,.crf-runner,.crf-mini-runner{transition:none!important}}
+</style>
+<div id="crf-console" aria-live="polite"></div>
+<div id="crf-vine" aria-hidden="true"></div>
+<div id="crf-hydration-overlay" hidden>
+  <div class="crf-hydration-card">
+    <div class="crf-hydration-title" data-crf-hydration-title>喝水</div>
+    <div class="crf-hydration-subtitle" data-crf-hydration-subtitle>喝兩口，再繼續。</div>
+    <div class="crf-hydration-actions" data-crf-hydration-actions hidden>
+      <button class="crf-btn blue" data-crf-action="drink">已喝水</button>
+      <button class="crf-btn" data-crf-action="no-water">我真的沒有水</button>
+    </div>
+  </div>
+</div>
+<script>
+(() => {
+  const KEY = "criminalRoseFloatingConsole_v1";
+  const ASSETS = {
+    battle: "assets/battle.png",
+    drink: "assets/drink.png",
+    eat: "assets/eat.png",
+    runner: "assets/progress_run_right.png"
+  };
+  const DATA = window.CRL_DATA || { chapters: [], traps: [], quizBank: [] };
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const panel = $("#crf-console");
+  const vine = $("#crf-vine");
+  const overlay = $("#crf-hydration-overlay");
+  const esc = value => String(value ?? "").replace(/[&<>'"]/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;","'":"&#039;",'"':"&quot;" }[m]));
+  const nowISO = () => new Date().toISOString();
+  const taipeiDay = (date = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone:"Asia/Taipei", year:"numeric", month:"2-digit", day:"2-digit" }).format(date);
+  const chapterItems = chapter => [
+    `條文地圖：${chapter.articles?.map(a => a.art).join("、") || "本章條文"}`,
+    "概念框架",
+    "簡單例子",
+    chapter.issue ? "爭點拆解" : "易錯陷阱",
+    "考古題信號",
+    "Rékaí 問答",
+    "本章小測通過"
+  ];
+  const defaultState = () => ({
+    collapsed:false,
+    hideDone:false,
+    panelPosition:null,
+    mode:"study",
+    message:"刑總主線啟動｜先穩三階層。",
+    chapters:Object.fromEntries(DATA.chapters.map(ch => [ch.id, Array(chapterItems(ch).length).fill(false)])),
+    expanded:Object.fromEntries(DATA.chapters.map((ch, i) => [ch.id, i < 2])),
+    hydration:{
+      intervalMinutes:25,
+      softOverlayDelayMinutes:10,
+      takeoverDelayMinutes:15,
+      lastDrinkAt:null,
+      nextDrinkAt:null,
+      reminderShownAt:null,
+      softOverlayAt:null,
+      takeoverAt:null,
+      waterCountToday:0,
+      waterCountDate:null,
+      isReminderActive:false,
+      overlayLevel:"none",
+      snoozeUntil:null
+    },
+    meal:{ countToday:0, countDate:null, total:0, lastMealAt:null },
+    sleepEndAt:null,
+    lastTaskCompletedAt:null
+  });
+  let state = loadState();
+  let toast = "";
+  let lastModeBeforeHydration = "study";
+  let timer = null;
+
+  function loadState(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+      const base = defaultState();
+      if(!saved || typeof saved !== "object") return normalizeState(base);
+      return normalizeState({ ...base, ...saved, hydration:{ ...base.hydration, ...(saved.hydration || {}) }, meal:{ ...base.meal, ...(saved.meal || {}) } });
+    }catch{
+      localStorage.removeItem(KEY);
+      toast = "進度資料損壞，已重設";
+      return normalizeState(defaultState());
+    }
+  }
+  function normalizeState(input){
+    const today = taipeiDay();
+    DATA.chapters.forEach(ch => {
+      const count = chapterItems(ch).length;
+      if(!Array.isArray(input.chapters[ch.id])) input.chapters[ch.id] = Array(count).fill(false);
+      input.chapters[ch.id] = input.chapters[ch.id].slice(0, count).concat(Array(Math.max(0, count - input.chapters[ch.id].length)).fill(false));
+      if(typeof input.expanded[ch.id] !== "boolean") input.expanded[ch.id] = false;
+    });
+    if(input.hydration.waterCountDate !== today){ input.hydration.waterCountDate = today; input.hydration.waterCountToday = 0; }
+    if(input.meal.countDate !== today){ input.meal.countDate = today; input.meal.countToday = 0; }
+    const now = Date.now();
+    if(!input.hydration.lastDrinkAt) input.hydration.lastDrinkAt = new Date(now).toISOString();
+    scheduleHydration(input, new Date(input.hydration.lastDrinkAt).getTime());
+    return input;
+  }
+  function scheduleHydration(target, fromMs){
+    const h = target.hydration;
+    const next = fromMs + h.intervalMinutes * 60000;
+    h.nextDrinkAt = new Date(next).toISOString();
+    h.softOverlayAt = new Date(next + h.softOverlayDelayMinutes * 60000).toISOString();
+    h.takeoverAt = new Date(next + h.takeoverDelayMinutes * 60000).toISOString();
+  }
+  function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+  function percent(){
+    const total = DATA.chapters.reduce((sum, ch) => sum + chapterItems(ch).length, 0);
+    const done = DATA.chapters.reduce((sum, ch) => sum + (state.chapters[ch.id] || []).filter(Boolean).length, 0);
+    return total ? Math.round(done / total * 100) : 0;
+  }
+  function chapterDone(ch){ return (state.chapters[ch.id] || []).every(Boolean); }
+  function doneChapters(){ return DATA.chapters.filter(chapterDone).length; }
+  function activeChapter(){
+    return DATA.chapters.find(ch => !chapterDone(ch)) || DATA.chapters[DATA.chapters.length - 1] || { title:"教材" };
+  }
+  function formatCountdown(ms, withUnits = false){
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    if(withUnits) return h > 0 ? `${h} 小時 ${String(m).padStart(2,"0")} 分 ${String(s).padStart(2,"0")} 秒` : `${m} 分 ${String(s).padStart(2,"0")} 秒`;
+    return h > 0 ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}` : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  }
+  function currentImage(){
+    if(state.mode === "hydration") return ASSETS.drink;
+    if(state.mode === "meal") return ASSETS.eat;
+    return ASSETS.battle;
+  }
+  function render(){
+    const p = percent();
+    const current = activeChapter();
+    const sleepActive = state.sleepEndAt && new Date(state.sleepEndAt).getTime() > Date.now();
+    panel.className = state.collapsed ? "crf-collapsed" : "";
+    if(state.panelPosition){ panel.style.left = `${state.panelPosition.x}px`; panel.style.top = `${state.panelPosition.y}px`; panel.style.right = "auto"; panel.style.bottom = "auto"; }
+    panel.innerHTML = `
+      <div class="crf-ripple"></div>
+      <div class="crf-shell">
+        <div class="crf-top" data-crf-drag-handle>
+          <div class="crf-avatar"><img src="${esc(currentImage())}" alt=""><span>⚔️</span><b class="crf-percent">${p}%</b></div>
+          <div>
+            <p class="crf-title">罪責玫瑰控制台</p>
+            <p class="crf-status">${esc(state.message || `下一章：${current.title}`)}</p>
+            <p class="crf-note">${sleepActive ? "睡眠模式倒數中" : `目前：${esc(current.title)}`}</p>
+          </div>
+          <button class="crf-toggle" data-crf-action="toggle">${state.collapsed ? "展開" : "收合"}</button>
+        </div>
+        <div class="crf-mini-route">
+          <div class="crf-mini-fill"></div>
+          <div class="crf-mini-runner"><img src="${esc(ASSETS.runner)}" alt=""><span>🌹⚔️</span></div>
+        </div>
+        <div class="crf-panel">
+          ${toast ? `<div class="crf-card"><strong>${esc(toast)}</strong></div>` : ""}
+          <div class="crf-grid">
+            <div class="crf-stat"><b>${p}%</b><span>總進度</span></div>
+            <div class="crf-stat"><b>${doneChapters()}/${DATA.chapters.length}</b><span>章節封存</span></div>
+            <div class="crf-stat"><b>${DATA.traps?.length || 0}</b><span>內建陷阱</span></div>
+          </div>
+          <div class="crf-card">
+            <h3>快捷作戰</h3>
+            <div class="crf-actions">
+              <button class="crf-btn primary" data-crf-action="next-item">下一項完成</button>
+              <button class="crf-btn" data-crf-action="open-reader">打開目前章</button>
+              <button class="crf-btn" data-crf-action="open-quiz">快問快答</button>
+              <button class="crf-btn" data-crf-action="toggle-hide">${state.hideDone ? "顯示已完成" : "隱藏已完成"}</button>
+              <button class="crf-btn danger" data-crf-action="reset">重設歸零</button>
+            </div>
+          </div>
+          <div class="crf-card crf-hydration" data-crf-hydration-box>
+            <h3 data-crf-hydration-heading>喝水監控</h3>
+            <div class="crf-time" data-crf-hydration-time>--:--</div>
+            <p class="crf-soft" data-crf-hydration-meta>每 25 分鐘提醒一次</p>
+            <div class="crf-actions" data-crf-hydration-buttons>
+              <button class="crf-btn blue" data-crf-action="drink">已喝水</button>
+              <button class="crf-btn gold" data-crf-action="meal">吃飯 +1</button>
+              <button class="crf-btn" data-crf-action="sleep">睡 30 分鐘</button>
+              ${sleepActive ? `<button class="crf-btn danger" data-crf-action="cancel-sleep">取消睡眠</button>` : ""}
+            </div>
+          </div>
+          <div class="crf-card">
+            <h3>今日補給</h3>
+            <p class="crf-soft">喝水 <strong data-crf-water-count>${state.hydration.waterCountToday}</strong> 次｜吃飯 <strong data-crf-meal-count>${state.meal.countToday}</strong> 次</p>
+            <p class="crf-soft" data-crf-sleep-countdown>${sleepActive ? `睡眠倒數：${formatCountdown(new Date(state.sleepEndAt).getTime() - Date.now(), true)}` : "睡眠：未啟動"}</p>
+          </div>
+          <div class="crf-card">
+            <h3>章節任務地圖</h3>
+            <div class="crf-actions" style="margin-bottom:8px">
+              <button class="crf-btn" data-crf-action="expand-all">全部展開</button>
+              <button class="crf-btn" data-crf-action="collapse-all">全部收合</button>
+            </div>
+            <div class="crf-chapters">
+              ${DATA.chapters.map((ch, index) => chapterHTML(ch, index)).join("")}
+            </div>
+          </div>
+        </div>
+      </div>`;
+    toast = "";
+    updateProgressVisuals();
+    bindAssetFallbacks(panel);
+  }
+  function chapterHTML(ch, index){
+    const checks = state.chapters[ch.id] || [];
+    const done = chapterDone(ch);
+    const items = chapterItems(ch);
+    return `<details class="crf-chapter ${done ? "done" : ""}" data-crf-chapter="${esc(ch.id)}" ${state.expanded[ch.id] ? "open" : ""} ${state.hideDone && done ? "hidden" : ""}>
+      <summary class="crf-summary">
+        <input type="checkbox" data-crf-chapter-check="${esc(ch.id)}" ${done ? "checked" : ""}>
+        <span class="crf-ch-title">${esc(ch.no)}｜${esc(ch.title)}</span>
+        <span class="crf-chip">${checks.filter(Boolean).length}/${items.length}</span>
+      </summary>
+      <div class="crf-items">
+        ${items.map((item, i) => `<label class="crf-item"><input type="checkbox" data-crf-item="${esc(ch.id)}" data-crf-item-index="${i}" ${checks[i] ? "checked" : ""}><span>${esc(item)}</span></label>`).join("")}
+        <div class="crf-actions"><button class="crf-btn" data-crf-go-chapter="${index}">前往本章</button><button class="crf-btn gold" data-crf-seal="${esc(ch.id)}">封存本章</button></div>
+      </div>
+    </details>`;
+  }
+  function bindAssetFallbacks(root){
+    $$("img", root).forEach(img => {
+      img.onerror = () => img.parentElement?.classList.add("failed");
+    });
+  }
+  function updateProgressVisuals(){
+    const p = percent();
+    const ratio = Math.max(.01, p / 100);
+    panel.style.setProperty("--crf-ratio", ratio);
+    const miniRoute = $(".crf-mini-route", panel);
+    const miniRunner = $(".crf-mini-runner", panel);
+    if(miniRoute && miniRunner){
+      const w = miniRoute.clientWidth || 300;
+      const rw = miniRunner.clientWidth || 128;
+      miniRunner.style.left = `${Math.max(12, Math.min((w - 28) * ratio + 14 - rw * .35, w - rw - 6))}px`;
+    }
+    vine.style.setProperty("--crf-vine-ratio", ratio);
+    const count = DATA.chapters.length || 1;
+    vine.innerHTML = `<div class="crf-vine-track"><div class="crf-vine-fill"></div></div>${DATA.chapters.map((ch, i) => `<span class="crf-vine-node ${chapterDone(ch) ? "done" : ""}" style="left:${count === 1 ? 50 : (i / (count - 1) * 100).toFixed(3)}%" title="${esc(ch.title)}">✦</span>`).join("")}<div class="crf-runner"><img src="${esc(ASSETS.runner)}" alt=""><span>🌹⚔️</span></div>`;
+    const runner = $(".crf-runner", vine);
+    const trackWidth = vine.clientWidth - 40;
+    const runnerWidth = runner?.clientWidth || 176;
+    const target = 20 + trackWidth * ratio - runnerWidth * .35;
+    if(runner) runner.style.left = `${Math.max(8, Math.min(target, vine.clientWidth - runnerWidth - 8))}px`;
+    bindAssetFallbacks(vine);
+  }
+  function markNext(){
+    for(const ch of DATA.chapters){
+      const arr = state.chapters[ch.id];
+      const idx = arr.findIndex(v => !v);
+      if(idx >= 0){
+        arr[idx] = true;
+        state.expanded[ch.id] = true;
+        state.lastTaskCompletedAt = nowISO();
+        state.message = `${ch.no} ${ch.title}｜已完成：${chapterItems(ch)[idx]}`;
+        if(arr.every(Boolean)) state.message = `${ch.no} 已封存｜下一章：${activeChapter().title}`;
+        save(); render(); return;
+      }
+    }
+    state.mode = "complete";
+    state.message = "主線已完成｜可以進入考古反射。";
+    save(); render();
+  }
+  function sealChapter(id){
+    const ch = DATA.chapters.find(item => item.id === id);
+    if(!ch) return;
+    state.chapters[id] = state.chapters[id].map(() => true);
+    state.expanded[id] = false;
+    state.lastTaskCompletedAt = nowISO();
+    const next = DATA.chapters.find(item => !chapterDone(item));
+    state.message = next ? `${ch.no} 已封存｜下一章：${next.title}` : "主線已完成｜進入考古反射";
+    save(); render();
+  }
+  function openView(view){
+    const btn = document.querySelector(`.rail-btn[data-view="${view}"]`);
+    if(btn) btn.click();
+  }
+  function openChapter(index){
+    const select = document.getElementById("chapterSelect");
+    if(select){ select.value = String(index); select.dispatchEvent(new Event("change", { bubbles:true })); }
+    openView("reader");
+  }
+  function resetAll(){
+    state = normalizeState(defaultState());
+    state.message = "進度已歸零｜從刑總地圖重新開戰。";
+    save(); render();
+  }
+  function confirmHydration(){
+    const now = Date.now();
+    const h = state.hydration;
+    h.waterCountDate = taipeiDay();
+    h.waterCountToday += 1;
+    h.lastDrinkAt = new Date(now).toISOString();
+    h.reminderShownAt = null;
+    h.isReminderActive = false;
+    h.overlayLevel = "none";
+    h.snoozeUntil = null;
+    scheduleHydration(state, now);
+    overlay.hidden = true;
+    overlay.classList.remove("takeover");
+    state.mode = lastModeBeforeHydration || "study";
+    state.message = "很好，回來。下一題。";
+    save(); render();
+  }
+  function noWater(){
+    const h = state.hydration;
+    h.snoozeUntil = new Date(Date.now() + 5 * 60000).toISOString();
+    h.overlayLevel = "reminder";
+    state.message = "去拿水。這不是建議。";
+    overlay.hidden = true;
+    overlay.classList.remove("takeover");
+    save(); render();
+  }
+  function startMeal(){
+    state.meal.countDate = taipeiDay();
+    state.meal.countToday += 1;
+    state.meal.total += 1;
+    state.meal.lastMealAt = nowISO();
+    state.mode = "meal";
+    state.message = "吃飯不是逃跑，是補給。";
+    save(); render();
+    setTimeout(() => { if(state.mode === "meal"){ state.mode = "study"; state.message = "補給完成｜回教材。"; save(); render(); } }, 10000);
+  }
+  function startSleep(){
+    state.sleepEndAt = new Date(Date.now() + 30 * 60000).toISOString();
+    state.mode = "sleep";
+    state.message = "睡 30 分鐘。醒來接刑總主線。";
+    save(); render();
+  }
+  function updateHydrationCountdown(){
+    const h = state.hydration;
+    const now = Date.now();
+    const today = taipeiDay();
+    if(h.waterCountDate !== today){ h.waterCountDate = today; h.waterCountToday = 0; save(); render(); return; }
+    const box = $("[data-crf-hydration-box]", panel);
+    const heading = $("[data-crf-hydration-heading]", panel);
+    const time = $("[data-crf-hydration-time]", panel);
+    const meta = $("[data-crf-hydration-meta]", panel);
+    const water = $("[data-crf-water-count]", panel);
+    const meal = $("[data-crf-meal-count]", panel);
+    const sleep = $("[data-crf-sleep-countdown]", panel);
+    if(water) water.textContent = h.waterCountToday;
+    if(meal) meal.textContent = state.meal.countToday;
+    if(state.sleepEndAt && new Date(state.sleepEndAt).getTime() > now){
+      const left = new Date(state.sleepEndAt).getTime() - now;
+      if(heading) heading.textContent = "睡眠模式中";
+      if(time) time.textContent = formatCountdown(left, true);
+      if(meta) meta.textContent = "睡醒先喝水，再碰下一題。";
+      if(sleep) sleep.textContent = `睡眠倒數：${formatCountdown(left, true)}`;
+      overlay.hidden = true;
+      return;
+    }
+    if(state.sleepEndAt && new Date(state.sleepEndAt).getTime() <= now){
+      state.sleepEndAt = null;
+      state.mode = "study";
+      state.message = "醒來。喝水。下一刀：刑法行為與三階層。";
+      save(); render(); return;
+    }
+    if(sleep) sleep.textContent = "睡眠：未啟動";
+    const snoozeUntil = h.snoozeUntil ? new Date(h.snoozeUntil).getTime() : 0;
+    const next = new Date(h.nextDrinkAt).getTime();
+    const soft = new Date(h.softOverlayAt).getTime();
+    const takeover = new Date(h.takeoverAt).getTime();
+    let level = "none";
+    if(now >= next && now >= snoozeUntil) level = "reminder";
+    if(now >= soft && now >= snoozeUntil) level = "soft";
+    if(now >= takeover && now >= snoozeUntil) level = "takeover";
+    h.isReminderActive = level !== "none";
+    h.overlayLevel = level;
+    if(level !== "none" && !h.reminderShownAt) h.reminderShownAt = new Date(next).toISOString();
+    if(box) box.className = `crf-card crf-hydration ${level === "takeover" ? "danger" : level === "soft" ? "warning" : ""}`;
+    if(level === "none"){
+      if(heading) heading.textContent = "喝水監控";
+      if(time) time.textContent = formatCountdown(next - now, true);
+      if(meta) meta.textContent = `今日喝水：${h.waterCountToday} 次｜每 ${h.intervalMinutes} 分鐘提醒一次`;
+      overlay.hidden = true;
+    }else{
+      const overdue = now - next;
+      if(heading) heading.textContent = level === "takeover" ? "喝水接管中" : level === "soft" ? "喝水水印已啟動" : "喝水提醒中";
+      if(time) time.textContent = `已逾時 ${formatCountdown(overdue, true)}`;
+      if(meta) meta.textContent = level === "takeover" ? "喝水，然後再碰下一題。" : `透明水印：${formatCountdown(soft - now)}｜接管：${formatCountdown(takeover - now)}`;
+      showHydrationOverlay(level);
+    }
+    save();
+  }
+  function showHydrationOverlay(level){
+    if(state.mode === "sleep" || state.mode === "meal") return;
+    if(level === "reminder"){ overlay.hidden = true; return; }
+    if(state.mode !== "hydration") lastModeBeforeHydration = state.mode || "study";
+    state.mode = "hydration";
+    overlay.hidden = false;
+    overlay.classList.toggle("takeover", level === "takeover");
+    $("[data-crf-hydration-title]", overlay).textContent = level === "takeover" ? "妳看到了" : "喝水";
+    $("[data-crf-hydration-subtitle]", overlay).textContent = level === "takeover" ? "水在旁邊。喝水，然後再碰下一題。" : "喝兩口，再繼續。";
+    $("[data-crf-hydration-actions]", overlay).hidden = level !== "takeover";
+  }
+  function enableDrag(){
+    let drag = null;
+    panel.addEventListener("pointerdown", event => {
+      const handle = event.target.closest("[data-crf-drag-handle]");
+      if(!handle || event.target.closest("button,input,select,textarea,label,a,summary")) return;
+      const rect = panel.getBoundingClientRect();
+      drag = { dx:event.clientX - rect.left, dy:event.clientY - rect.top };
+      panel.classList.add("crf-dragging");
+      panel.setPointerCapture(event.pointerId);
+    });
+    panel.addEventListener("pointermove", event => {
+      if(!drag) return;
+      const width = panel.offsetWidth, height = panel.offsetHeight;
+      const x = Math.max(8, Math.min(event.clientX - drag.dx, window.innerWidth - width - 8));
+      const y = Math.max(8, Math.min(event.clientY - drag.dy, window.innerHeight - height - 8));
+      panel.style.left = `${x}px`; panel.style.top = `${y}px`; panel.style.right = "auto"; panel.style.bottom = "auto";
+      state.panelPosition = { x, y };
+    });
+    const end = event => {
+      if(!drag) return;
+      drag = null;
+      panel.classList.remove("crf-dragging");
+      try{ panel.releasePointerCapture(event.pointerId); }catch{}
+      save();
+    };
+    panel.addEventListener("pointerup", end);
+    panel.addEventListener("pointercancel", end);
+  }
+  function bindEvents(){
+    panel.addEventListener("click", event => {
+      const action = event.target.closest("[data-crf-action]")?.dataset.crfAction;
+      if(action === "toggle"){ state.collapsed = !state.collapsed; save(); render(); return; }
+      if(action === "next-item"){ markNext(); return; }
+      if(action === "open-reader"){ openChapter(DATA.chapters.indexOf(activeChapter())); return; }
+      if(action === "open-quiz"){ openView("quiz"); return; }
+      if(action === "toggle-hide"){ state.hideDone = !state.hideDone; save(); render(); return; }
+      if(action === "reset"){ resetAll(); return; }
+      if(action === "drink"){ confirmHydration(); return; }
+      if(action === "no-water"){ noWater(); return; }
+      if(action === "meal"){ startMeal(); return; }
+      if(action === "sleep"){ startSleep(); return; }
+      if(action === "cancel-sleep"){ state.sleepEndAt = null; state.mode = "study"; state.message = "睡眠已取消｜回到教材。"; save(); render(); return; }
+      if(action === "expand-all"){ DATA.chapters.forEach(ch => state.expanded[ch.id] = true); save(); render(); return; }
+      if(action === "collapse-all"){ DATA.chapters.forEach(ch => state.expanded[ch.id] = false); save(); render(); return; }
+      const go = event.target.closest("[data-crf-go-chapter]");
+      if(go){ openChapter(Number(go.dataset.crfGoChapter)); return; }
+      const seal = event.target.closest("[data-crf-seal]");
+      if(seal){ sealChapter(seal.dataset.crfSeal); return; }
+    });
+    panel.addEventListener("change", event => {
+      const chapterId = event.target.dataset.crfChapterCheck;
+      if(chapterId){
+        state.chapters[chapterId] = state.chapters[chapterId].map(() => event.target.checked);
+        state.lastTaskCompletedAt = nowISO();
+        save(); render(); return;
+      }
+      const itemId = event.target.dataset.crfItem;
+      if(itemId){
+        state.chapters[itemId][Number(event.target.dataset.crfItemIndex)] = event.target.checked;
+        state.lastTaskCompletedAt = nowISO();
+        save(); render(); return;
+      }
+    });
+    panel.addEventListener("toggle", event => {
+      const detail = event.target.closest("[data-crf-chapter]");
+      if(detail){ state.expanded[detail.dataset.crfChapter] = detail.open; save(); }
+    }, true);
+    overlay.addEventListener("click", event => {
+      const action = event.target.closest("[data-crf-action]")?.dataset.crfAction;
+      if(action === "drink") confirmHydration();
+      if(action === "no-water") noWater();
+    });
+    window.addEventListener("resize", updateProgressVisuals);
+  }
+  function init(){
+    render();
+    bindEvents();
+    enableDrag();
+    updateHydrationCountdown();
+    timer = setInterval(updateHydrationCountdown, 1000);
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+</script>
+<!-- Criminal Rose Floating Console END -->
+</body>
+</html>
