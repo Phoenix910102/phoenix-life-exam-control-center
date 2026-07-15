@@ -11,7 +11,7 @@ import type { StudyMaterial } from "@/types/studyMaterial";
 import type { MaterialDefinition, MaterialProgress } from "@/types/materialRecord";
 import { legacyStudyMaterialToRecords } from "@/lib/materials/legacyMigration";
 
-class PhoenixDB extends Dexie {
+export class PhoenixDB extends Dexie {
   dailyLogs!: Table<DailyLog, string>;
   tasks!: Table<Task, string>;
   questions!: Table<Question, string>;
@@ -24,8 +24,8 @@ class PhoenixDB extends Dexie {
   materialDefinitions!: Table<MaterialDefinition, string>;
   materialProgress!: Table<MaterialProgress, string>;
 
-  constructor() {
-    super("phoenix_life_exam_db");
+  constructor(name = "phoenix_life_exam_db") {
+    super(name);
     this.version(1).stores({
       dailyLogs: "date",
       tasks: "id, done, dueTime, category",

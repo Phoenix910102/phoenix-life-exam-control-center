@@ -8,6 +8,7 @@ import { achievementSchema } from "./achievement";
 import { appSettingsSchema } from "./settings";
 import { studyMaterialSchema } from "./studyMaterial";
 import { materialDefinitionSchema, materialProgressSchema } from "./materialRecord";
+import { questionSchema } from "./question";
 
 export const exportDataSchema = z.object({
   meta: z.object({
@@ -22,6 +23,7 @@ export const exportDataSchema = z.object({
     bankVersion: z.string(),
     lastImportAt: z.string().datetime().optional(),
   }),
+  questions: z.array(questionSchema).default([]),
   examAttempts: z.array(examAttemptSchema),
   wrongIndex: z.array(wrongQuestionIndexSchema),
   gameSessions: z.array(gameSessionSchema),

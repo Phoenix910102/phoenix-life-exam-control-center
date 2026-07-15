@@ -22,11 +22,14 @@ Follows `ExportData` schema:
 - `dailyLogs`
 - `tasks`
 - `questionBankMeta`
+- `questions`（完整題庫本體）
 - `examAttempts`
 - `wrongIndex`
 - `gameSessions`
 - `achievements`
 - `studyMaterials`
+- `materialDefinitions`
+- `materialProgress`
 - `settings`
 
 ## Example

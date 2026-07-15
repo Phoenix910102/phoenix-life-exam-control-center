@@ -19,6 +19,7 @@ export async function restoreFullBackup(input: unknown) {
     [
       db.dailyLogs,
       db.tasks,
+      db.questions,
       db.examAttempts,
       db.wrongIndex,
       db.gameSessions,
@@ -32,6 +33,7 @@ export async function restoreFullBackup(input: unknown) {
       await Promise.all([
         db.dailyLogs.clear(),
         db.tasks.clear(),
+        db.questions.clear(),
         db.examAttempts.clear(),
         db.wrongIndex.clear(),
         db.gameSessions.clear(),
@@ -43,6 +45,7 @@ export async function restoreFullBackup(input: unknown) {
       ]);
       await db.dailyLogs.bulkPut(data.dailyLogs);
       await db.tasks.bulkPut(data.tasks);
+      await db.questions.bulkPut(data.questions);
       await db.examAttempts.bulkPut(data.examAttempts);
       await db.wrongIndex.bulkPut(data.wrongIndex);
       await db.gameSessions.bulkPut(data.gameSessions);
@@ -55,6 +58,7 @@ export async function restoreFullBackup(input: unknown) {
   );
 
   return {
+    questions: data.questions.length,
     materialDefinitions: definitions.length,
     materialProgress: progress.length,
     restoredAt: new Date().toISOString(),

@@ -48,6 +48,7 @@ export async function buildFullBackup(): Promise<{ filename: string; data: Expor
       bankVersion: "mvp-v1",
       lastImportAt: (await db.questions.orderBy("questionId").last()) ? new Date().toISOString() : undefined,
     },
+    questions: await db.questions.toArray(),
     examAttempts: await db.examAttempts.toArray(),
     wrongIndex: await db.wrongIndex.toArray(),
     gameSessions: await db.gameSessions.toArray(),
