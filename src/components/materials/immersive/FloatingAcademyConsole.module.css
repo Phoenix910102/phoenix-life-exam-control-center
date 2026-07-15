@@ -162,7 +162,27 @@
 .achievementLink span { margin-left: auto; color: #baaebc; }
 
 @media (max-width: 680px) {
-  .console { right: 14px; bottom: 12px; }
+  .console {
+    right: 14px;
+    bottom: 12px;
+  }
+
+  .console:not(.expanded) {
+    width: 58px;
+    border-radius: 50%;
+  }
+
+  .console:not(.expanded) .toggle {
+    min-height: 56px;
+    grid-template-columns: 36px;
+    gap: 0;
+    padding: 10px;
+  }
+
+  .console:not(.expanded) .toggleCopy,
+  .console:not(.expanded) .toggle > svg {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

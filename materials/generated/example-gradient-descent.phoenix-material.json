@@ -1,7 +1,7 @@
 {
   "schema": "phoenix.material.v1",
   "slug": "gradient-descent-uphill-downhill",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "title": "梯度下降：梯度指上坡，模型走下坡",
   "description": "用位置、比較、考題訊號與例題，把梯度、學習率和更新方向連成一條可作答的路。",
   "subject": "人工智慧技術應用與規劃",
@@ -21,7 +21,17 @@
     "layout": "immersive-academy",
     "theme": "neural-rose",
     "renderOrder": "authored",
-    "modules": ["battlefield", "roadmap", "reader", "lesson", "duel", "diagnostic", "trap-field", "quiz", "achievements", "floating-console"]
+    "modules": ["battlefield", "roadmap", "reader", "lesson", "duel", "diagnostic", "trap-field", "quiz", "achievements", "floating-console"],
+    "battlefield3d": {
+      "enabled": true,
+      "mapStyle": "neural-network",
+      "layout": "radial",
+      "seed": "gradient-descent-neural-front-v1",
+      "cameraPreset": "war-room",
+      "environment": "neural-void",
+      "quality": "auto",
+      "allowCinematics": true
+    }
   },
   "difficulty": "standard",
   "prerequisites": [],

@@ -34,6 +34,21 @@ describe("Phoenix material package", () => {
   it("accepts a valid package", () => {
     const parsed = parseMaterialPackage(sampleJson);
     expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.package.presentation?.battlefield3d).toMatchObject({
+        enabled: true,
+        layout: "radial",
+        quality: "auto",
+      });
+    }
+  });
+
+  it("rejects unsupported 3D battlefield configuration values", () => {
+    const invalid = structuredClone(sampleJson);
+    invalid.presentation.battlefield3d.layout = "spiral" as "radial";
+    const parsed = parseMaterialPackage(invalid);
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) expect(parsed.errors.some((error) => error.path.includes("battlefield3d.layout"))).toBe(true);
   });
 
   it("rejects schema errors with a field path", () => {
@@ -75,7 +90,7 @@ describe("Phoenix material package", () => {
 
     const update: MaterialPackage = {
       ...material,
-      version: "1.1.0",
+      version: "1.2.0",
       chapters: [
         ...material.chapters,
         {
@@ -85,7 +100,7 @@ describe("Phoenix material package", () => {
         },
       ],
     };
-    await importPhoenixMaterialPackage(update, "sample-v1.1.phoenix-material.json");
+    await importPhoenixMaterialPackage(update, "sample-v1.2.phoenix-material.json");
     const bundle = await getMaterialBundle(material.slug);
     expect(bundle?.progress.chapterProgress[material.chapters[0].key]).toBe(60);
     expect(bundle?.progress.chapterProgress["gradient-descent-advanced"]).toBe(0);

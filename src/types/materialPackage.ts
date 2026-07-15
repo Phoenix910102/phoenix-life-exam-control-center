@@ -33,12 +33,33 @@ export const materialModuleSchema = z.enum([
   "achievements",
   "floating-console",
 ]);
+
+export const battlefield3dSchema = z
+  .object({
+    enabled: z.boolean().default(false),
+    mapStyle: z
+      .enum(["frontline-territories", "island-campaign", "neural-network", "fortress-ring"])
+      .default("frontline-territories"),
+    layout: z.enum(["curved-front", "grid", "radial", "custom"]).default("curved-front"),
+    seed: z.string().trim().min(1, "battlefield3d.seed 不可空白").optional(),
+    cameraPreset: z
+      .enum(["war-room", "isometric", "cinematic-low", "top-down"])
+      .default("war-room"),
+    environment: z
+      .enum(["dark-chamber", "neural-void", "cipher-grid", "command-table"])
+      .default("dark-chamber"),
+    quality: z.enum(["auto", "low", "medium", "high"]).default("auto"),
+    allowCinematics: z.boolean().default(true),
+  })
+  .strict();
+
 export const materialPresentationSchema = z
   .object({
     layout: materialLayoutSchema.default("editorial"),
     theme: materialThemeSchema.default("criminal-rose"),
     renderOrder: z.enum(["authored", "phoenix-default"]).default("phoenix-default"),
     modules: z.array(materialModuleSchema).default(["reader", "quiz"]),
+    battlefield3d: battlefield3dSchema.optional(),
   })
   .strict();
 

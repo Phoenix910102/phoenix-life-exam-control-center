@@ -1,0 +1,368 @@
+.shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(209, 170, 92, 0.26);
+  background: #07090b;
+  color: #f0eadc;
+  min-height: 640px;
+}
+
+.viewport {
+  height: clamp(540px, 67vh, 720px);
+  min-height: 540px;
+  background: #07090b;
+}
+
+.loader {
+  display: grid;
+  height: 100%;
+  min-height: 540px;
+  place-items: center;
+  color: #c7b992;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+}
+
+.hudTop {
+  position: absolute;
+  z-index: 12;
+  top: 14px;
+  right: 14px;
+  left: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.metrics,
+.preference,
+.controlBadge,
+.zoneIntel,
+.performanceNotice {
+  border: 1px solid rgba(217, 183, 105, 0.28);
+  background: rgba(9, 11, 14, 0.88);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(12px);
+}
+
+.animationStatus {
+  position: absolute;
+  z-index: 13;
+  top: 76px;
+  left: 142px;
+  display: flex;
+  max-width: min(430px, calc(100% - 310px));
+  min-height: 52px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(225, 190, 105, 0.4);
+  background: rgba(12, 13, 16, 0.92);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+  padding: 8px 9px 8px 12px;
+  backdrop-filter: blur(12px);
+}
+
+.animationStatus div {
+  min-width: 0;
+}
+
+.animationStatus span {
+  display: block;
+  color: #8f887b;
+  font-size: 0.62rem;
+}
+
+.animationStatus strong {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: #f1dfad;
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.animationStatus button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid rgba(225, 190, 105, 0.28);
+  background: rgba(202, 163, 78, 0.1);
+  color: #ead59d;
+  cursor: pointer;
+}
+
+.animationStatus button:hover {
+  background: rgba(202, 163, 78, 0.22);
+}
+
+.metrics {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 12px;
+}
+
+.metrics span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #bdb6a7;
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.metrics b {
+  color: #f2dfaa;
+}
+
+.preference {
+  display: flex;
+  padding: 3px;
+  pointer-events: auto;
+}
+
+.preference button {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  background: transparent;
+  color: #9e9a92;
+  cursor: pointer;
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 0.7rem;
+}
+
+.preference button:last-child {
+  border-right: 0;
+}
+
+.preference button:hover,
+.preference .preferenceActive {
+  background: rgba(188, 147, 66, 0.17);
+  color: #f2dfaa;
+}
+
+.controlBadge {
+  position: absolute;
+  z-index: 11;
+  top: 76px;
+  left: 14px;
+  display: flex;
+  width: 112px;
+  flex-direction: column;
+  padding: 10px 12px;
+}
+
+.controlBadge strong {
+  color: #f0d589;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 1.3rem;
+}
+
+.controlBadge span,
+.zoneIntel > span {
+  color: #999184;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+
+.zoneIntel {
+  position: absolute;
+  z-index: 11;
+  right: 18px;
+  bottom: 92px;
+  width: min(320px, calc(100% - 36px));
+  padding: 14px 16px;
+  pointer-events: none;
+}
+
+.zoneIntel strong {
+  display: block;
+  margin-top: 3px;
+  color: #f2dfaa;
+  font-family: Georgia, serif;
+  font-size: 1rem;
+}
+
+.zoneIntel p {
+  margin: 6px 0 10px;
+  color: #bab4a8;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.zoneIntel dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.zoneIntel dl div {
+  display: flex;
+  flex-direction: column;
+  background: #111418;
+  padding: 7px;
+}
+
+.zoneIntel dt {
+  color: #7f7c75;
+  font-size: 0.62rem;
+}
+
+.zoneIntel dd {
+  margin: 2px 0 0;
+  color: #ece4d5;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.76rem;
+}
+
+.performanceNotice {
+  position: absolute;
+  z-index: 11;
+  top: 76px;
+  right: 14px;
+  margin: 0;
+  padding: 8px 10px;
+  color: #d9c997;
+  font-size: 0.68rem;
+}
+
+.fallbackSurface {
+  height: 100%;
+  overflow: auto;
+  padding: 76px 14px 18px;
+  background: #0a0b0d;
+}
+
+.fallbackReason {
+  margin: 0 0 10px;
+  border-left: 3px solid #b58a42;
+  background: #121315;
+  color: #bdb6a7;
+  padding: 9px 11px;
+  font-size: 0.75rem;
+}
+
+.zoneNavigation {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  min-height: 68px;
+  gap: 1px;
+  overflow-x: auto;
+  padding: 0;
+  background: rgba(4, 5, 6, 0.92);
+  border-top: 1px solid rgba(217, 183, 105, 0.2);
+}
+
+.zoneNavigation button {
+  display: grid;
+  min-width: 156px;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  color: #a8a297;
+  cursor: pointer;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.zoneNavigation button:hover,
+.zoneNavigation .zoneNavigationActive {
+  background: rgba(188, 147, 66, 0.13);
+  color: #f2dfaa;
+}
+
+.zoneNavigation span,
+.zoneNavigation small {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.66rem;
+}
+
+.zoneNavigation strong {
+  overflow: hidden;
+  font-size: 0.73rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .shell {
+    min-height: 620px;
+  }
+
+  .viewport,
+  .loader {
+    height: 620px;
+    min-height: 620px;
+  }
+
+  .hudTop {
+    flex-direction: column;
+  }
+
+  .metrics {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .preference {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .preference button {
+    min-width: 0;
+    flex: 1;
+    padding: 5px 4px;
+    font-size: 0.62rem;
+  }
+
+  .controlBadge {
+    top: 116px;
+  }
+
+  .performanceNotice {
+    top: 116px;
+    max-width: calc(100% - 150px);
+  }
+
+  .animationStatus {
+    top: 158px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+  }
+
+  .zoneIntel {
+    right: 12px;
+    bottom: 80px;
+    left: 12px;
+    width: auto;
+  }
+
+  .fallbackSurface {
+    padding-top: 122px;
+  }
+}

@@ -2,6 +2,7 @@ import { processDomainEvent } from "@/lib/achievements/rules";
 import { db } from "@/lib/db/client";
 import { toTaipeiDateKey } from "@/lib/utils/date";
 import type { CareState } from "@/types/careState";
+import type { DomainEventReceipt } from "@/types/domainEvent";
 
 const HYDRATION_INTERVAL_MS = 25 * 60 * 1000;
 
@@ -50,7 +51,7 @@ export async function getCareState(now = new Date()) {
   return normalized;
 }
 
-export async function confirmHydration(now = new Date()) {
+async function confirmHydrationAction(now = new Date()): Promise<{ care: CareState; eventReceipts: DomainEventReceipt[] }> {
   const current = await getCareState(now);
   const next: CareState = {
     ...current,
@@ -63,11 +64,17 @@ export async function confirmHydration(now = new Date()) {
     updatedAt: now.toISOString(),
   };
   await db.careState.put(next);
-  await processDomainEvent({ type: "care.water.confirmed", payload: { countToday: next.hydration.countToday } });
-  return next;
+  const eventReceipt = await processDomainEvent({ type: "care.water.confirmed", payload: { countToday: next.hydration.countToday } });
+  return { care: next, eventReceipts: [eventReceipt] };
 }
 
-export async function confirmMeal(now = new Date()) {
+export async function confirmHydration(now = new Date()) {
+  return (await confirmHydrationAction(now)).care;
+}
+
+export { confirmHydrationAction };
+
+async function confirmMealAction(now = new Date()): Promise<{ care: CareState; eventReceipts: DomainEventReceipt[] }> {
   const current = await getCareState(now);
   const next: CareState = {
     ...current,
@@ -79,11 +86,17 @@ export async function confirmMeal(now = new Date()) {
     updatedAt: now.toISOString(),
   };
   await db.careState.put(next);
-  await processDomainEvent({ type: "care.meal.confirmed", payload: { countToday: next.meal.countToday } });
-  return next;
+  const eventReceipt = await processDomainEvent({ type: "care.meal.confirmed", payload: { countToday: next.meal.countToday } });
+  return { care: next, eventReceipts: [eventReceipt] };
 }
 
-export async function startRest(minutes = 30, now = new Date()) {
+export async function confirmMeal(now = new Date()) {
+  return (await confirmMealAction(now)).care;
+}
+
+export { confirmMealAction };
+
+async function startRestAction(minutes = 30, now = new Date()): Promise<{ care: CareState; eventReceipts: DomainEventReceipt[] }> {
   const current = await getCareState(now);
   const next: CareState = {
     ...current,
@@ -94,14 +107,26 @@ export async function startRest(minutes = 30, now = new Date()) {
     updatedAt: now.toISOString(),
   };
   await db.careState.put(next);
-  await processDomainEvent({ type: "care.rest.started", payload: { minutes, restUntil: next.rest.restUntil } });
-  return next;
+  const eventReceipt = await processDomainEvent({ type: "care.rest.started", payload: { minutes, restUntil: next.rest.restUntil } });
+  return { care: next, eventReceipts: [eventReceipt] };
 }
 
-export async function endRest(now = new Date()) {
+export async function startRest(minutes = 30, now = new Date()) {
+  return (await startRestAction(minutes, now)).care;
+}
+
+export { startRestAction };
+
+async function endRestAction(now = new Date()): Promise<{ care: CareState; eventReceipts: DomainEventReceipt[] }> {
   const current = await getCareState(now);
   const next: CareState = { ...current, rest: { mode: "none" }, updatedAt: now.toISOString() };
   await db.careState.put(next);
-  await processDomainEvent({ type: "care.rest.ended", payload: {} });
-  return next;
+  const eventReceipt = await processDomainEvent({ type: "care.rest.ended", payload: {} });
+  return { care: next, eventReceipts: [eventReceipt] };
 }
+
+export async function endRest(now = new Date()) {
+  return (await endRestAction(now)).care;
+}
+
+export { endRestAction };

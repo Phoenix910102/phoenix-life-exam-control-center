@@ -4,8 +4,15 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Droplets, Moon, Trophy, Utensils } from "lucide-react";
 import { db } from "@/lib/db/client";
-import { confirmHydration, confirmMeal, endRest, getCareState, startRest } from "@/lib/care/repository";
+import {
+  confirmHydrationAction,
+  confirmMealAction,
+  endRestAction,
+  getCareState,
+  startRestAction,
+} from "@/lib/care/repository";
 import type { CareState } from "@/types/careState";
+import type { DomainEventReceipt } from "@/types/domainEvent";
 import styles from "./FloatingAcademyConsole.module.css";
 
 function formatCountdown(target?: string, now = Date.now()) {
@@ -23,9 +30,10 @@ function formatCountdown(target?: string, now = Date.now()) {
 type Props = {
   overallProgress: number;
   chapterTitle: string;
+  onEventReceipts?: (receipts: DomainEventReceipt[]) => void;
 };
 
-export function FloatingAcademyConsole({ overallProgress, chapterTitle }: Props) {
+export function FloatingAcademyConsole({ overallProgress, chapterTitle, onEventReceipts }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [care, setCare] = useState<CareState>();
   const [achievementCount, setAchievementCount] = useState(0);
@@ -45,8 +53,19 @@ export function FloatingAcademyConsole({ overallProgress, chapterTitle }: Props)
 
   useEffect(() => {
     if (!care?.rest.restUntil || new Date(care.rest.restUntil).getTime() > now) return;
-    endRest().then(setCare);
-  }, [care?.rest.restUntil, now]);
+    endRestAction().then((result) => {
+      setCare(result.care);
+      onEventReceipts?.(result.eventReceipts);
+    });
+  }, [care?.rest.restUntil, now, onEventReceipts]);
+
+  const runCareAction = async (
+    action: () => Promise<{ care: CareState; eventReceipts: DomainEventReceipt[] }>,
+  ) => {
+    const result = await action();
+    setCare(result.care);
+    onEventReceipts?.(result.eventReceipts);
+  };
 
   const hydrationDue = care?.hydration.nextReminderAt
     ? new Date(care.hydration.nextReminderAt).getTime() <= now
@@ -80,7 +99,7 @@ export function FloatingAcademyConsole({ overallProgress, chapterTitle }: Props)
             <Droplets size={17} />
             <div><span>喝水監控</span><strong>{hydrationDue ? "00:00" : formatCountdown(care.hydration.nextReminderAt, now)}</strong></div>
             <button
-              onClick={async () => setCare(await confirmHydration())}
+              onClick={() => runCareAction(() => confirmHydrationAction())}
               title="記錄已喝水"
               type="button"
             >已喝水</button>
@@ -95,12 +114,12 @@ export function FloatingAcademyConsole({ overallProgress, chapterTitle }: Props)
             <div className={styles.resting}>
               <Moon size={17} />
               <div><span>休整倒數</span><strong>{formatCountdown(care.rest.restUntil, now)}</strong></div>
-              <button onClick={async () => setCare(await endRest())} type="button">結束</button>
+              <button onClick={() => runCareAction(() => endRestAction())} type="button">結束</button>
             </div>
           ) : (
             <div className={styles.actions}>
-              <button onClick={async () => setCare(await confirmMeal())} type="button"><Utensils size={15} />吃飯紀錄</button>
-              <button onClick={async () => setCare(await startRest(30))} type="button"><Moon size={15} />睡 30 分鐘</button>
+              <button onClick={() => runCareAction(() => confirmMealAction())} type="button"><Utensils size={15} />吃飯紀錄</button>
+              <button onClick={() => runCareAction(() => startRestAction(30))} type="button"><Moon size={15} />睡 30 分鐘</button>
             </div>
           )}
 

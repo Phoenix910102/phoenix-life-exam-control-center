@@ -3,6 +3,7 @@ import sampleJson from "../../materials/generated/example-gradient-descent.phoen
 
 test("imports, reads, quizzes, and updates a Phoenix material without losing progress", async ({ page }) => {
   await page.goto("/materials");
+  await expect(page.getByTestId("materials-page")).toHaveAttribute("data-hydrated", "true");
 
   const packageInput = page.locator('input[accept*=".phoenix-material.json"]');
   await packageInput.setInputFiles({
@@ -17,8 +18,8 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
   await page.getByRole("button", { name: "確認匯入教材" }).click();
 
   await expect(page.getByRole("heading", { name: "梯度到底指哪裡？" }).first()).toBeVisible();
-  await expect(page.getByText("知識前線總覽")).toBeVisible();
-  await expect(page.getByRole("button", { name: /迷霧未開.*梯度到底指哪裡/ })).toBeVisible();
+  await expect(page.getByTestId("battlefield-3d")).toBeVisible();
+  await expect(page.getByRole("button", { name: "2D 戰術圖" })).toBeVisible();
   await page.getByRole("button", { name: "診斷" }).click();
   await expect(page.getByText("先命名卡住的層級，再決定要補位置、定義、比較或題幹訊號。")).toBeVisible();
   await page.getByRole("button", { name: "閱讀" }).click();
@@ -31,6 +32,8 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
   await progress.fill("60");
   await expect(progress).toHaveValue("60");
   await page.getByRole("button", { name: "戰場" }).click();
+  await expect(page.getByTestId("battlefield-animation-status")).toContainText("作答正確，己方推進");
+  await page.getByRole("button", { name: "2D 戰術圖" }).click();
   await expect(page.locator('button[data-status="frontline"]').filter({ hasText: "梯度到底指哪裡？" })).toContainText("60%");
 
   const consolePanel = page.getByRole("complementary", { name: "Rékaí 浮動戰術控制台" });
@@ -40,14 +43,14 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
   await expect(consolePanel.getByText("今日喝水").locator("..")).toContainText("1");
 
   const updated = structuredClone(sampleJson);
-  updated.version = "1.1.0";
+  updated.version = "1.2.0";
   updated.chapters.push({
     ...structuredClone(updated.chapters[0]),
     key: "gradient-descent-advanced",
     title: "進階更新策略",
   });
   await packageInput.setInputFiles({
-    name: "example-gradient-descent-v1.1.phoenix-material.json",
+    name: "example-gradient-descent-v1.2.phoenix-material.json",
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(updated)),
   });
@@ -61,6 +64,7 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
 
 test("unlocks a campaign achievement after securing a chapter", async ({ page }) => {
   await page.goto("/materials");
+  await expect(page.getByTestId("materials-page")).toHaveAttribute("data-hydrated", "true");
   const packageInput = page.locator('input[accept*=".phoenix-material.json"]');
   await packageInput.setInputFiles({
     name: "example-gradient-descent.phoenix-material.json",
@@ -68,7 +72,11 @@ test("unlocks a campaign achievement after securing a chapter", async ({ page })
     buffer: Buffer.from(JSON.stringify(sampleJson)),
   });
   await page.getByRole("button", { name: "確認匯入教材" }).click();
+  await page.getByRole("button", { name: "閱讀" }).click();
   await page.getByLabel("梯度到底指哪裡？進度").fill("100");
+  await page.getByRole("button", { name: "戰場" }).click();
+  await expect(page.getByTestId("battlefield-animation-status")).toContainText("章節完成，據點已固守");
+  await page.getByRole("button", { name: "跳過目前動畫" }).click();
   await page.goto("/achievements");
   await expect(page.getByRole("heading", { name: "戰役成就庫" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "據點收復" })).toBeVisible();

@@ -245,12 +245,12 @@ export async function importPhoenixMaterialPackage(
     await db.materialProgress.put(progress);
     return { definition, progress, status };
   });
-  await processDomainEvent({
+  const eventReceipt = await processDomainEvent({
     type: result.status === "upgrade" || result.status === "downgrade" ? "material.updated" : "material.imported",
     materialSlug: result.definition.slug,
     payload: { version: result.definition.version, status: result.status },
   });
-  return result;
+  return { ...result, eventReceipts: [eventReceipt] };
 }
 
 export async function setActiveMaterial(slug: string) {
@@ -295,21 +295,21 @@ export async function updateMaterialChapterProgress(slug: string, chapterKey: st
     return { next, previousValue, normalized };
   });
   if (!result) return undefined;
-  await processDomainEvent({
+  const eventReceipts = [await processDomainEvent({
     type: "chapter.progress.changed",
     materialSlug: slug,
     chapterKey,
     payload: { previous: result.previousValue, current: result.normalized },
-  });
+  })];
   if (result.previousValue < 100 && result.normalized >= 100) {
-    await processDomainEvent({
+    eventReceipts.push(await processDomainEvent({
       type: "chapter.completed",
       materialSlug: slug,
       chapterKey,
       payload: { progress: 100 },
-    });
+    }));
   }
-  return result.next;
+  return { progress: result.next, eventReceipts };
 }
 
 export async function openMaterialChapter(slug: string, chapterKey: string) {
@@ -326,13 +326,13 @@ export async function openMaterialChapter(slug: string, chapterKey: string) {
     return progress;
   });
   if (!next) return undefined;
-  await processDomainEvent({
+  const eventReceipt = await processDomainEvent({
     type: "chapter.opened",
     materialSlug: slug,
     chapterKey,
     payload: {},
   });
-  return next;
+  return { progress: next, eventReceipts: [eventReceipt] };
 }
 
 export async function recordMaterialQuizAttempt(slug: string, attempt: MaterialQuizAttempt) {
@@ -350,19 +350,19 @@ export async function recordMaterialQuizAttempt(slug: string, attempt: MaterialQ
     return next;
   });
   if (!next) return undefined;
-  await processDomainEvent({
+  const eventReceipts = [await processDomainEvent({
     type: "quiz.attempted",
     materialSlug: slug,
     chapterKey: attempt.chapterKey,
     payload: { correct: attempt.correct, questionIndex: attempt.questionIndex },
-  });
-  await processDomainEvent({
+  })];
+  eventReceipts.push(await processDomainEvent({
     type: attempt.correct ? "quiz.correct" : "quiz.incorrect",
     materialSlug: slug,
     chapterKey: attempt.chapterKey,
     payload: { questionIndex: attempt.questionIndex },
-  });
-  return next;
+  }));
+  return { progress: next, eventReceipts };
 }
 
 export async function deleteMaterialBundle(slug: string) {

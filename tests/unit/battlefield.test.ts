@@ -46,4 +46,28 @@ describe("learning battlefield", () => {
     expect(battlefield.criticalCount).toBe(1);
     expect(battlefield.zones[0].enemyStrength).toBeGreaterThan(battlefield.zones[0].defense);
   });
+
+  it("removes resolved mistakes from current enemy pressure", () => {
+    const attempts: MaterialProgress["quizAttempts"] = [
+      {
+        chapterKey: "gradient-descent-core",
+        blockIndex: 9,
+        questionIndex: 0,
+        selectedIndex: 0,
+        correct: false,
+        attemptedAt: "2026-07-16T01:00:00.000Z",
+      },
+      {
+        chapterKey: "gradient-descent-core",
+        blockIndex: 9,
+        questionIndex: 0,
+        selectedIndex: 1,
+        correct: true,
+        attemptedAt: "2026-07-16T01:05:00.000Z",
+      },
+    ];
+
+    const battlefield = deriveBattlefield(definition(), progress(100, attempts));
+    expect(battlefield.zones[0]).toMatchObject({ status: "secured", wrongCount: 0, correctRate: 100 });
+  });
 });

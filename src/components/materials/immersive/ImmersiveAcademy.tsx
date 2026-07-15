@@ -19,7 +19,8 @@ import {
 } from "@/components/materials/PhoenixMaterialRenderer";
 import type { MaterialBlock } from "@/types/materialPackage";
 import type { MaterialDefinition, MaterialProgress, MaterialQuizAttempt } from "@/types/materialRecord";
-import { LearningBattlefield } from "./LearningBattlefield";
+import type { DomainEventReceipt } from "@/types/domainEvent";
+import { Battlefield3D } from "./3d/Battlefield3D";
 import { FloatingAcademyConsole } from "./FloatingAcademyConsole";
 import styles from "./ImmersiveAcademy.module.css";
 
@@ -32,6 +33,9 @@ type Props = {
   onChapterSelect: (chapterKey: string) => void | Promise<void>;
   onChapterProgressChange: (chapterKey: string, value: number) => void | Promise<void>;
   onQuizAttempt?: (attempt: MaterialQuizAttempt) => void | Promise<void>;
+  battlefieldEventReceipts?: DomainEventReceipt[];
+  onBattlefieldEventReceiptsConsumed?: (eventIds: string[]) => void;
+  onBattlefieldEventReceipts?: (receipts: DomainEventReceipt[]) => void;
 };
 
 const modeDefinitions: Array<{ id: Mode; label: string; icon: typeof BookOpen }> = [
@@ -78,6 +82,9 @@ export function ImmersiveAcademy({
   onChapterSelect,
   onChapterProgressChange,
   onQuizAttempt,
+  battlefieldEventReceipts,
+  onBattlefieldEventReceiptsConsumed,
+  onBattlefieldEventReceipts,
 }: Props) {
   const modules = Array.from(new Set([
     "battlefield",
@@ -135,7 +142,7 @@ export function ImmersiveAcademy({
         </nav>
       )}
 
-      <div className={styles.workbench}>
+      <div className={`${styles.workbench} ${mode === "battlefield" ? styles.workbenchBattlefield : ""}`}>
         <nav className={styles.rail} aria-label="教材模式">
           {availableModes.map(({ id, label, icon: Icon }) => (
             <button
@@ -173,8 +180,10 @@ export function ImmersiveAcademy({
 
           <div className={styles.modeContent}>
             {mode === "battlefield" && (
-              <LearningBattlefield
+              <Battlefield3D
                 definition={definition}
+                eventReceipts={battlefieldEventReceipts}
+                onEventReceiptsConsumed={onBattlefieldEventReceiptsConsumed}
                 progress={progress}
                 onChapterSelect={onChapterSelect}
               />
@@ -226,7 +235,7 @@ export function ImmersiveAcademy({
           </div>
         </div>
 
-        <aside className={styles.intel}>
+        <aside className={`${styles.intel} ${mode === "battlefield" ? styles.intelBattlefield : ""}`}>
           <section className={styles.intelSection}>
             <p className={styles.intelLabel}>當前章節</p>
             <strong>{String(chapterIndex + 1).padStart(2, "0")} · {chapterProgress}%</strong>
@@ -255,6 +264,7 @@ export function ImmersiveAcademy({
       {modules.includes("floating-console") && (
         <FloatingAcademyConsole
           chapterTitle={chapter.title}
+          onEventReceipts={onBattlefieldEventReceipts}
           overallProgress={progress.overallProgress}
         />
       )}

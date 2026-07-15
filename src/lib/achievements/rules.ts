@@ -22,13 +22,17 @@ async function collectMetrics(): Promise<Record<string, number>> {
     db.gameSessions.count(),
   ]);
   const attempts = materials
-    .flatMap((material) => material.quizAttempts)
+    .flatMap((material) => material.quizAttempts.map((attempt) => ({
+      ...attempt,
+      materialSlug: material.materialSlug,
+    })))
     .sort((a, b) => a.attemptedAt.localeCompare(b.attemptedAt));
   const recoveredChapters = new Set<string>();
   const chapterHasWrong = new Set<string>();
   for (const attempt of attempts) {
-    if (!attempt.correct) chapterHasWrong.add(attempt.chapterKey);
-    else if (chapterHasWrong.has(attempt.chapterKey)) recoveredChapters.add(attempt.chapterKey);
+    const chapterId = `${attempt.materialSlug}:${attempt.chapterKey}`;
+    if (!attempt.correct) chapterHasWrong.add(chapterId);
+    else if (chapterHasWrong.has(chapterId)) recoveredChapters.add(chapterId);
   }
 
   return {
@@ -79,8 +83,9 @@ export async function evaluateAchievementRules() {
 }
 
 export async function processDomainEvent(event: NewDomainEvent) {
-  await recordDomainEvent(event);
-  return evaluateAchievementRules();
+  const recordedEvent = await recordDomainEvent(event);
+  const achievementsUnlocked = await evaluateAchievementRules();
+  return { event: recordedEvent, achievementsUnlocked };
 }
 
 export async function runAchievementChecks() {

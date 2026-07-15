@@ -184,6 +184,10 @@
   min-height: 720px;
 }
 
+.workbenchBattlefield {
+  grid-template-columns: 96px minmax(0, 1fr);
+}
+
 .rail {
   padding: 18px 10px;
   border-right: 1px solid var(--academy-line);
@@ -331,6 +335,10 @@
   background: var(--academy-panel);
 }
 
+.intelBattlefield {
+  display: none;
+}
+
 .intelSection {
   padding: 17px 0;
   border-bottom: 1px solid var(--academy-line);
@@ -378,6 +386,11 @@
     gap: 18px;
     border-top: 1px solid var(--academy-line);
     border-left: 0;
+  }
+
+
+  .intelBattlefield {
+    display: none;
   }
 }
 

@@ -30,3 +30,8 @@ export type DomainEvent = z.infer<typeof domainEventSchema>;
 export type NewDomainEvent = Omit<DomainEvent, "id" | "occurredAt"> & {
   occurredAt?: string;
 };
+
+export type DomainEventReceipt = {
+  event: DomainEvent;
+  achievementsUnlocked: string[];
+};

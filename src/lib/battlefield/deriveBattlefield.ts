@@ -1,4 +1,5 @@
 import type { MaterialDefinition, MaterialProgress } from "@/types/materialRecord";
+import { latestAttemptsByQuestion } from "@/lib/battlefield/battlefieldRecovery";
 
 export type BattlefieldZoneStatus = "fog" | "frontline" | "critical" | "secured";
 
@@ -37,9 +38,12 @@ export function deriveBattlefield(
   const zones = definition.chapters.map((chapter) => {
     const chapterProgress = progress.chapterProgress[chapter.key] ?? 0;
     const attempts = progress.quizAttempts.filter((attempt) => attempt.chapterKey === chapter.key);
-    const wrongCount = attempts.filter((attempt) => !attempt.correct).length;
-    const correctCount = attempts.length - wrongCount;
-    const correctRate = attempts.length > 0 ? Math.round((correctCount / attempts.length) * 100) : null;
+    const latestAttempts = latestAttemptsByQuestion(attempts);
+    const wrongCount = latestAttempts.filter((attempt) => !attempt.correct).length;
+    const correctCount = latestAttempts.length - wrongCount;
+    const correctRate = latestAttempts.length > 0
+      ? Math.round((correctCount / latestAttempts.length) * 100)
+      : null;
     const supplyCount = chapter.blocks.filter(
       (block) => block.type === "memory" || block.type === "example" || block.type === "comparison",
     ).length;
@@ -48,7 +52,7 @@ export function deriveBattlefield(
 
     let status: BattlefieldZoneStatus = "frontline";
     if (chapterProgress === 0 && attempts.length === 0) status = "fog";
-    else if (wrongCount >= 2 || (attempts.length >= 2 && (correctRate ?? 100) < 50)) status = "critical";
+    else if (wrongCount >= 2 || (latestAttempts.length >= 2 && (correctRate ?? 100) < 50)) status = "critical";
     else if (chapterProgress >= 100 && wrongCount === 0) status = "secured";
 
     return {

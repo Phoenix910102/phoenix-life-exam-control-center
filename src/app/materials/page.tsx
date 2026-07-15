@@ -49,6 +49,7 @@ import {
 import { apiHeaders } from "@/lib/utils/api";
 import type { MaterialPackage } from "@/types/materialPackage";
 import type { MaterialBundle, MaterialDefinition } from "@/types/materialRecord";
+import type { DomainEventReceipt } from "@/types/domainEvent";
 
 const formatLabels: Record<MaterialDefinition["format"], string> = {
   "phoenix-package": "Phoenix 教材包",
@@ -229,6 +230,7 @@ function PackagePreview({
 }
 
 export default function MaterialsPage() {
+  const [isHydrated, setIsHydrated] = useState(false);
   const packageInputRef = useRef<HTMLInputElement>(null);
   const legacyInputRef = useRef<HTMLInputElement>(null);
   const [bundles, setBundles] = useState<MaterialBundle[]>([]);
@@ -241,6 +243,19 @@ export default function MaterialsPage() {
   const [remoteCatalog, setRemoteCatalog] = useState<RemoteCatalog>();
   const [remoteMessage, setRemoteMessage] = useState<string>();
   const [isCheckingRemote, setIsCheckingRemote] = useState(false);
+  const [battlefieldEventReceipts, setBattlefieldEventReceipts] = useState<DomainEventReceipt[]>([]);
+
+  const queueBattlefieldEvents = useCallback((receipts: DomainEventReceipt[]) => {
+    setBattlefieldEventReceipts((current) => {
+      const known = new Set(current.map((receipt) => receipt.event.id));
+      return current.concat(receipts.filter((receipt) => !known.has(receipt.event.id)));
+    });
+  }, []);
+
+  const consumeBattlefieldEvents = useCallback((eventIds: string[]) => {
+    const consumed = new Set(eventIds);
+    setBattlefieldEventReceipts((current) => current.filter((receipt) => !consumed.has(receipt.event.id)));
+  }, []);
 
   const refresh = useCallback(async (preferredSlug?: string) => {
     const next = await listMaterialBundles();
@@ -267,6 +282,14 @@ export default function MaterialsPage() {
   const completedChapters = bundles.reduce((sum, bundle) => sum + bundle.progress.completedChapterKeys.length, 0);
   const activeMaterial = bundles.find((bundle) => bundle.progress.isActive);
   const isImmersive = selected?.definition.presentation?.layout === "immersive-academy";
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    setBattlefieldEventReceipts([]);
+  }, [selectedSlug]);
 
   const preparePackage = async (file: File, source: PackageCandidate["source"] = "local", remotePath?: string) => {
     const result = await readMaterialPackageFile(file);
@@ -398,13 +421,15 @@ export default function MaterialsPage() {
 
   const changeProgress = async (chapterKey: string, value: number) => {
     if (!selected) return;
-    await updateMaterialChapterProgress(selected.definition.slug, chapterKey, value);
+    const result = await updateMaterialChapterProgress(selected.definition.slug, chapterKey, value);
+    if (result) queueBattlefieldEvents(result.eventReceipts);
     await refresh(selected.definition.slug);
   };
 
   const selectChapter = async (chapterKey: string) => {
     if (!selected) return;
-    await openMaterialChapter(selected.definition.slug, chapterKey);
+    const result = await openMaterialChapter(selected.definition.slug, chapterKey);
+    if (result) queueBattlefieldEvents(result.eventReceipts);
     await refresh(selected.definition.slug);
   };
 
@@ -430,7 +455,7 @@ export default function MaterialsPage() {
   };
 
   return (
-    <main className="space-y-7">
+    <main className="space-y-7" data-hydrated={isHydrated} data-testid="materials-page">
       <section className="flex flex-col gap-4 border-b border-border pb-5 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium text-primary">Phoenix × Rékaí Material Protocol</p>
@@ -440,6 +465,9 @@ export default function MaterialsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={previewExamplePackage}>
+            <Sparkles className="mr-2 h-4 w-4" />預覽 3D 範例
+          </Button>
           <Button variant="outline" onClick={() => window.open("/legacy/criminal-law-general-principles/", "_blank", "noopener,noreferrer")}>
             <ExternalLink className="mr-2 h-4 w-4" />罪責玫瑰原型
           </Button>
@@ -571,12 +599,12 @@ export default function MaterialsPage() {
           </div>
         </section>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[310px_minmax(0,1fr)]">
-          <aside className="space-y-3">
+        <div className={isImmersive ? "grid gap-6" : "grid gap-6 lg:grid-cols-[310px_minmax(0,1fr)]"}>
+          <aside className={isImmersive ? "grid gap-3 border-b border-border pb-5 md:grid-cols-[150px_minmax(0,1fr)]" : "space-y-3"}>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">我的教材</h3><span className="text-xs text-muted-foreground">{bundles.length} 份</span>
             </div>
-            <div className="space-y-2">
+            <div className={isImmersive ? "grid gap-2 md:grid-cols-2 xl:grid-cols-3" : "space-y-2"}>
               {bundles.map((bundle) => {
                 const { definition, progress } = bundle;
                 const remoteUpdate = remoteCatalog?.items.find(
@@ -649,10 +677,14 @@ export default function MaterialsPage() {
                       definition={selected.definition}
                       progress={selected.progress}
                       chapterKey={activeChapter.key}
+                      battlefieldEventReceipts={battlefieldEventReceipts}
+                      onBattlefieldEventReceipts={queueBattlefieldEvents}
+                      onBattlefieldEventReceiptsConsumed={consumeBattlefieldEvents}
                       onChapterSelect={selectChapter}
                       onChapterProgressChange={changeProgress}
                       onQuizAttempt={async (attempt) => {
-                        await recordMaterialQuizAttempt(selected.definition.slug, attempt);
+                        const result = await recordMaterialQuizAttempt(selected.definition.slug, attempt);
+                        if (result) queueBattlefieldEvents(result.eventReceipts);
                         await refresh(selected.definition.slug);
                       }}
                     />

@@ -1,6 +1,7 @@
 "use client";
 
 import type { MaterialDefinition, MaterialProgress, MaterialQuizAttempt } from "@/types/materialRecord";
+import type { DomainEventReceipt } from "@/types/domainEvent";
 import { ImmersiveAcademy } from "@/components/materials/immersive/ImmersiveAcademy";
 import { PhoenixMaterialRenderer } from "@/components/materials/PhoenixMaterialRenderer";
 
@@ -11,6 +12,9 @@ type Props = {
   onChapterSelect: (chapterKey: string) => void | Promise<void>;
   onChapterProgressChange: (chapterKey: string, value: number) => void | Promise<void>;
   onQuizAttempt?: (attempt: MaterialQuizAttempt) => void | Promise<void>;
+  battlefieldEventReceipts?: DomainEventReceipt[];
+  onBattlefieldEventReceiptsConsumed?: (eventIds: string[]) => void;
+  onBattlefieldEventReceipts?: (receipts: DomainEventReceipt[]) => void;
 };
 
 export function MaterialExperience(props: Props) {
