@@ -108,6 +108,17 @@ function readAsDataUrl(file: File) {
   });
 }
 
+function readAsText(file: File) {
+  if (typeof file.text === "function") return file.text();
+
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error ?? new Error("檔案讀取失敗"));
+    reader.readAsText(file);
+  });
+}
+
 export async function importStudyMaterial(file: File): Promise<StudyMaterial> {
   const format = detectMaterialFormat(file);
   const fallbackTitle = file.name.replace(/\.[^.]+$/, "") || "未命名教材";
@@ -121,7 +132,7 @@ export async function importStudyMaterial(file: File): Promise<StudyMaterial> {
     contentEncoding = "data-url";
     parsed = { title: fallbackTitle, chapters: makeChapters(["整份教材"]) };
   } else {
-    sourceContent = await file.text();
+    sourceContent = await readAsText(file);
     contentEncoding = "text";
     if (format === "html") parsed = parseHtml(sourceContent, fallbackTitle);
     else if (format === "markdown") parsed = parseMarkdown(sourceContent, fallbackTitle);
