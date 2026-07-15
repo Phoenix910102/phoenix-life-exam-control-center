@@ -8,6 +8,8 @@ import type { GameSession } from "@/types/game";
 import type { AppSettings } from "@/types/settings";
 import type { Achievement } from "@/types/achievement";
 import type { StudyMaterial } from "@/types/studyMaterial";
+import type { MaterialDefinition, MaterialProgress } from "@/types/materialRecord";
+import { legacyStudyMaterialToRecords } from "@/lib/materials/legacyMigration";
 
 class PhoenixDB extends Dexie {
   dailyLogs!: Table<DailyLog, string>;
@@ -19,6 +21,8 @@ class PhoenixDB extends Dexie {
   settings!: Table<AppSettings, string>;
   achievements!: Table<Achievement, string>;
   studyMaterials!: Table<StudyMaterial, string>;
+  materialDefinitions!: Table<MaterialDefinition, string>;
+  materialProgress!: Table<MaterialProgress, string>;
 
   constructor() {
     super("phoenix_life_exam_db");
@@ -43,6 +47,30 @@ class PhoenixDB extends Dexie {
       achievements: "id",
       studyMaterials: "id, updatedAt, lastOpenedAt, format",
     });
+    this.version(3)
+      .stores({
+        dailyLogs: "date",
+        tasks: "id, done, dueTime, category",
+        questions: "questionId, subject, topic, type",
+        examAttempts: "attemptId, dateTimeStart, mode",
+        wrongIndex: "questionId, severity, nextReviewAt",
+        gameSessions: "sessionId, gameType, dateTimeStart",
+        settings: "id",
+        achievements: "id",
+        studyMaterials: "id, updatedAt, lastOpenedAt, format",
+        materialDefinitions: "slug, version, updatedAt, subject, kind",
+        materialProgress: "materialSlug, lastOpenedAt, overallProgress, isActive",
+      })
+      .upgrade(async (transaction) => {
+        const legacyMaterials = (await transaction.table("studyMaterials").toArray()) as StudyMaterial[];
+        if (legacyMaterials.length === 0) return;
+
+        const definitions = transaction.table("materialDefinitions") as Table<MaterialDefinition, string>;
+        const progressTable = transaction.table("materialProgress") as Table<MaterialProgress, string>;
+        const converted = legacyMaterials.map(legacyStudyMaterialToRecords);
+        await definitions.bulkPut(converted.map((item) => item.definition));
+        await progressTable.bulkPut(converted.map((item) => item.progress));
+      });
   }
 }
 

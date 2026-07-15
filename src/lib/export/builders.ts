@@ -53,6 +53,8 @@ export async function buildFullBackup(): Promise<{ filename: string; data: Expor
     gameSessions: await db.gameSessions.toArray(),
     achievements: await db.achievements.toArray(),
     studyMaterials: await db.studyMaterials.toArray(),
+    materialDefinitions: await db.materialDefinitions.toArray(),
+    materialProgress: await db.materialProgress.toArray(),
     settings,
   };
 

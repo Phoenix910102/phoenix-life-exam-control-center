@@ -6,6 +6,7 @@ import { db } from "@/lib/db/client";
 import { toTaipeiDateKey } from "@/lib/utils/date";
 import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { listMaterialBundles } from "@/lib/db/repository";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({ tasks: 0, done: 0, questions: 0, exams: 0, gameFocus: 0 });
@@ -23,12 +24,13 @@ export default function DashboardPage() {
         exams: await db.examAttempts.count(),
         gameFocus: log?.gameSummary?.focusIndex ?? 0,
       });
-      const active = (await db.studyMaterials.filter((item) => item.isActive).first()) ?? (await db.studyMaterials.orderBy("updatedAt").last());
+      const materials = await listMaterialBundles();
+      const active = materials.find((item) => item.progress.isActive) ?? materials[0];
       if (active) {
         setMaterial({
-          title: active.title,
-          progress: active.progressPercent,
-          chapter: active.chapters.find((chapter) => chapter.id === active.activeChapterId)?.title ?? active.chapters[0]?.title ?? "未選章節",
+          title: active.definition.title,
+          progress: active.progress.overallProgress,
+          chapter: active.definition.chapters.find((chapter) => chapter.key === active.progress.activeChapterKey)?.title ?? active.definition.chapters[0]?.title ?? "未選章節",
         });
       }
     })();

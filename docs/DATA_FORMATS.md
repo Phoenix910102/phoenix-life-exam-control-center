@@ -6,6 +6,8 @@
 ## Study materials
 - Imported HTML, PDF, Markdown, text, and JSON files are stored locally in IndexedDB.
 - Each material keeps its chapter list, active chapter, per-chapter progress, overall progress, and active-mainline flag.
+- Phoenix package definitions and reading progress are exported separately as `materialDefinitions` and `materialProgress`.
+- Legacy `studyMaterials` remains in backups during the v3 migration window so older local data is never discarded.
 - PDF content is stored as a data URL so it remains available after refresh and is included in full backup.
 
 ## Snapshot

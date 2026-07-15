@@ -8,6 +8,20 @@ import { defaultSettings, type AppSettings } from "@/types/settings";
 import { applyAttemptToWrongIndex } from "@/lib/exams/wrongIndex";
 import type { StudyMaterial, StudyMaterialChapter } from "@/types/studyMaterial";
 import { calculateMaterialProgress } from "@/lib/materials/importer";
+import type { MaterialPackage } from "@/types/materialPackage";
+import type {
+  MaterialBundle,
+  MaterialDefinition,
+  MaterialProgress,
+  MaterialQuizAttempt,
+} from "@/types/materialRecord";
+import {
+  assertImportAllowed,
+  getMaterialImportStatus,
+  materialPackageToDefinition,
+  mergeMaterialProgress,
+} from "@/lib/materials/packageImporter";
+import { legacyStudyMaterialToRecords } from "@/lib/materials/legacyMigration";
 
 export async function upsertDailyLog(date: string, patch: Partial<DailyLog>) {
   const prev = await db.dailyLogs.get(date);
@@ -163,4 +177,175 @@ export async function updateStudyMaterialProgress(
 
 export async function deleteStudyMaterial(id: string) {
   await db.studyMaterials.delete(id);
+}
+
+function emptyProgressForDefinition(definition: MaterialDefinition): MaterialProgress {
+  const chapterProgress = Object.fromEntries(definition.chapters.map((chapter) => [chapter.key, 0]));
+  return {
+    materialSlug: definition.slug,
+    activeChapterKey: definition.chapters[0]?.key,
+    chapterProgress,
+    completedChapterKeys: [],
+    quizAttempts: [],
+    orphanedProgress: {},
+    overallProgress: 0,
+    isActive: false,
+  };
+}
+
+export async function listMaterialBundles(): Promise<MaterialBundle[]> {
+  const definitions = await db.materialDefinitions.orderBy("updatedAt").reverse().toArray();
+  const allProgress = await db.materialProgress.toArray();
+  const progressBySlug = new Map(allProgress.map((progress) => [progress.materialSlug, progress]));
+  return definitions.map((definition) => ({
+    definition,
+    progress: progressBySlug.get(definition.slug) ?? emptyProgressForDefinition(definition),
+  }));
+}
+
+export async function getMaterialBundle(slug: string): Promise<MaterialBundle | undefined> {
+  const definition = await db.materialDefinitions.get(slug);
+  if (!definition) return undefined;
+  const progress = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
+  return { definition, progress };
+}
+
+export async function importLegacyStudyMaterial(material: StudyMaterial) {
+  const converted = legacyStudyMaterialToRecords(material);
+  await db.transaction("rw", db.studyMaterials, db.materialDefinitions, db.materialProgress, async () => {
+    await db.studyMaterials.put(material);
+    await db.materialDefinitions.put(converted.definition);
+    await db.materialProgress.put(converted.progress);
+  });
+  return converted;
+}
+
+export async function importPhoenixMaterialPackage(
+  material: MaterialPackage,
+  sourceFileName: string,
+  options: { allowDowngrade?: boolean; setActive?: boolean } = {},
+) {
+  return db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+    const existingDefinition = await db.materialDefinitions.get(material.slug);
+    const existingProgress = await db.materialProgress.get(material.slug);
+    const status = getMaterialImportStatus(material, existingDefinition);
+    assertImportAllowed(status, options.allowDowngrade);
+
+    const definition = materialPackageToDefinition(material, sourceFileName, existingDefinition);
+    const progress = mergeMaterialProgress(material, existingProgress);
+    if (options.setActive) {
+      const allProgress = await db.materialProgress.toArray();
+      await db.materialProgress.bulkPut(
+        allProgress.map((item) => ({ ...item, isActive: item.materialSlug === material.slug })),
+      );
+      progress.isActive = true;
+    }
+    await db.materialDefinitions.put(definition);
+    await db.materialProgress.put(progress);
+    return { definition, progress, status };
+  });
+}
+
+export async function setActiveMaterial(slug: string) {
+  return db.transaction("rw", db.materialProgress, async () => {
+    const definitions = await db.materialDefinitions.toArray();
+    const progressItems = await db.materialProgress.toArray();
+    const progressBySlug = new Map(progressItems.map((item) => [item.materialSlug, item]));
+    await db.materialProgress.bulkPut(
+      definitions.map((definition) => ({
+        ...(progressBySlug.get(definition.slug) ?? emptyProgressForDefinition(definition)),
+        isActive: definition.slug === slug,
+      })),
+    );
+    return db.materialProgress.get(slug);
+  });
+}
+
+export async function updateMaterialChapterProgress(slug: string, chapterKey: string, value: number) {
+  return db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+    const definition = await db.materialDefinitions.get(slug);
+    if (!definition || !definition.chapters.some((chapter) => chapter.key === chapterKey)) return undefined;
+    const current = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
+    const normalized = Math.max(0, Math.min(100, Math.round(value)));
+    const chapterProgress = { ...current.chapterProgress, [chapterKey]: normalized };
+    const completedChapterKeys = definition.chapters
+      .map((chapter) => chapter.key)
+      .filter((key) => (chapterProgress[key] ?? 0) >= 100);
+    const overallProgress = Math.round(
+      definition.chapters.reduce((sum, chapter) => sum + (chapterProgress[chapter.key] ?? 0), 0) /
+        definition.chapters.length,
+    );
+    const next: MaterialProgress = {
+      ...current,
+      activeChapterKey: chapterKey,
+      chapterProgress,
+      completedChapterKeys,
+      overallProgress,
+      lastOpenedAt: new Date().toISOString(),
+    };
+    await db.materialProgress.put(next);
+    return next;
+  });
+}
+
+export async function recordMaterialQuizAttempt(slug: string, attempt: MaterialQuizAttempt) {
+  return db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+    const definition = await db.materialDefinitions.get(slug);
+    if (!definition) return undefined;
+    const current = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
+    const next = {
+      ...current,
+      activeChapterKey: attempt.chapterKey,
+      quizAttempts: [...current.quizAttempts, attempt],
+      lastOpenedAt: attempt.attemptedAt,
+    };
+    await db.materialProgress.put(next);
+    return next;
+  });
+}
+
+export async function deleteMaterialBundle(slug: string) {
+  await db.transaction("rw", db.materialDefinitions, db.materialProgress, db.studyMaterials, async () => {
+    await db.materialDefinitions.delete(slug);
+    await db.materialProgress.delete(slug);
+    if (slug.startsWith("legacy-")) await db.studyMaterials.delete(slug.slice("legacy-".length));
+  });
+}
+
+export async function addLegacyMaterialChapter(slug: string, title: string) {
+  return db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+    const definition = await db.materialDefinitions.get(slug);
+    if (!definition || definition.kind !== "legacy") return undefined;
+    const key = `manual-${Date.now()}`;
+    const nextDefinition: MaterialDefinition = {
+      ...definition,
+      chapters: [
+        ...definition.chapters,
+        {
+          key,
+          title: title.trim(),
+          summary: "Phoenix 手動建立的閱讀進度單元。",
+          estimatedMinutes: 1,
+          objectives: ["完成本單元閱讀"],
+          blocks: [
+            {
+              type: "callout",
+              tone: "info",
+              title: "自訂單元",
+              body: "這個單元用來追蹤舊版教材中的自訂閱讀範圍。",
+            },
+          ],
+        },
+      ],
+      updatedAt: new Date().toISOString(),
+    };
+    const current = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
+    const nextProgress: MaterialProgress = {
+      ...current,
+      chapterProgress: { ...current.chapterProgress, [key]: 0 },
+    };
+    await db.materialDefinitions.put(nextDefinition);
+    await db.materialProgress.put(nextProgress);
+    return { definition: nextDefinition, progress: nextProgress };
+  });
 }

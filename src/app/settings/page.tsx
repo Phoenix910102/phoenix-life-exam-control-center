@@ -12,6 +12,7 @@ import { bulkUpsertQuestions } from "@/lib/db/repository";
 import { questionSchema } from "@/types/question";
 import { newId } from "@/lib/utils/id";
 import { apiHeaders } from "@/lib/utils/api";
+import { restoreFullBackup } from "@/lib/export/restore";
 
 export default function SettingsPage() {
   const { settings, loadSettings, saveSettings } = useAppStore();
@@ -37,6 +38,17 @@ export default function SettingsPage() {
     });
     await bulkUpsertQuestions(parsed);
     notify("題庫已匯入", `${parsed.length} 題`);
+  };
+
+  const onRestoreBackup = async (file: File) => {
+    if (!window.confirm("確認以這份完整備份取代目前本機資料？")) return;
+    try {
+      const result = await restoreFullBackup(JSON.parse(await file.text()));
+      notify("完整備份已還原", `${result.materialDefinitions} 份教材定義與 ${result.materialProgress} 份進度`);
+      await loadSettings();
+    } catch (error) {
+      notify("備份還原失敗", error instanceof Error ? error.message : "備份格式不合法");
+    }
   };
 
   if (!settings) return <Card>設定載入中...</Card>;
@@ -111,6 +123,16 @@ export default function SettingsPage() {
           >
             下載完整備份
           </Button>
+        </div>
+        <div className="border-t border-border pt-3">
+          <label className="text-sm font-medium" htmlFor="full-backup-restore">還原完整備份</label>
+          <Input
+            id="full-backup-restore"
+            className="mt-2"
+            type="file"
+            accept=".json,application/json"
+            onChange={(event) => event.target.files?.[0] && onRestoreBackup(event.target.files[0])}
+          />
         </div>
         <p className="text-sm">產生時間：{generatedAt || "-"}</p>
       </Card>
