@@ -23,6 +23,10 @@ const links = [
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
+  if (pathname.startsWith("/command-center") || pathname.startsWith("/arsenal")) {
+    return children;
+  }
+
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-6">
       <header className="mb-6 rounded-xl border border-border bg-white/90 p-4 shadow-sm backdrop-blur">

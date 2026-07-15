@@ -1,0 +1,33 @@
+.page {
+  align-items: center;
+  background: #090809;
+  color: #f0ebe4;
+  display: flex;
+  justify-content: center;
+  min-height: 100svh;
+  overflow: hidden;
+  position: relative;
+}
+
+.backdrop {
+  background: linear-gradient(90deg, rgba(8, 7, 8, 0.96), rgba(8, 7, 8, 0.46)), url("/command-center/command-room-bg.jpg") center / cover;
+  inset: 0;
+  opacity: 0.72;
+  position: absolute;
+}
+
+.content {
+  border-left: 1px solid rgba(198, 165, 106, 0.58);
+  max-width: 560px;
+  padding: 32px 36px;
+  position: relative;
+  width: calc(100% - 40px);
+}
+
+.icon { color: #c6a56a; display: block; margin-bottom: 28px; }
+.content > p { color: #a9a0a0; font: 0.7rem/1.2 SFMono-Regular, Consolas, monospace; letter-spacing: 0.16em; }
+.content h1 { font-family: "Songti TC", "Noto Serif TC", serif; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 500; letter-spacing: 0; margin: 16px 0; }
+.rule { background: #8e293d; display: block; height: 2px; margin: 24px 0; width: 72px; }
+.status { align-items: center; color: #c5c8d0; display: flex; font-size: 0.9rem; gap: 9px; margin-bottom: 36px; }
+.content a { align-items: center; border: 1px solid rgba(198, 165, 106, 0.54); color: #e0c892; display: inline-flex; font-size: 0.86rem; gap: 10px; min-height: 44px; padding: 0 18px; text-decoration: none; }
+.content a:hover { background: rgba(198, 165, 106, 0.1); }
