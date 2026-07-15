@@ -3,6 +3,11 @@
 ## Timezone
 - All date keys are `YYYY-MM-DD` in `Asia/Taipei`.
 
+## Study materials
+- Imported HTML, PDF, Markdown, text, and JSON files are stored locally in IndexedDB.
+- Each material keeps its chapter list, active chapter, per-chapter progress, overall progress, and active-mainline flag.
+- PDF content is stored as a data URL so it remains available after refresh and is included in full backup.
+
 ## Snapshot
 - `dailyLogs` last 3 days
 - `todayTaskSummary`
@@ -19,6 +24,7 @@ Follows `ExportData` schema:
 - `wrongIndex`
 - `gameSessions`
 - `achievements`
+- `studyMaterials`
 - `settings`
 
 ## Example

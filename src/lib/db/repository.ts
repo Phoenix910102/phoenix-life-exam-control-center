@@ -6,6 +6,8 @@ import type { ExamAttempt } from "@/types/exam";
 import type { GameSession } from "@/types/game";
 import { defaultSettings, type AppSettings } from "@/types/settings";
 import { applyAttemptToWrongIndex } from "@/lib/exams/wrongIndex";
+import type { StudyMaterial, StudyMaterialChapter } from "@/types/studyMaterial";
+import { calculateMaterialProgress } from "@/lib/materials/importer";
 
 export async function upsertDailyLog(date: string, patch: Partial<DailyLog>) {
   const prev = await db.dailyLogs.get(date);
@@ -104,4 +106,61 @@ export async function upsertSettings(patch: Partial<AppSettings>) {
 
 export async function getSettings() {
   return (await db.settings.get("singleton")) ?? defaultSettings;
+}
+
+export async function listStudyMaterials() {
+  return db.studyMaterials.orderBy("updatedAt").reverse().toArray();
+}
+
+export async function getStudyMaterial(id: string) {
+  return db.studyMaterials.get(id);
+}
+
+export async function putStudyMaterial(material: StudyMaterial) {
+  await db.studyMaterials.put(material);
+  return material;
+}
+
+export async function setActiveStudyMaterial(id: string) {
+  await db.transaction("rw", db.studyMaterials, async () => {
+    const materials = await db.studyMaterials.toArray();
+    await db.studyMaterials.bulkPut(
+      materials.map((material) => ({
+        ...material,
+        isActive: material.id === id,
+        updatedAt: material.id === id ? new Date().toISOString() : material.updatedAt,
+      })),
+    );
+  });
+  return db.studyMaterials.get(id);
+}
+
+export async function updateStudyMaterialProgress(
+  materialId: string,
+  chapterId: string,
+  progress: number,
+) {
+  const material = await db.studyMaterials.get(materialId);
+  if (!material) return undefined;
+  const now = new Date().toISOString();
+  const normalized = Math.max(0, Math.min(100, Math.round(progress)));
+  const chapters: StudyMaterialChapter[] = material.chapters.map((chapter) =>
+    chapter.id === chapterId
+      ? { ...chapter, progress: normalized, completed: normalized === 100, lastOpenedAt: now }
+      : chapter,
+  );
+  const next: StudyMaterial = {
+    ...material,
+    chapters,
+    activeChapterId: chapterId,
+    progressPercent: calculateMaterialProgress(chapters),
+    lastOpenedAt: now,
+    updatedAt: now,
+  };
+  await db.studyMaterials.put(next);
+  return next;
+}
+
+export async function deleteStudyMaterial(id: string) {
+  await db.studyMaterials.delete(id);
 }

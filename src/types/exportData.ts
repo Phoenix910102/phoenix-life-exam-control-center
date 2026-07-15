@@ -6,6 +6,7 @@ import { wrongQuestionIndexSchema } from "./wrongIndex";
 import { gameSessionSchema } from "./game";
 import { achievementSchema } from "./achievement";
 import { appSettingsSchema } from "./settings";
+import { studyMaterialSchema } from "./studyMaterial";
 
 export const exportDataSchema = z.object({
   meta: z.object({
@@ -24,6 +25,7 @@ export const exportDataSchema = z.object({
   wrongIndex: z.array(wrongQuestionIndexSchema),
   gameSessions: z.array(gameSessionSchema),
   achievements: z.array(achievementSchema),
+  studyMaterials: z.array(studyMaterialSchema).default([]),
   settings: appSettingsSchema,
 });
 

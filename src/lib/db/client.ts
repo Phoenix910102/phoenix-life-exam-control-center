@@ -7,6 +7,7 @@ import type { WrongQuestionIndex } from "@/types/wrongIndex";
 import type { GameSession } from "@/types/game";
 import type { AppSettings } from "@/types/settings";
 import type { Achievement } from "@/types/achievement";
+import type { StudyMaterial } from "@/types/studyMaterial";
 
 class PhoenixDB extends Dexie {
   dailyLogs!: Table<DailyLog, string>;
@@ -17,6 +18,7 @@ class PhoenixDB extends Dexie {
   gameSessions!: Table<GameSession, string>;
   settings!: Table<AppSettings, string>;
   achievements!: Table<Achievement, string>;
+  studyMaterials!: Table<StudyMaterial, string>;
 
   constructor() {
     super("phoenix_life_exam_db");
@@ -29,6 +31,17 @@ class PhoenixDB extends Dexie {
       gameSessions: "sessionId, gameType, dateTimeStart",
       settings: "id",
       achievements: "id",
+    });
+    this.version(2).stores({
+      dailyLogs: "date",
+      tasks: "id, done, dueTime, category",
+      questions: "questionId, subject, topic, type",
+      examAttempts: "attemptId, dateTimeStart, mode",
+      wrongIndex: "questionId, severity, nextReviewAt",
+      gameSessions: "sessionId, gameType, dateTimeStart",
+      settings: "id",
+      achievements: "id",
+      studyMaterials: "id, updatedAt, lastOpenedAt, format",
     });
   }
 }

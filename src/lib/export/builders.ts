@@ -52,6 +52,7 @@ export async function buildFullBackup(): Promise<{ filename: string; data: Expor
     wrongIndex: await db.wrongIndex.toArray(),
     gameSessions: await db.gameSessions.toArray(),
     achievements: await db.achievements.toArray(),
+    studyMaterials: await db.studyMaterials.toArray(),
     settings,
   };
 
