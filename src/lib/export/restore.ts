@@ -24,6 +24,9 @@ export async function restoreFullBackup(input: unknown) {
       db.wrongIndex,
       db.gameSessions,
       db.achievements,
+      db.achievementProgress,
+      db.careState,
+      db.domainEvents,
       db.settings,
       db.studyMaterials,
       db.materialDefinitions,
@@ -38,6 +41,9 @@ export async function restoreFullBackup(input: unknown) {
         db.wrongIndex.clear(),
         db.gameSessions.clear(),
         db.achievements.clear(),
+        db.achievementProgress.clear(),
+        db.careState.clear(),
+        db.domainEvents.clear(),
         db.settings.clear(),
         db.studyMaterials.clear(),
         db.materialDefinitions.clear(),
@@ -50,6 +56,9 @@ export async function restoreFullBackup(input: unknown) {
       await db.wrongIndex.bulkPut(data.wrongIndex);
       await db.gameSessions.bulkPut(data.gameSessions);
       await db.achievements.bulkPut(data.achievements);
+      await db.achievementProgress.bulkPut(data.achievementProgress);
+      if (data.careState) await db.careState.put(data.careState);
+      await db.domainEvents.bulkPut(data.domainEvents);
       await db.settings.put(data.settings);
       await db.studyMaterials.bulkPut(data.studyMaterials);
       await db.materialDefinitions.bulkPut(definitions);
@@ -61,6 +70,8 @@ export async function restoreFullBackup(input: unknown) {
     questions: data.questions.length,
     materialDefinitions: definitions.length,
     materialProgress: progress.length,
+    achievements: data.achievements.length,
+    domainEvents: data.domainEvents.length,
     restoredAt: new Date().toISOString(),
   };
 }

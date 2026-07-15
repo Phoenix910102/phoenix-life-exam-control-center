@@ -10,6 +10,7 @@ import {
   GitCompareArrows,
   GraduationCap,
   ListChecks,
+  Map,
   ScanSearch,
 } from "lucide-react";
 import {
@@ -18,9 +19,11 @@ import {
 } from "@/components/materials/PhoenixMaterialRenderer";
 import type { MaterialBlock } from "@/types/materialPackage";
 import type { MaterialDefinition, MaterialProgress, MaterialQuizAttempt } from "@/types/materialRecord";
+import { LearningBattlefield } from "./LearningBattlefield";
+import { FloatingAcademyConsole } from "./FloatingAcademyConsole";
 import styles from "./ImmersiveAcademy.module.css";
 
-type Mode = "reader" | "lesson" | "duel" | "diagnostic" | "trap-field" | "quiz";
+type Mode = "battlefield" | "reader" | "lesson" | "duel" | "diagnostic" | "trap-field" | "quiz";
 
 type Props = {
   definition: MaterialDefinition;
@@ -32,6 +35,7 @@ type Props = {
 };
 
 const modeDefinitions: Array<{ id: Mode; label: string; icon: typeof BookOpen }> = [
+  { id: "battlefield", label: "戰場", icon: Map },
   { id: "reader", label: "閱讀", icon: BookOpen },
   { id: "lesson", label: "上課", icon: GraduationCap },
   { id: "duel", label: "決鬥", icon: GitCompareArrows },
@@ -41,6 +45,7 @@ const modeDefinitions: Array<{ id: Mode; label: string; icon: typeof BookOpen }>
 ];
 
 const modeCopy: Record<Mode, { title: string; description: string }> = {
+  battlefield: { title: "戰場總覽", description: "把章節進度、錯題壓力與測驗表現投影成可操作的學習局勢。" },
   reader: { title: "完整閱讀", description: "沿作者安排的節奏閱讀定位、概念、例題與記憶錨點。" },
   lesson: { title: "單點上課", description: "一次只處理一個內容區塊，避免同時展開過多概念。" },
   duel: { title: "概念決鬥", description: "集中處理比較表與容易混淆的角色差異。" },
@@ -74,7 +79,12 @@ export function ImmersiveAcademy({
   onChapterProgressChange,
   onQuizAttempt,
 }: Props) {
-  const modules = definition.presentation?.modules ?? modeDefinitions.map((mode) => mode.id);
+  const modules = Array.from(new Set([
+    "battlefield",
+    "achievements",
+    "floating-console",
+    ...(definition.presentation?.modules ?? modeDefinitions.map((mode) => mode.id)),
+  ]));
   const availableModes = modeDefinitions.filter((mode) => modules.includes(mode.id));
   const [mode, setMode] = useState<Mode>(availableModes[0]?.id ?? "reader");
   const [lessonIndex, setLessonIndex] = useState(0);
@@ -162,6 +172,13 @@ export function ImmersiveAcademy({
           </div>
 
           <div className={styles.modeContent}>
+            {mode === "battlefield" && (
+              <LearningBattlefield
+                definition={definition}
+                progress={progress}
+                onChapterSelect={onChapterSelect}
+              />
+            )}
             {mode === "reader" && (
               <PhoenixMaterialRenderer definition={definition} chapterKey={chapter.key} onQuizAttempt={onQuizAttempt} />
             )}
@@ -235,6 +252,12 @@ export function ImmersiveAcademy({
           </section>
         </aside>
       </div>
+      {modules.includes("floating-console") && (
+        <FloatingAcademyConsole
+          chapterTitle={chapter.title}
+          overallProgress={progress.overallProgress}
+        />
+      )}
     </section>
   );
 }

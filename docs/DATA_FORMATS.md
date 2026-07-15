@@ -10,6 +10,12 @@
 - Legacy `studyMaterials` remains in backups during the v3 migration window so older local data is never discarded.
 - PDF content is stored as a data URL so it remains available after refresh and is included in full backup.
 
+## Learning battlefield and care
+- Dexie v4 adds `domainEvents`, `achievementProgress`, and the singleton `careState` table.
+- Battlefield regions are derived from `materialProgress` and quiz attempts; battlefield visuals are not stored as a second source of truth.
+- `domainEvents` records material, chapter, quiz, achievement, and care actions used by the achievement engine.
+- `careState` stores hydration, meal, and bounded-rest records independently from any material slug.
+
 ## Snapshot
 - `dailyLogs` last 3 days
 - `todayTaskSummary`
@@ -27,6 +33,9 @@ Follows `ExportData` schema:
 - `wrongIndex`
 - `gameSessions`
 - `achievements`
+- `achievementProgress`
+- `careState`
+- `domainEvents`
 - `studyMaterials`
 - `materialDefinitions`
 - `materialProgress`

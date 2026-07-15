@@ -25,6 +25,10 @@ describe("Phoenix material package", () => {
   beforeEach(async () => {
     await db.materialProgress.clear();
     await db.materialDefinitions.clear();
+    await db.achievements.clear();
+    await db.achievementProgress.clear();
+    await db.domainEvents.clear();
+    await db.careState.clear();
   });
 
   it("accepts a valid package", () => {

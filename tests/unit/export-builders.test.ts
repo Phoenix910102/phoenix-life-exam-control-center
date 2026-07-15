@@ -4,6 +4,7 @@ import { buildFullBackup, buildSnapshot } from "@/lib/export/builders";
 import { restoreFullBackup } from "@/lib/export/restore";
 import { importPhoenixMaterialPackage } from "@/lib/db/repository";
 import { parseMaterialPackage } from "@/lib/materials/packageImporter";
+import { confirmHydration } from "@/lib/care/repository";
 import sampleJson from "../../materials/generated/example-gradient-descent.phoenix-material.json";
 
 describe("export builders", () => {
@@ -15,6 +16,9 @@ describe("export builders", () => {
     await db.wrongIndex.clear();
     await db.questions.clear();
     await db.achievements.clear();
+    await db.achievementProgress.clear();
+    await db.careState.clear();
+    await db.domainEvents.clear();
     await db.settings.clear();
     await db.studyMaterials.clear();
     await db.materialProgress.clear();
@@ -53,6 +57,7 @@ describe("export builders", () => {
     const parsed = parseMaterialPackage(sampleJson);
     if (!parsed.success) throw new Error("sample package is invalid");
     await importPhoenixMaterialPackage(parsed.package, "example.phoenix-material.json");
+    await confirmHydration();
     const x = await buildFullBackup();
     expect(x.filename).toMatch(/^phoenix-backup-/);
     expect(x.data.tasks.length).toBe(1);
@@ -60,15 +65,21 @@ describe("export builders", () => {
     expect(x.data.meta.timezone).toBe("Asia/Taipei");
     expect(x.data.materialDefinitions).toHaveLength(1);
     expect(x.data.materialProgress).toHaveLength(1);
+    expect(x.data.domainEvents.length).toBeGreaterThan(0);
+    expect(x.data.careState?.hydration.countToday).toBe(1);
 
     await db.tasks.clear();
     await db.questions.clear();
     await db.materialDefinitions.clear();
     await db.materialProgress.clear();
+    await db.domainEvents.clear();
+    await db.careState.clear();
     await restoreFullBackup(x.data);
     expect(await db.tasks.get("t1")).toBeDefined();
     expect(await db.questions.get("q-backup-1")).toMatchObject({ topic: "犯罪成立三階層" });
     expect(await db.materialDefinitions.count()).toBe(1);
     expect(await db.materialProgress.count()).toBe(1);
+    expect(await db.domainEvents.count()).toBeGreaterThan(0);
+    expect((await db.careState.get("singleton"))?.hydration.countToday).toBe(1);
   });
 });

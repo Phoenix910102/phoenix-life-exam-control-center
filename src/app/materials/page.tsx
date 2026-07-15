@@ -41,6 +41,7 @@ import {
   importLegacyStudyMaterial,
   importPhoenixMaterialPackage,
   listMaterialBundles,
+  openMaterialChapter,
   recordMaterialQuizAttempt,
   setActiveMaterial,
   updateMaterialChapterProgress,
@@ -401,6 +402,12 @@ export default function MaterialsPage() {
     await refresh(selected.definition.slug);
   };
 
+  const selectChapter = async (chapterKey: string) => {
+    if (!selected) return;
+    await openMaterialChapter(selected.definition.slug, chapterKey);
+    await refresh(selected.definition.slug);
+  };
+
   const addChapter = async () => {
     if (!selected || selected.definition.kind !== "legacy" || !newChapterTitle.trim()) return;
     await addLegacyMaterialChapter(selected.definition.slug, newChapterTitle);
@@ -642,7 +649,7 @@ export default function MaterialsPage() {
                       definition={selected.definition}
                       progress={selected.progress}
                       chapterKey={activeChapter.key}
-                      onChapterSelect={(chapterKey) => changeProgress(chapterKey, selected.progress.chapterProgress[chapterKey] ?? 0)}
+                      onChapterSelect={selectChapter}
                       onChapterProgressChange={changeProgress}
                       onQuizAttempt={async (attempt) => {
                         await recordMaterialQuizAttempt(selected.definition.slug, attempt);

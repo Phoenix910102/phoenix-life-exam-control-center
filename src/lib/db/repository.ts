@@ -22,6 +22,7 @@ import {
   mergeMaterialProgress,
 } from "@/lib/materials/packageImporter";
 import { legacyStudyMaterialToRecords } from "@/lib/materials/legacyMigration";
+import { processDomainEvent } from "@/lib/achievements/rules";
 
 export async function upsertDailyLog(date: string, patch: Partial<DailyLog>) {
   const prev = await db.dailyLogs.get(date);
@@ -225,7 +226,7 @@ export async function importPhoenixMaterialPackage(
   sourceFileName: string,
   options: { allowDowngrade?: boolean; setActive?: boolean } = {},
 ) {
-  return db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+  const result = await db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
     const existingDefinition = await db.materialDefinitions.get(material.slug);
     const existingProgress = await db.materialProgress.get(material.slug);
     const status = getMaterialImportStatus(material, existingDefinition);
@@ -244,6 +245,12 @@ export async function importPhoenixMaterialPackage(
     await db.materialProgress.put(progress);
     return { definition, progress, status };
   });
+  await processDomainEvent({
+    type: result.status === "upgrade" || result.status === "downgrade" ? "material.updated" : "material.imported",
+    materialSlug: result.definition.slug,
+    payload: { version: result.definition.version, status: result.status },
+  });
+  return result;
 }
 
 export async function setActiveMaterial(slug: string) {
@@ -262,10 +269,11 @@ export async function setActiveMaterial(slug: string) {
 }
 
 export async function updateMaterialChapterProgress(slug: string, chapterKey: string, value: number) {
-  return db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+  const result = await db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
     const definition = await db.materialDefinitions.get(slug);
     if (!definition || !definition.chapters.some((chapter) => chapter.key === chapterKey)) return undefined;
     const current = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
+    const previousValue = current.chapterProgress[chapterKey] ?? 0;
     const normalized = Math.max(0, Math.min(100, Math.round(value)));
     const chapterProgress = { ...current.chapterProgress, [chapterKey]: normalized };
     const completedChapterKeys = definition.chapters
@@ -284,12 +292,51 @@ export async function updateMaterialChapterProgress(slug: string, chapterKey: st
       lastOpenedAt: new Date().toISOString(),
     };
     await db.materialProgress.put(next);
-    return next;
+    return { next, previousValue, normalized };
   });
+  if (!result) return undefined;
+  await processDomainEvent({
+    type: "chapter.progress.changed",
+    materialSlug: slug,
+    chapterKey,
+    payload: { previous: result.previousValue, current: result.normalized },
+  });
+  if (result.previousValue < 100 && result.normalized >= 100) {
+    await processDomainEvent({
+      type: "chapter.completed",
+      materialSlug: slug,
+      chapterKey,
+      payload: { progress: 100 },
+    });
+  }
+  return result.next;
+}
+
+export async function openMaterialChapter(slug: string, chapterKey: string) {
+  const next = await db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+    const definition = await db.materialDefinitions.get(slug);
+    if (!definition || !definition.chapters.some((chapter) => chapter.key === chapterKey)) return undefined;
+    const current = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
+    const progress: MaterialProgress = {
+      ...current,
+      activeChapterKey: chapterKey,
+      lastOpenedAt: new Date().toISOString(),
+    };
+    await db.materialProgress.put(progress);
+    return progress;
+  });
+  if (!next) return undefined;
+  await processDomainEvent({
+    type: "chapter.opened",
+    materialSlug: slug,
+    chapterKey,
+    payload: {},
+  });
+  return next;
 }
 
 export async function recordMaterialQuizAttempt(slug: string, attempt: MaterialQuizAttempt) {
-  return db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+  const next = await db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
     const definition = await db.materialDefinitions.get(slug);
     if (!definition) return undefined;
     const current = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
@@ -302,6 +349,20 @@ export async function recordMaterialQuizAttempt(slug: string, attempt: MaterialQ
     await db.materialProgress.put(next);
     return next;
   });
+  if (!next) return undefined;
+  await processDomainEvent({
+    type: "quiz.attempted",
+    materialSlug: slug,
+    chapterKey: attempt.chapterKey,
+    payload: { correct: attempt.correct, questionIndex: attempt.questionIndex },
+  });
+  await processDomainEvent({
+    type: attempt.correct ? "quiz.correct" : "quiz.incorrect",
+    materialSlug: slug,
+    chapterKey: attempt.chapterKey,
+    payload: { questionIndex: attempt.questionIndex },
+  });
+  return next;
 }
 
 export async function deleteMaterialBundle(slug: string) {

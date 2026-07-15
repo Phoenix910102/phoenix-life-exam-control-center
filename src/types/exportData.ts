@@ -4,11 +4,13 @@ import { taskSchema } from "./task";
 import { examAttemptSchema } from "./exam";
 import { wrongQuestionIndexSchema } from "./wrongIndex";
 import { gameSessionSchema } from "./game";
-import { achievementSchema } from "./achievement";
+import { achievementProgressSchema, achievementSchema } from "./achievement";
 import { appSettingsSchema } from "./settings";
 import { studyMaterialSchema } from "./studyMaterial";
 import { materialDefinitionSchema, materialProgressSchema } from "./materialRecord";
 import { questionSchema } from "./question";
+import { careStateSchema } from "./careState";
+import { domainEventSchema } from "./domainEvent";
 
 export const exportDataSchema = z.object({
   meta: z.object({
@@ -28,6 +30,9 @@ export const exportDataSchema = z.object({
   wrongIndex: z.array(wrongQuestionIndexSchema),
   gameSessions: z.array(gameSessionSchema),
   achievements: z.array(achievementSchema),
+  achievementProgress: z.array(achievementProgressSchema).default([]),
+  careState: careStateSchema.optional(),
+  domainEvents: z.array(domainEventSchema).default([]),
   studyMaterials: z.array(studyMaterialSchema).default([]),
   materialDefinitions: z.array(materialDefinitionSchema).default([]),
   materialProgress: z.array(materialProgressSchema).default([]),
