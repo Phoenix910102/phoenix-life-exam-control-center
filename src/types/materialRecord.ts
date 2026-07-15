@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { materialPackageChapterSchema, semverSchema } from "./materialPackage";
+import {
+  materialPackageChapterSchema,
+  materialPrerequisiteSchema,
+  materialPresentationSchema,
+  materialSourceSchema,
+  semverSchema,
+} from "./materialPackage";
 import { studyMaterialFormatSchema } from "./studyMaterial";
 
 export const materialDefinitionSchema = z.object({
@@ -27,6 +33,18 @@ export const materialDefinitionSchema = z.object({
       model: z.string().min(1).optional(),
     })
     .optional(),
+  presentation: materialPresentationSchema.optional(),
+  difficulty: z.enum(["quick-pass", "standard", "deep"]).default("standard"),
+  prerequisites: z.array(materialPrerequisiteSchema).default([]),
+  sources: z.array(materialSourceSchema).default([]),
+  quickReview: z
+    .object({
+      summary: z.string().min(1).optional(),
+      coreBlockKeys: z.array(z.string().min(1)).default([]),
+      finalQuestionCount: z.number().int().positive().optional(),
+    })
+    .optional(),
+  generationProfile: z.string().min(1).optional(),
   format: z.union([studyMaterialFormatSchema, z.literal("phoenix-package")]),
   sourceFileName: z.string().min(1),
   mimeType: z.string(),

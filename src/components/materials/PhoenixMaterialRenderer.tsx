@@ -19,6 +19,13 @@ type Props = {
   onQuizAttempt?: (attempt: MaterialQuizAttempt) => void | Promise<void>;
 };
 
+export type PhoenixMaterialBlockProps = {
+  block: MaterialBlock;
+  blockIndex: number;
+  chapterKey: string;
+  onQuizAttempt?: Props["onQuizAttempt"];
+};
+
 const blockPriority: Record<MaterialBlock["type"], number> = {
   position: 0,
   concept: 1,
@@ -291,11 +298,43 @@ function QuizBlock({
   );
 }
 
+export function PhoenixMaterialBlock({
+  block,
+  blockIndex,
+  chapterKey,
+  onQuizAttempt,
+}: PhoenixMaterialBlockProps) {
+  switch (block.type) {
+    case "position": return <PositionBlock block={block} />;
+    case "concept": return <ConceptBlock block={block} />;
+    case "comparison": return <ComparisonBlock block={block} />;
+    case "confusion": return <ConfusionBlock block={block} />;
+    case "flow": return <FlowBlock block={block} />;
+    case "exam-signal": return <ExamSignalBlock block={block} />;
+    case "example": return <ExampleBlock block={block} />;
+    case "memory": return <MemoryBlock block={block} />;
+    case "callout": return <CalloutBlock block={block} />;
+    case "quiz":
+      return (
+        <QuizBlock
+          block={block}
+          blockIndex={blockIndex}
+          chapterKey={chapterKey}
+          onQuizAttempt={onQuizAttempt}
+        />
+      );
+  }
+}
+
 export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt }: Props) {
   const chapter = definition.chapters.find((item) => item.key === chapterKey) ?? definition.chapters[0];
   const blocks = useMemo(
-    () => chapter.blocks.map((block, index) => ({ block, index })).sort((a, b) => blockPriority[a.block.type] - blockPriority[b.block.type]),
-    [chapter],
+    () => {
+      const authored = chapter.blocks.map((block, index) => ({ block, index }));
+      if (definition.presentation?.renderOrder === "authored") return authored;
+      return authored.sort((a, b) => blockPriority[a.block.type] - blockPriority[b.block.type]);
+    },
+    [chapter, definition.presentation?.renderOrder],
   );
 
   return (
@@ -312,29 +351,15 @@ export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt 
         </div>
       </header>
 
-      {blocks.map(({ block, index }) => {
-        switch (block.type) {
-          case "position": return <PositionBlock block={block} key={`${block.type}-${index}`} />;
-          case "concept": return <ConceptBlock block={block} key={`${block.type}-${index}`} />;
-          case "comparison": return <ComparisonBlock block={block} key={`${block.type}-${index}`} />;
-          case "confusion": return <ConfusionBlock block={block} key={`${block.type}-${index}`} />;
-          case "flow": return <FlowBlock block={block} key={`${block.type}-${index}`} />;
-          case "exam-signal": return <ExamSignalBlock block={block} key={`${block.type}-${index}`} />;
-          case "example": return <ExampleBlock block={block} key={`${block.type}-${index}`} />;
-          case "memory": return <MemoryBlock block={block} key={`${block.type}-${index}`} />;
-          case "callout": return <CalloutBlock block={block} key={`${block.type}-${index}`} />;
-          case "quiz":
-            return (
-              <QuizBlock
-                block={block}
-                blockIndex={index}
-                chapterKey={chapter.key}
-                key={`${chapter.key}-${block.type}-${index}`}
-                onQuizAttempt={onQuizAttempt}
-              />
-            );
-        }
-      })}
+      {blocks.map(({ block, index }) => (
+        <PhoenixMaterialBlock
+          block={block}
+          blockIndex={index}
+          chapterKey={chapter.key}
+          key={block.key ?? `${chapter.key}-${block.type}-${index}`}
+          onQuizAttempt={onQuizAttempt}
+        />
+      ))}
     </article>
   );
 }

@@ -16,7 +16,10 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
   await expect(page.getByText("1 章").first()).toBeVisible();
   await page.getByRole("button", { name: "確認匯入教材" }).click();
 
-  await expect(page.getByRole("heading", { name: "梯度到底指哪裡？" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "梯度到底指哪裡？" }).first()).toBeVisible();
+  await page.getByRole("button", { name: "診斷" }).click();
+  await expect(page.getByText("先命名卡住的層級，再決定要補位置、定義、比較或題幹訊號。")).toBeVisible();
+  await page.getByRole("button", { name: "閱讀" }).click();
   const firstQuestion = page.locator("fieldset").filter({ hasText: "梯度 ∇L 的方向代表什麼" });
   await firstQuestion.getByLabel("損失上升最快的方向").check();
   await firstQuestion.getByRole("button", { name: "送出答案" }).click();
@@ -42,5 +45,13 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
   await expect(page.getByText("可更新", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "確認更新教材" }).click();
   await expect(page.getByLabel("梯度到底指哪裡？進度")).toHaveValue("60");
+  await page.getByRole("button", { name: /進階更新策略/ }).click();
   await expect(page.getByLabel("進階更新策略進度")).toHaveValue("0");
+});
+
+test("serves the criminal rose legacy prototype with its local assets", async ({ page }) => {
+  await page.goto("/legacy/criminal-law-general-principles/");
+  await expect(page).toHaveTitle("罪責之骨｜刑法總則上課系統");
+  await expect(page.getByRole("heading", { name: "罪責之骨" })).toBeVisible();
+  await expect(page.locator("img").first()).toBeVisible();
 });

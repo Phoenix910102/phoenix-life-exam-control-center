@@ -12,8 +12,73 @@ export const semverSchema = z
 const requiredText = (label: string) => z.string().trim().min(1, `${label} 不可空白`);
 const textList = (label: string) => z.array(requiredText(label)).min(1, `${label} 至少需要一項`);
 
+export const materialLayoutSchema = z.enum(["compact", "editorial", "immersive-academy"]);
+export const materialThemeSchema = z.enum([
+  "criminal-rose",
+  "jurist-rose",
+  "neural-rose",
+  "cipher-rose",
+  "command-rose",
+  "black-dossier",
+]);
+export const materialModuleSchema = z.enum([
+  "battlefield",
+  "roadmap",
+  "reader",
+  "lesson",
+  "duel",
+  "diagnostic",
+  "trap-field",
+  "quiz",
+  "achievements",
+  "floating-console",
+]);
+export const materialPresentationSchema = z
+  .object({
+    layout: materialLayoutSchema.default("editorial"),
+    theme: materialThemeSchema.default("criminal-rose"),
+    renderOrder: z.enum(["authored", "phoenix-default"]).default("phoenix-default"),
+    modules: z.array(materialModuleSchema).default(["reader", "quiz"]),
+  })
+  .strict();
+
+export const materialPrerequisiteSchema = z
+  .object({
+    slug: requiredText("prerequisite.slug"),
+    title: requiredText("prerequisite.title"),
+    requiredLevel: z.enum(["basic", "intermediate", "advanced"]).default("basic"),
+  })
+  .strict();
+
+export const materialSourceSchema = z
+  .object({
+    id: requiredText("source.id"),
+    title: requiredText("source.title"),
+    type: z.enum(["law", "judgment", "official", "paper", "book", "documentation"]),
+    url: z.string().url("source.url 必須是有效網址").optional(),
+    citation: requiredText("source.citation").optional(),
+    accessedAt: z.string().datetime({ message: "source.accessedAt 必須是 ISO 8601 日期時間" }),
+    applicableVersion: requiredText("source.applicableVersion").optional(),
+    freshness: z.enum(["stable", "review-needed", "expired"]).default("stable"),
+  })
+  .strict();
+
+const blockMetadata = {
+  key: z
+    .string()
+    .trim()
+    .min(1, "block.key 不可空白")
+    .regex(/^[a-z0-9][a-z0-9._-]*$/i, "block.key 只能使用英數、點、底線與連字號")
+    .optional(),
+  importance: z.enum(["supporting", "core", "critical"]).optional(),
+  examWeight: z.number().int().min(0).max(10).optional(),
+  includeInQuickReview: z.boolean().optional(),
+  estimatedMinutes: z.number().int().positive().optional(),
+};
+
 export const positionBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("position"),
     category: requiredText("category"),
     before: requiredText("before"),
@@ -24,6 +89,7 @@ export const positionBlockSchema = z
 
 export const conceptBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("concept"),
     title: requiredText("title"),
     body: requiredText("body"),
@@ -32,6 +98,7 @@ export const conceptBlockSchema = z
 
 export const comparisonBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("comparison"),
     title: requiredText("title"),
     columns: z.array(requiredText("column")).min(2, "columns 至少需要兩欄"),
@@ -41,6 +108,7 @@ export const comparisonBlockSchema = z
 
 export const confusionBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("confusion"),
     items: z
       .array(
@@ -58,6 +126,7 @@ export const confusionBlockSchema = z
 
 export const flowBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("flow"),
     title: requiredText("title"),
     steps: textList("steps"),
@@ -66,6 +135,7 @@ export const flowBlockSchema = z
 
 export const examSignalBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("exam-signal"),
     cues: textList("cues"),
     answerRule: requiredText("answerRule"),
@@ -75,6 +145,7 @@ export const examSignalBlockSchema = z
 
 export const exampleBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("example"),
     prompt: requiredText("prompt"),
     reasoningSteps: textList("reasoningSteps"),
@@ -84,6 +155,7 @@ export const exampleBlockSchema = z
 
 export const memoryBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("memory"),
     anchor: requiredText("anchor"),
     explanation: requiredText("explanation"),
@@ -92,6 +164,7 @@ export const memoryBlockSchema = z
 
 export const calloutBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("callout"),
     tone: z.enum(["info", "warning", "important"]),
     title: requiredText("title"),
@@ -120,6 +193,7 @@ export const materialQuizQuestionSchema = z
 
 export const quizBlockSchema = z
   .object({
+    ...blockMetadata,
     type: z.literal("quiz"),
     title: requiredText("title").optional(),
     questions: z.array(materialQuizQuestionSchema).min(1, "questions 至少需要一題"),
@@ -187,6 +261,19 @@ export const materialPackageSchema = z
       })
       .strict()
       .optional(),
+    presentation: materialPresentationSchema.optional(),
+    difficulty: z.enum(["quick-pass", "standard", "deep"]).default("standard"),
+    prerequisites: z.array(materialPrerequisiteSchema).default([]),
+    sources: z.array(materialSourceSchema).default([]),
+    quickReview: z
+      .object({
+        summary: requiredText("quickReview.summary").optional(),
+        coreBlockKeys: z.array(requiredText("quickReview.coreBlockKey")).default([]),
+        finalQuestionCount: z.number().int().positive().optional(),
+      })
+      .strict()
+      .optional(),
+    generationProfile: requiredText("generationProfile").optional(),
     chapters: z.array(materialPackageChapterSchema).min(1, "chapters 至少需要一章"),
   })
   .strict()
@@ -205,7 +292,20 @@ export const materialPackageSchema = z
       }
     });
     material.chapters.forEach((chapter, chapterIndex) => {
+      const seenBlockKeys = new Map<string, number>();
       chapter.blocks.forEach((block, blockIndex) => {
+        if (block.key) {
+          const previous = seenBlockKeys.get(block.key);
+          if (previous !== undefined) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["chapters", chapterIndex, "blocks", blockIndex, "key"],
+              message: `block.key「${block.key}」與本章第 ${previous + 1} 個 block 重複`,
+            });
+          } else {
+            seenBlockKeys.set(block.key, blockIndex);
+          }
+        }
         if (block.type !== "comparison") return;
         block.rows.forEach((row, rowIndex) => {
           if (row.length !== block.columns.length) {

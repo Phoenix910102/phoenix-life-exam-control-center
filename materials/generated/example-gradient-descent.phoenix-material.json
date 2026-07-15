@@ -17,6 +17,16 @@
     "version": "1.0",
     "model": "GPT-5"
   },
+  "presentation": {
+    "layout": "immersive-academy",
+    "theme": "neural-rose",
+    "renderOrder": "authored",
+    "modules": ["roadmap", "reader", "lesson", "duel", "diagnostic", "trap-field", "quiz"]
+  },
+  "difficulty": "standard",
+  "prerequisites": [],
+  "sources": [],
+  "generationProfile": "phoenix-default-v1",
   "chapters": [
     {
       "key": "gradient-descent-core",

@@ -47,6 +47,16 @@ describe("Phoenix material package", () => {
     if (!parsed.success) expect(parsed.errors.some((error) => error.message.includes("重複"))).toBe(true);
   });
 
+  it("accepts presentation metadata and rejects duplicate block keys", () => {
+    const valid = structuredClone(sampleJson);
+    const [firstBlock, secondBlock] = valid.chapters[0].blocks as Array<Record<string, unknown>>;
+    firstBlock.key = "shared-block";
+    secondBlock.key = "shared-block";
+    const parsed = parseMaterialPackage(valid);
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) expect(parsed.errors.some((error) => error.message.includes("block.key") && error.message.includes("重複"))).toBe(true);
+  });
+
   it("does not import the same slug and version twice", async () => {
     const material = samplePackage();
     await importPhoenixMaterialPackage(material, "sample.phoenix-material.json");

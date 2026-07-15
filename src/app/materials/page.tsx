@@ -24,7 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { PhoenixMaterialRenderer } from "@/components/materials/PhoenixMaterialRenderer";
+import { MaterialExperience } from "@/components/materials/MaterialExperience";
 import { notify } from "@/lib/notifications/toast";
 import { importStudyMaterial } from "@/lib/materials/importer";
 import {
@@ -265,6 +265,7 @@ export default function MaterialsPage() {
   const totalChapters = bundles.reduce((sum, bundle) => sum + bundle.definition.chapters.length, 0);
   const completedChapters = bundles.reduce((sum, bundle) => sum + bundle.progress.completedChapterKeys.length, 0);
   const activeMaterial = bundles.find((bundle) => bundle.progress.isActive);
+  const isImmersive = selected?.definition.presentation?.layout === "immersive-academy";
 
   const preparePackage = async (file: File, source: PackageCandidate["source"] = "local", remotePath?: string) => {
     const result = await readMaterialPackageFile(file);
@@ -361,6 +362,26 @@ export default function MaterialsPage() {
     }
   };
 
+  const previewExamplePackage = async () => {
+    try {
+      const response = await fetch("/api/materials/example", { headers: apiHeaders() });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.message ?? "範例教材讀取失敗");
+      const material = body.package as MaterialPackage;
+      const existing = bundles.find((bundle) => bundle.definition.slug === material.slug)?.definition;
+      setCandidate({
+        package: material,
+        fileName: body.fileName as string,
+        status: getMaterialImportStatus(material, existing),
+        source: "local",
+      });
+      setSetAsActive(!activeMaterial);
+      setAllowDowngrade(false);
+    } catch (error) {
+      notify("範例教材讀取失敗", error instanceof Error ? error.message : "請稍後再試");
+    }
+  };
+
   const selectRemoteCandidate = (item: RemoteCatalogItem) => {
     const existing = bundles.find((bundle) => bundle.definition.slug === item.package.slug)?.definition;
     setCandidate({
@@ -411,10 +432,15 @@ export default function MaterialsPage() {
             一般檔案繼續留在本機；Rékaí 製作的版本化教材會先驗證、預覽，再依 slug 更新內容並保留章節進度。
           </p>
         </div>
-        <Button variant="outline" onClick={checkRemoteInbox} disabled={isCheckingRemote}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${isCheckingRemote ? "animate-spin" : ""}`} />
-          檢查 GitHub 收件匣
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => window.open("/legacy/criminal-law-general-principles/", "_blank", "noopener,noreferrer")}>
+            <ExternalLink className="mr-2 h-4 w-4" />罪責玫瑰原型
+          </Button>
+          <Button variant="outline" onClick={checkRemoteInbox} disabled={isCheckingRemote}>
+            <RefreshCw className={`mr-2 h-4 w-4 ${isCheckingRemote ? "animate-spin" : ""}`} />
+            檢查 GitHub 收件匣
+          </Button>
+        </div>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
@@ -532,6 +558,9 @@ export default function MaterialsPage() {
             <FolderOpen className="mx-auto h-10 w-10 text-primary" />
             <h3 className="mt-4 text-lg font-semibold">教材收件匣還是空的</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">可以匯入 preview.html，也可以先試用 repository 內的梯度下降 Phoenix 範例教材。</p>
+            <Button className="mt-4" variant="outline" onClick={previewExamplePackage}>
+              <Sparkles className="mr-2 h-4 w-4" />預覽內建範例
+            </Button>
           </div>
         </section>
       ) : (
@@ -601,17 +630,20 @@ export default function MaterialsPage() {
                 </Button>
               </div>
 
-              <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]">
+              <div className={isImmersive ? "block" : "grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]"}>
                 <div className="overflow-hidden border border-border bg-white shadow-sm">
                   <div className="flex items-center justify-between border-b border-border px-4 py-3">
                     <div className="flex items-center gap-2 text-sm font-medium"><BookOpen className="h-4 w-4 text-primary" />教材閱讀器</div>
                     <span className="text-xs text-muted-foreground">{formatLabels[selected.definition.format]}</span>
                   </div>
                   {selected.definition.kind === "phoenix-package" ? (
-                    <PhoenixMaterialRenderer
+                    <MaterialExperience
                       key={`${selected.definition.slug}-${activeChapter.key}`}
                       definition={selected.definition}
+                      progress={selected.progress}
                       chapterKey={activeChapter.key}
+                      onChapterSelect={(chapterKey) => changeProgress(chapterKey, selected.progress.chapterProgress[chapterKey] ?? 0)}
+                      onChapterProgressChange={changeProgress}
                       onQuizAttempt={async (attempt) => {
                         await recordMaterialQuizAttempt(selected.definition.slug, attempt);
                         await refresh(selected.definition.slug);
@@ -620,7 +652,7 @@ export default function MaterialsPage() {
                   ) : <LegacyMaterialViewer definition={selected.definition} />}
                 </div>
 
-                <aside className="space-y-4">
+                {!isImmersive && <aside className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between">
                       <h4 className="flex items-center gap-2 text-sm font-semibold"><Gauge className="h-4 w-4 text-primary" />章節進度</h4>
@@ -656,7 +688,7 @@ export default function MaterialsPage() {
                       </div>
                     </div>
                   )}
-                </aside>
+                </aside>}
               </div>
             </section>
           )}
