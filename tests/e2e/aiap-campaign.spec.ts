@@ -1,4 +1,16 @@
 import { expect, test } from "@playwright/test";
+
+test("opens the bundled AIAP campaign directly in a fresh browser", async ({ page }) => {
+  await page.goto("/campaigns/aiap-intermediate-complete-guide");
+
+  await expect(page.getByTestId("campaign-experience")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AIAP 中級：情境判題與應用全科戰役" })).toBeVisible();
+  await expect(page.getByTestId("campaign-reading-surface")).toBeVisible();
+
+  await page.goto("/materials");
+  await expect(page.getByRole("heading", { name: "AIAP 中級：情境判題與應用全科戰役" }).first()).toBeVisible();
+});
+
 test("imports the complete AIAP campaign and exposes searchable term cards", async ({ page }) => {
   await page.goto("/materials");
   await expect(page.getByTestId("materials-page")).toHaveAttribute("data-hydrated", "true");

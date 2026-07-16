@@ -7,9 +7,9 @@ import { CommandSceneBackdrop } from "@/components/command-shell/CommandSceneBac
 import { CommandShell } from "@/components/command-shell/CommandShell";
 import { MaterialExperience } from "@/components/materials/MaterialExperience";
 import { Button } from "@/components/ui/button";
+import { hasBundledMaterialSource, openCampaignWithBundledSource } from "@/lib/materials/bundledMaterials";
 import {
   getMaterialBundle,
-  openMaterialCampaign,
   openMaterialChapter,
   recordMaterialQuizAttempt,
   setActiveMaterial,
@@ -26,6 +26,7 @@ export function PhoenixCampaignExperience({ slug }: { slug: string }) {
   const [state, setState] = useState<CampaignState>("loading");
   const [errorMessage, setErrorMessage] = useState("");
   const [battlefieldEventReceipts, setBattlefieldEventReceipts] = useState<DomainEventReceipt[]>([]);
+  const hasBundledSource = hasBundledMaterialSource(slug);
 
   const queueBattlefieldEvents = useCallback((receipts: DomainEventReceipt[]) => {
     setBattlefieldEventReceipts((current) => {
@@ -57,7 +58,7 @@ export function PhoenixCampaignExperience({ slug }: { slug: string }) {
     setErrorMessage("");
     setBattlefieldEventReceipts([]);
 
-    openMaterialCampaign(slug)
+    openCampaignWithBundledSource(slug)
       .then((opened) => {
         if (!active) return;
         if (!opened) {
@@ -130,7 +131,15 @@ export function PhoenixCampaignExperience({ slug }: { slug: string }) {
           </div>
           <p className={styles.kicker}>{failed ? "CAMPAIGN INTERRUPTED" : missing ? "CAMPAIGN NOT FOUND" : "CAMPAIGN INITIALIZING"}</p>
           <h1>{failed ? "教材戰役無法開啟" : missing ? "找不到教材戰役" : "正在建立戰役空間"}</h1>
-          <p>{failed ? errorMessage : missing ? "這份教材尚未匯入本機教材戰役庫。" : "正在讀取教材內容與妳原本的學習進度。"}</p>
+          <p>
+            {failed
+              ? errorMessage
+              : missing
+                ? "這份教材尚未匯入本機教材戰役庫。"
+                : hasBundledSource
+                  ? "正在從內建教材來源建立戰役，並接回這個瀏覽器的本機進度。"
+                  : "正在讀取教材內容與妳原本的學習進度。"}
+          </p>
           <Link className={styles.returnLink} href="/materials"><ArrowLeft size={16} />返回教材戰役庫</Link>
         </section>
       </CommandShell>

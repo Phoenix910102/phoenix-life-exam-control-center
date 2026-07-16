@@ -180,7 +180,7 @@ export function ImmersiveAcademy({
         )}
 
         <div className={styles.content}>
-          <div className={styles.modeHeader}>
+          <div className={`${styles.modeHeader} campaign-reading-intro`}>
             <div>
               <p className={styles.modeHint}>{modeCopy[mode].title}</p>
               <h3>{chapter.title}</h3>
