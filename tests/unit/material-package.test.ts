@@ -56,8 +56,12 @@ describe("Phoenix material package", () => {
     expect(definition.presentation).toMatchObject({
       layout: "immersive-academy",
       theme: "criminal-rose",
+      shellTheme: "criminal-rose",
+      readingTheme: "ivory-archive",
+      defaultMode: "reading",
       renderOrder: "authored",
     });
+    expect(definition.presentation?.availableModes).toEqual(["reading", "immersive", "night"]);
     expect(definition.presentation?.modules).toEqual(expect.arrayContaining([
       "battlefield",
       "reader",
@@ -74,6 +78,17 @@ describe("Phoenix material package", () => {
     const parsed = parseMaterialPackage(invalid);
     expect(parsed.success).toBe(false);
     if (!parsed.success) expect(parsed.errors.some((error) => error.path.includes("battlefield3d.layout"))).toBe(true);
+  });
+
+  it("requires the default reading mode to be available", () => {
+    const invalid = structuredClone(sampleJson);
+    Object.assign(invalid.presentation, {
+      defaultMode: "night",
+      availableModes: ["reading", "immersive"],
+    });
+    const parsed = parseMaterialPackage(invalid);
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) expect(parsed.errors.some((error) => error.path.includes("availableModes"))).toBe(true);
   });
 
   it("rejects schema errors with a field path", () => {

@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   CircleAlert,
   Compass,
+  Search,
+  Tags,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { MaterialBlock } from "@/types/materialPackage";
@@ -41,14 +43,14 @@ const blockPriority: Record<MaterialBlock["type"], number> = {
 
 function PositionBlock({ block }: { block: Extract<MaterialBlock, { type: "position" }> }) {
   return (
-    <section className="border-y border-rose-950/10 bg-[linear-gradient(90deg,rgba(249,168,212,0.08),rgba(196,181,253,0.14),rgba(249,168,212,0.08))] px-5 py-6">
+    <section className="campaign-block-position border-y border-rose-950/10 bg-[linear-gradient(90deg,rgba(249,168,212,0.08),rgba(196,181,253,0.14),rgba(249,168,212,0.08))] px-5 py-6">
       <div className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-violet-800">
         <Compass className="h-4 w-4" />{block.category} 的位置
       </div>
       <div className="grid items-stretch gap-2 sm:grid-cols-[1fr_auto_1.15fr_auto_1fr]">
         <div className="border-l-2 border-violet-200 px-3 py-2 text-sm text-slate-600">{block.before}</div>
         <ArrowRight className="mx-auto hidden h-4 w-4 self-center text-violet-300 sm:block" />
-        <div className="border border-rose-300 bg-rose-50/75 px-4 py-3 text-sm font-semibold text-rose-950 shadow-[inset_3px_0_0_#be123c]">
+        <div className="campaign-position-current border border-rose-300 bg-rose-50/75 px-4 py-3 text-sm font-semibold text-rose-950 shadow-[inset_3px_0_0_#be123c]">
           {block.current}
         </div>
         <ArrowRight className="mx-auto hidden h-4 w-4 self-center text-violet-300 sm:block" />
@@ -60,7 +62,7 @@ function PositionBlock({ block }: { block: Extract<MaterialBlock, { type: "posit
 
 function ConceptBlock({ block }: { block: Extract<MaterialBlock, { type: "concept" }> }) {
   return (
-    <section className="grid gap-3 border-b border-slate-200 px-5 py-7 md:grid-cols-[150px_minmax(0,1fr)]">
+    <section className="campaign-block-concept grid gap-3 border-b border-slate-200 px-5 py-7 md:grid-cols-[150px_minmax(0,1fr)]">
       <h4 className="font-serif text-lg font-semibold text-violet-950">{block.title}</h4>
       <p className="whitespace-pre-line text-[15px] leading-7 text-slate-700">{block.body}</p>
     </section>
@@ -69,7 +71,7 @@ function ConceptBlock({ block }: { block: Extract<MaterialBlock, { type: "concep
 
 function ComparisonBlock({ block }: { block: Extract<MaterialBlock, { type: "comparison" }> }) {
   return (
-    <section className="px-5 py-7">
+    <section className="campaign-block-comparison px-5 py-7">
       <h4 className="mb-4 font-serif text-lg font-semibold text-violet-950">{block.title}</h4>
       <div className="overflow-x-auto border-y border-violet-200">
         <table className="w-full min-w-[560px] border-collapse text-left text-sm">
@@ -95,7 +97,7 @@ function ComparisonBlock({ block }: { block: Extract<MaterialBlock, { type: "com
 
 function ConfusionBlock({ block }: { block: Extract<MaterialBlock, { type: "confusion" }> }) {
   return (
-    <section className="border-y border-amber-200/70 bg-amber-50/55 px-5 py-7">
+    <section className="campaign-block-confusion border-y border-amber-200/70 bg-amber-50/55 px-5 py-7">
       <h4 className="mb-4 flex items-center gap-2 font-serif text-lg font-semibold text-amber-950">
         <CircleAlert className="h-5 w-5" />容易混淆
       </h4>
@@ -114,7 +116,7 @@ function ConfusionBlock({ block }: { block: Extract<MaterialBlock, { type: "conf
 
 function FlowBlock({ block }: { block: Extract<MaterialBlock, { type: "flow" }> }) {
   return (
-    <section className="px-5 py-7">
+    <section className="campaign-block-flow px-5 py-7">
       <h4 className="font-serif text-lg font-semibold text-violet-950">{block.title}</h4>
       <ol className="mt-5 space-y-0">
         {block.steps.map((step, index) => (
@@ -131,7 +133,7 @@ function FlowBlock({ block }: { block: Extract<MaterialBlock, { type: "flow" }> 
 
 function ExamSignalBlock({ block }: { block: Extract<MaterialBlock, { type: "exam-signal" }> }) {
   return (
-    <section className="bg-violet-950 px-5 py-7 text-violet-50">
+    <section className="campaign-block-signal bg-violet-950 px-5 py-7 text-violet-50">
       <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr]">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-300">題幹訊號</p>
@@ -156,7 +158,7 @@ function ExamSignalBlock({ block }: { block: Extract<MaterialBlock, { type: "exa
 
 function ExampleBlock({ block }: { block: Extract<MaterialBlock, { type: "example" }> }) {
   return (
-    <details className="group border-y border-slate-200 px-5 py-6">
+    <details className="campaign-block-example group border-y border-slate-200 px-5 py-6">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-serif text-lg font-semibold text-violet-950">
         <span>例題｜{block.prompt}</span><span className="text-sm font-sans text-rose-800 group-open:hidden">展開推理</span>
       </summary>
@@ -168,7 +170,7 @@ function ExampleBlock({ block }: { block: Extract<MaterialBlock, { type: "exampl
             </li>
           ))}
         </ol>
-        <div className="border-l-2 border-rose-700 bg-rose-50/70 p-4 text-sm leading-6 text-rose-950">
+        <div className="campaign-example-answer border-l-2 border-rose-700 bg-rose-50/70 p-4 text-sm leading-6 text-rose-950">
           <strong className="block text-xs uppercase tracking-[0.15em]">Answer</strong>{block.answer}
         </div>
       </div>
@@ -178,7 +180,7 @@ function ExampleBlock({ block }: { block: Extract<MaterialBlock, { type: "exampl
 
 function MemoryBlock({ block }: { block: Extract<MaterialBlock, { type: "memory" }> }) {
   return (
-    <section className="relative overflow-hidden bg-rose-950 px-6 py-8 text-rose-50">
+    <section className="campaign-block-memory relative overflow-hidden bg-rose-950 px-6 py-8 text-rose-50">
       <BookMarked className="absolute -right-4 -top-5 h-28 w-28 text-rose-800/40" />
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rose-300">記憶錨點</p>
       <blockquote className="relative mt-2 font-serif text-2xl font-semibold leading-9">{block.anchor}</blockquote>
@@ -194,7 +196,7 @@ function CalloutBlock({ block }: { block: Extract<MaterialBlock, { type: "callou
     important: "border-rose-500 bg-rose-50/75 text-rose-950",
   };
   return (
-    <aside className={`mx-5 my-6 border-l-4 px-4 py-3 ${tones[block.tone]}`}>
+    <aside className={`campaign-block-callout mx-5 my-6 border-l-4 px-4 py-3 ${tones[block.tone]}`}>
       <strong className="text-sm">{block.title}</strong>
       <p className="mt-1 text-sm leading-6">{block.body}</p>
     </aside>
@@ -216,7 +218,7 @@ function QuizBlock({
   const [submitted, setSubmitted] = useState<Record<number, boolean>>({});
 
   return (
-    <section className="border-y-2 border-violet-900 bg-violet-50/45 px-5 py-7">
+    <section className="campaign-block-quiz border-y-2 border-violet-900 bg-violet-50/45 px-5 py-7">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Knowledge Check</p>
       <h4 className="mt-1 font-serif text-xl font-semibold text-violet-950">{block.title ?? "章節測驗"}</h4>
       <div className="mt-6 space-y-8">
@@ -236,7 +238,7 @@ function QuizBlock({
                   const revealWrong = isSubmitted && checked && !revealCorrect;
                   return (
                     <label
-                      className={`flex cursor-pointer gap-3 border px-3 py-3 text-sm leading-5 transition ${
+                      className={`campaign-quiz-option flex cursor-pointer gap-3 border px-3 py-3 text-sm leading-5 transition ${
                         revealCorrect
                           ? "border-emerald-500 bg-emerald-50 text-emerald-950"
                           : revealWrong
@@ -245,6 +247,7 @@ function QuizBlock({
                               ? "border-violet-600 bg-violet-100 text-violet-950"
                               : "border-violet-200 bg-white/70 text-slate-700 hover:border-violet-400"
                       }`}
+                      data-state={revealCorrect ? "correct" : revealWrong ? "wrong" : checked ? "selected" : "idle"}
                       key={`${option}-${optionIndex}`}
                     >
                       <input
@@ -281,7 +284,7 @@ function QuizBlock({
                   送出答案
                 </Button>
               ) : (
-                <div className={`mt-3 border-l-4 px-4 py-3 text-sm ${isCorrect ? "border-emerald-600 bg-emerald-50" : "border-rose-700 bg-rose-50"}`}>
+                <div className={`campaign-quiz-result mt-3 border-l-4 px-4 py-3 text-sm ${isCorrect ? "border-emerald-600 bg-emerald-50" : "border-rose-700 bg-rose-50"}`}>
                   <p className="flex items-center gap-2 font-semibold">
                     {isCorrect ? <CheckCircle2 className="h-4 w-4 text-emerald-700" /> : <CircleAlert className="h-4 w-4 text-rose-700" />}
                     {isCorrect ? "答對" : `答錯，正確答案是第 ${question.answer + 1} 項`}
@@ -328,6 +331,8 @@ export function PhoenixMaterialBlock({
 
 export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt }: Props) {
   const chapter = definition.chapters.find((item) => item.key === chapterKey) ?? definition.chapters[0];
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("all");
   const blocks = useMemo(
     () => {
       const authored = chapter.blocks.map((block, index) => ({ block, index }));
@@ -336,10 +341,20 @@ export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt 
     },
     [chapter, definition.presentation?.renderOrder],
   );
+  const visibleBlocks = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase("zh-TW");
+    return blocks.filter(({ block }) => {
+      const blockCategory = getBlockCategory(block);
+      const categoryMatches = category === "all" || category === blockCategory;
+      const queryMatches = !normalizedQuery
+        || JSON.stringify(block).toLocaleLowerCase("zh-TW").includes(normalizedQuery);
+      return categoryMatches && queryMatches;
+    });
+  }, [blocks, category, query]);
 
   return (
-    <article className="overflow-hidden bg-[#fffdfb] text-slate-900">
-      <header className="border-b border-rose-200 bg-[linear-gradient(120deg,#fff7f7_0%,#fbf7ff_60%,#fffdfb_100%)] px-5 py-7 md:px-8">
+    <article className="campaign-reading-surface overflow-hidden bg-[#fffdfb] text-slate-900" data-testid="campaign-reading-surface">
+      <header className="campaign-chapter-header border-b border-rose-200 bg-[linear-gradient(120deg,#fff7f7_0%,#fbf7ff_60%,#fffdfb_100%)] px-5 py-7 md:px-8">
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-violet-700">
           <span>{definition.subject}</span><span className="text-rose-300">/</span><span>約 {chapter.estimatedMinutes} 分鐘</span>
         </div>
@@ -351,15 +366,76 @@ export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt 
         </div>
       </header>
 
-      {blocks.map(({ block, index }) => (
-        <PhoenixMaterialBlock
-          block={block}
-          blockIndex={index}
-          chapterKey={chapter.key}
+      <div className="campaign-reading-tools" data-testid="campaign-reading-tools">
+        <div className="campaign-reading-tools__controls">
+          <label>
+            <Search aria-hidden="true" size={16} />
+            <input
+              aria-label="搜尋本章內容"
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="搜尋本章關鍵字"
+              type="search"
+              value={query}
+            />
+          </label>
+          <label>
+            <Tags aria-hidden="true" size={16} />
+            <select aria-label="篩選內容分類" onChange={(event) => setCategory(event.target.value)} value={category}>
+              <option value="all">全部內容</option>
+              <option value="concept">核心觀念</option>
+              <option value="comparison">比較與陷阱</option>
+              <option value="practice">例題與測驗</option>
+              <option value="memory">記憶錨點</option>
+            </select>
+          </label>
+        </div>
+        {visibleBlocks.length > 0 && (
+          <nav className="campaign-reading-index" aria-label="本章內容索引">
+            {visibleBlocks.map(({ block, index }) => (
+              <a href={`#${getBlockAnchor(chapter.key, block, index)}`} key={`index-${block.key ?? index}`}>
+                {getBlockLabel(block, index)}
+              </a>
+            ))}
+          </nav>
+        )}
+      </div>
+
+      {visibleBlocks.length > 0 ? visibleBlocks.map(({ block, index }) => (
+        <div
+          className="campaign-reading-block"
+          data-block-type={block.type}
+          id={getBlockAnchor(chapter.key, block, index)}
           key={block.key ?? `${chapter.key}-${block.type}-${index}`}
-          onQuizAttempt={onQuizAttempt}
-        />
-      ))}
+        >
+          <PhoenixMaterialBlock
+            block={block}
+            blockIndex={index}
+            chapterKey={chapter.key}
+            onQuizAttempt={onQuizAttempt}
+          />
+        </div>
+      )) : <p className="campaign-reading-empty">本章找不到符合目前搜尋與分類的內容。</p>}
     </article>
   );
+}
+
+function getBlockCategory(block: MaterialBlock) {
+  if (["position", "concept", "flow"].includes(block.type)) return "concept";
+  if (["comparison", "confusion", "exam-signal", "callout"].includes(block.type)) return "comparison";
+  if (["example", "quiz"].includes(block.type)) return "practice";
+  return "memory";
+}
+
+function getBlockLabel(block: MaterialBlock, index: number) {
+  if (block.type === "concept" || block.type === "comparison" || block.type === "flow" || block.type === "callout") return block.title;
+  if (block.type === "quiz") return block.title ?? "章節測驗";
+  if (block.type === "position") return `${block.category}的位置`;
+  if (block.type === "confusion") return "容易混淆";
+  if (block.type === "exam-signal") return "判題信號";
+  if (block.type === "example") return `例題 ${index + 1}`;
+  return "記憶錨點";
+}
+
+function getBlockAnchor(chapterKey: string, block: MaterialBlock, index: number) {
+  return `block-${chapterKey}-${block.key ?? `${block.type}-${index}`}`;
 }

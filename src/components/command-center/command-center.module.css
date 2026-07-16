@@ -76,6 +76,15 @@
 
 .charactersReady { opacity: 1; }
 
+.campaignCharacters {
+  height: auto;
+  max-width: none;
+  position: relative;
+  right: auto;
+  top: auto;
+  width: 100%;
+}
+
 .tableLight {
   background: radial-gradient(ellipse at 61% 88%, rgba(198, 165, 106, 0.22), transparent 38%);
   inset: 0;

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./command-center.module.css";
 
-export function ChromaKeyCharacters() {
+export function ChromaKeyCharacters({ variant = "hero" }: { variant?: "hero" | "campaign" }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
 
@@ -44,7 +44,7 @@ export function ChromaKeyCharacters() {
   return (
     <canvas
       aria-label="Phoenix 與 Rékaí 站在戰術桌前"
-      className={`${styles.characters} ${ready ? styles.charactersReady : ""}`}
+      className={`${styles.characters} ${variant === "campaign" ? styles.campaignCharacters : ""} ${ready ? styles.charactersReady : ""}`}
       data-testid="command-characters"
       ref={canvasRef}
       role="img"

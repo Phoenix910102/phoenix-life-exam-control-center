@@ -5,6 +5,10 @@ export type MaterialPresentation = NonNullable<MaterialDefinition["presentation"
 export const defaultPhoenixMaterialPresentation: MaterialPresentation = {
   layout: "immersive-academy",
   theme: "criminal-rose",
+  shellTheme: "criminal-rose",
+  readingTheme: "ivory-archive",
+  defaultMode: "reading",
+  availableModes: ["reading", "immersive", "night"],
   renderOrder: "authored",
   modules: [
     "battlefield",
@@ -27,6 +31,12 @@ export function normalizeMaterialPresentation(
   return {
     ...defaultPhoenixMaterialPresentation,
     ...presentation,
+    shellTheme: presentation.shellTheme ?? presentation.theme ?? "criminal-rose",
+    readingTheme: presentation.readingTheme ?? "ivory-archive",
+    defaultMode: presentation.defaultMode ?? "reading",
+    availableModes: presentation.availableModes?.length > 0
+      ? presentation.availableModes
+      : defaultPhoenixMaterialPresentation.availableModes,
     modules: presentation.modules?.length > 0
       ? presentation.modules
       : defaultPhoenixMaterialPresentation.modules,

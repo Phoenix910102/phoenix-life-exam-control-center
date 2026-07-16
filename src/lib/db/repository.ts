@@ -106,7 +106,7 @@ export async function listGameSessions(today?: string) {
 }
 
 export async function upsertSettings(patch: Partial<AppSettings>) {
-  const prev = (await db.settings.get("singleton")) ?? defaultSettings;
+  const prev = await getSettings();
   const next: AppSettings = {
     ...prev,
     ...patch,
@@ -114,13 +114,23 @@ export async function upsertSettings(patch: Partial<AppSettings>) {
     notifications: { ...prev.notifications, ...(patch.notifications ?? {}) },
     backups: { ...prev.backups, ...(patch.backups ?? {}) },
     models: { ...prev.models, ...(patch.models ?? {}) },
+    campaign: { ...prev.campaign, ...(patch.campaign ?? {}) },
   };
   await db.settings.put(next);
   return next;
 }
 
 export async function getSettings() {
-  return (await db.settings.get("singleton")) ?? defaultSettings;
+  const stored = await db.settings.get("singleton");
+  if (!stored) return defaultSettings;
+  return {
+    ...defaultSettings,
+    ...stored,
+    notifications: { ...defaultSettings.notifications, ...stored.notifications },
+    backups: { ...defaultSettings.backups, ...stored.backups },
+    models: { ...defaultSettings.models, ...stored.models },
+    campaign: { ...defaultSettings.campaign, ...stored.campaign },
+  };
 }
 
 export async function listStudyMaterials() {

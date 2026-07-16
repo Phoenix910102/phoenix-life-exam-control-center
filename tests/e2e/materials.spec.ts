@@ -20,11 +20,16 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
   await page.getByRole("button", { name: "確認匯入教材" }).click();
 
   await expect(page.getByRole("heading", { name: "梯度到底指哪裡？" }).first()).toBeVisible();
+  await expect(page.locator('[data-theme-hydrated="true"]')).toBeVisible();
+  await expect(page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "紙本閱讀" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("campaign-reading-surface")).toBeVisible();
+  await page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "沉浸" }).click();
+  await page.getByRole("button", { name: "戰場" }).click();
   await expect(page.getByTestId("battlefield-3d")).toBeVisible();
   await expect(page.getByRole("button", { name: "2D 戰術圖" })).toBeVisible();
   await page.getByRole("button", { name: "診斷" }).click();
   await expect(page.getByText("先命名卡住的層級，再決定要補位置、定義、比較或題幹訊號。")).toBeVisible();
-  await page.getByRole("button", { name: "閱讀" }).click();
+  await page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "紙本閱讀" }).click();
   const firstQuestion = page.locator("fieldset").filter({ hasText: "梯度 ∇L 的方向代表什麼" });
   await firstQuestion.getByLabel("損失上升最快的方向").check();
   await firstQuestion.getByRole("button", { name: "送出答案" }).click();
@@ -33,6 +38,7 @@ test("imports, reads, quizzes, and updates a Phoenix material without losing pro
   const progress = page.getByLabel("梯度到底指哪裡？進度");
   await progress.fill("60");
   await expect(progress).toHaveValue("60");
+  await page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "沉浸" }).click();
   await page.getByRole("button", { name: "戰場" }).click();
   await expect(page.getByTestId("battlefield-animation-status")).toContainText("作答正確，己方推進");
   await page.getByRole("button", { name: "2D 戰術圖" }).click();
@@ -74,8 +80,8 @@ test("unlocks a campaign achievement after securing a chapter", async ({ page })
     buffer: Buffer.from(JSON.stringify(sampleJson)),
   });
   await page.getByRole("button", { name: "確認匯入教材" }).click();
-  await page.getByRole("button", { name: "閱讀" }).click();
   await page.getByLabel("梯度到底指哪裡？進度").fill("100");
+  await page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "沉浸" }).click();
   await page.getByRole("button", { name: "戰場" }).click();
   await expect(page.getByTestId("battlefield-animation-status")).toContainText("章節完成，據點已固守");
   await page.getByRole("button", { name: "跳過目前動畫" }).click();
@@ -100,7 +106,12 @@ test("opens an imported Phoenix package as a dedicated immersive campaign", asyn
   await expect(page).toHaveURL(new RegExp(`/campaigns/${sampleJson.slug}$`));
   await expect(page.getByTestId("campaign-experience")).toBeVisible();
   await expect(page.getByRole("heading", { name: "梯度下降：梯度指上坡，模型走下坡" })).toBeVisible();
+  await expect(page.locator('[data-theme-hydrated="true"]')).toBeVisible();
+  await expect(page.getByTestId("campaign-reading-surface")).toBeVisible();
+  await expect(page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "紙本閱讀" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "沉浸" }).click();
   await expect(page.getByRole("navigation", { name: "教材模式" })).toBeVisible();
+  await page.getByRole("button", { name: "戰場" }).click();
   await expect(page.getByTestId("battlefield-3d")).toBeVisible();
 
   await page.getByRole("link", { name: "教材戰役庫" }).click();

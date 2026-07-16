@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { campaignReadingModeValues } from "@/components/campaign/theme/campaign-theme.types";
 import { intensitySchema } from "./task";
 
 export const appSettingsSchema = z.object({
@@ -25,6 +26,9 @@ export const appSettingsSchema = z.object({
     helelModel: z.string(),
     parserModel: z.string(),
   }),
+  campaign: z.object({
+    readingMode: z.enum(campaignReadingModeValues),
+  }),
 });
 
 export type AppSettings = z.infer<typeof appSettingsSchema>;
@@ -43,5 +47,8 @@ export const defaultSettings: AppSettings = {
   models: {
     helelModel: "gpt-5.2",
     parserModel: "gpt-5.2",
+  },
+  campaign: {
+    readingMode: "reading",
   },
 };

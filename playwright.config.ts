@@ -7,6 +7,7 @@ export default defineConfig({
   use: {
     baseURL,
     trace: "on-first-retry",
+    video: process.env.PLAYWRIGHT_VIDEO === "1" ? "on" : "retain-on-failure",
   },
   webServer: process.env.PLAYWRIGHT_SKIP_WEBSERVER === "1"
     ? undefined

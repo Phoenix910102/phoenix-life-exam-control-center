@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   BookOpen,
@@ -13,6 +13,9 @@ import {
   Map,
   ScanSearch,
 } from "lucide-react";
+import { ChromaKeyCharacters } from "@/components/command-center/ChromaKeyCharacters";
+import { ReadingModeToggle } from "@/components/campaign/theme/ReadingModeToggle";
+import { useCampaignTheme } from "@/components/campaign/theme/CampaignThemeProvider";
 import {
   PhoenixMaterialBlock,
   PhoenixMaterialRenderer,
@@ -86,6 +89,7 @@ export function ImmersiveAcademy({
   onBattlefieldEventReceiptsConsumed,
   onBattlefieldEventReceipts,
 }: Props) {
+  const { mode: readingMode, setMode: setReadingMode } = useCampaignTheme();
   const modules = Array.from(new Set([
     "battlefield",
     "achievements",
@@ -93,7 +97,7 @@ export function ImmersiveAcademy({
     ...(definition.presentation?.modules ?? modeDefinitions.map((mode) => mode.id)),
   ]));
   const availableModes = modeDefinitions.filter((mode) => modules.includes(mode.id));
-  const [mode, setMode] = useState<Mode>(availableModes[0]?.id ?? "reader");
+  const [mode, setMode] = useState<Mode>(readingMode === "immersive" ? (availableModes[0]?.id ?? "reader") : "reader");
   const [lessonIndex, setLessonIndex] = useState(0);
   const [blocker, setBlocker] = useState<(typeof blockerOptions)[number][0]>("position");
   const chapter = definition.chapters.find((item) => item.key === chapterKey) ?? definition.chapters[0];
@@ -103,22 +107,36 @@ export function ImmersiveAcademy({
   const currentLesson = chapter.blocks[Math.min(lessonIndex, chapter.blocks.length - 1)];
   const chapterProgress = progress.chapterProgress[chapter.key] ?? 0;
 
+  useEffect(() => {
+    if (readingMode !== "immersive" && mode !== "reader") {
+      setMode("reader");
+      setLessonIndex(0);
+    }
+  }, [mode, readingMode]);
+
   const switchMode = (next: Mode) => {
     setMode(next);
     setLessonIndex(0);
   };
 
   return (
-    <section className={styles.shell} data-theme={definition.presentation?.theme ?? "criminal-rose"}>
+    <section
+      className={styles.shell}
+      data-display-mode={readingMode}
+      data-theme={definition.presentation?.shellTheme ?? definition.presentation?.theme ?? "criminal-rose"}
+    >
       <header className={styles.masthead}>
         <div>
           <p className={styles.eyebrow}>Phoenix Immersive Academy / {definition.subject}</p>
           <h2 className={styles.title}>{definition.title}</h2>
           <p className={styles.description}>{definition.description}</p>
         </div>
-        <div className={styles.seal}>
-          <strong>{progress.overallProgress}%</strong>
-          <span>主線控制率 · v{definition.version}</span>
+        <div className={styles.mastheadControls}>
+          <ReadingModeToggle />
+          <div className={styles.seal}>
+            <strong>{progress.overallProgress}%</strong>
+            <span>主線控制率 · v{definition.version}</span>
+          </div>
         </div>
       </header>
 
@@ -142,22 +160,24 @@ export function ImmersiveAcademy({
         </nav>
       )}
 
-      <div className={`${styles.workbench} ${mode === "battlefield" ? styles.workbenchBattlefield : ""}`}>
-        <nav className={styles.rail} aria-label="教材模式">
-          {availableModes.map(({ id, label, icon: Icon }) => (
-            <button
-              aria-current={mode === id ? "page" : undefined}
-              className={`${styles.modeButton} ${mode === id ? styles.modeButtonActive : ""}`}
-              key={id}
-              onClick={() => switchMode(id)}
-              title={`${label}模式`}
-              type="button"
-            >
-              <Icon aria-hidden="true" size={18} />
-              <span>{label}</span>
-            </button>
-          ))}
-        </nav>
+      <div className={`${styles.workbench} ${readingMode !== "immersive" ? styles.workbenchReading : ""} ${mode === "battlefield" ? styles.workbenchBattlefield : ""}`}>
+        {readingMode === "immersive" && (
+          <nav className={styles.rail} aria-label="教材模式">
+            {availableModes.map(({ id, label, icon: Icon }) => (
+              <button
+                aria-current={mode === id ? "page" : undefined}
+                className={`${styles.modeButton} ${mode === id ? styles.modeButtonActive : ""}`}
+                key={id}
+                onClick={() => switchMode(id)}
+                title={`${label}模式`}
+                type="button"
+              >
+                <Icon aria-hidden="true" size={18} />
+                <span>{label}</span>
+              </button>
+            ))}
+          </nav>
+        )}
 
         <div className={styles.content}>
           <div className={styles.modeHeader}>
@@ -176,9 +196,21 @@ export function ImmersiveAcademy({
                 </button>
               </div>
             )}
+            {readingMode !== "immersive" && (
+              <button
+                className={styles.immersiveAction}
+                onClick={() => {
+                  setReadingMode("immersive");
+                  switchMode("lesson");
+                }}
+                type="button"
+              >
+                <GraduationCap size={16} />進入上課／沉浸模式
+              </button>
+            )}
           </div>
 
-          <div className={styles.modeContent}>
+          <div className={`${styles.modeContent} ${mode === "reader" ? "campaign-reading-stage" : ""}`}>
             {mode === "battlefield" && (
               <Battlefield3D
                 definition={definition}
@@ -236,6 +268,9 @@ export function ImmersiveAcademy({
         </div>
 
         <aside className={`${styles.intel} ${mode === "battlefield" ? styles.intelBattlefield : ""}`}>
+          <div className={styles.characterPresence} aria-hidden="true">
+            <ChromaKeyCharacters variant="campaign" />
+          </div>
           <section className={styles.intelSection}>
             <p className={styles.intelLabel}>當前章節</p>
             <strong>{String(chapterIndex + 1).padStart(2, "0")} · {chapterProgress}%</strong>
@@ -261,7 +296,7 @@ export function ImmersiveAcademy({
           </section>
         </aside>
       </div>
-      {modules.includes("floating-console") && (
+      {readingMode === "immersive" && modules.includes("floating-console") && (
         <FloatingAcademyConsole
           chapterTitle={chapter.title}
           onEventReceipts={onBattlefieldEventReceipts}

@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  campaignReadingModeValues,
+  campaignReadingThemeValues,
+} from "@/components/campaign/theme/campaign-theme.types";
 
 export const PHOENIX_MATERIAL_SCHEMA = "phoenix.material.v1" as const;
 
@@ -21,6 +25,8 @@ export const materialThemeSchema = z.enum([
   "command-rose",
   "black-dossier",
 ]);
+export const campaignReadingModeSchema = z.enum(campaignReadingModeValues);
+export const campaignReadingThemeSchema = z.enum(campaignReadingThemeValues);
 export const materialModuleSchema = z.enum([
   "battlefield",
   "roadmap",
@@ -57,11 +63,24 @@ export const materialPresentationSchema = z
   .object({
     layout: materialLayoutSchema.default("editorial"),
     theme: materialThemeSchema.default("criminal-rose"),
+    shellTheme: materialThemeSchema.optional(),
+    readingTheme: campaignReadingThemeSchema.default("ivory-archive"),
+    defaultMode: campaignReadingModeSchema.default("reading"),
+    availableModes: z.array(campaignReadingModeSchema).min(1).default([...campaignReadingModeValues]),
     renderOrder: z.enum(["authored", "phoenix-default"]).default("phoenix-default"),
     modules: z.array(materialModuleSchema).default(["reader", "quiz"]),
     battlefield3d: battlefield3dSchema.optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((presentation, ctx) => {
+    if (!presentation.availableModes.includes(presentation.defaultMode)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["availableModes"],
+        message: "availableModes 必須包含 defaultMode",
+      });
+    }
+  });
 
 export const materialPrerequisiteSchema = z
   .object({
