@@ -10,6 +10,10 @@ test("command center presents the primary mission and global status", async ({ p
   await expect(page.getByTestId("upcoming-reward")).toContainText("Night Commander");
   await expect(page.getByRole("button", { name: "進入戰役" })).toBeVisible();
   await expect(page.getByRole("button", { name: "軍需庫" })).toBeVisible();
+
+  const scene = page.getByTestId("command-scene");
+  await page.mouse.move(1200, 220);
+  await expect.poll(() => scene.evaluate((element) => element.style.getPropertyValue("--pointer-x"))).not.toBe("0");
 });
 
 test("command center keeps the primary actions visible on mobile", async ({ page }) => {
