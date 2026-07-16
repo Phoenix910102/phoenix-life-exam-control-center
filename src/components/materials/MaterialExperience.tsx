@@ -4,6 +4,7 @@ import type { MaterialDefinition, MaterialProgress, MaterialQuizAttempt } from "
 import type { DomainEventReceipt } from "@/types/domainEvent";
 import { ImmersiveAcademy } from "@/components/materials/immersive/ImmersiveAcademy";
 import { PhoenixMaterialRenderer } from "@/components/materials/PhoenixMaterialRenderer";
+import { normalizeMaterialPresentation } from "@/lib/materials/presentation";
 
 type Props = {
   definition: MaterialDefinition;
@@ -18,16 +19,20 @@ type Props = {
 };
 
 export function MaterialExperience(props: Props) {
-  const layout = props.definition.presentation?.layout ?? "editorial";
+  const definition = props.definition.kind === "phoenix-package"
+    ? { ...props.definition, presentation: normalizeMaterialPresentation(props.definition.presentation) }
+    : props.definition;
+  const normalizedProps = { ...props, definition };
+  const layout = definition.presentation?.layout ?? "editorial";
 
-  if (layout === "immersive-academy") return <ImmersiveAcademy {...props} />;
+  if (layout === "immersive-academy") return <ImmersiveAcademy {...normalizedProps} />;
 
   if (layout === "compact") {
     return (
       <div className="mx-auto max-w-3xl border-x border-slate-200 bg-white">
         <PhoenixMaterialRenderer
           chapterKey={props.chapterKey}
-          definition={props.definition}
+          definition={definition}
           onQuizAttempt={props.onQuizAttempt}
         />
       </div>
@@ -37,7 +42,7 @@ export function MaterialExperience(props: Props) {
   return (
     <PhoenixMaterialRenderer
       chapterKey={props.chapterKey}
-      definition={props.definition}
+      definition={definition}
       onQuizAttempt={props.onQuizAttempt}
     />
   );

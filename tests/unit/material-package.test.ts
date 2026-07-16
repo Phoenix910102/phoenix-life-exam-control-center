@@ -4,11 +4,13 @@ import { db } from "@/lib/db/client";
 import {
   assertImportAllowed,
   getMaterialImportStatus,
+  materialPackageToDefinition,
   parseMaterialPackage,
 } from "@/lib/materials/packageImporter";
 import {
   getMaterialBundle,
   importPhoenixMaterialPackage,
+  openMaterialCampaign,
   updateMaterialChapterProgress,
 } from "@/lib/db/repository";
 import { loadRemoteMaterialCatalog } from "@/lib/materials/githubRemote";
@@ -41,6 +43,29 @@ describe("Phoenix material package", () => {
         quality: "auto",
       });
     }
+  });
+
+  it("gives packages without presentation metadata the immersive campaign defaults", () => {
+    const input = structuredClone(sampleJson) as Record<string, unknown>;
+    delete input.presentation;
+    const parsed = parseMaterialPackage(input);
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) return;
+
+    const definition = materialPackageToDefinition(parsed.package, "default.phoenix-material.json");
+    expect(definition.presentation).toMatchObject({
+      layout: "immersive-academy",
+      theme: "criminal-rose",
+      renderOrder: "authored",
+    });
+    expect(definition.presentation?.modules).toEqual(expect.arrayContaining([
+      "battlefield",
+      "reader",
+      "duel",
+      "diagnostic",
+      "quiz",
+      "floating-console",
+    ]));
   });
 
   it("rejects unsupported 3D battlefield configuration values", () => {
@@ -81,6 +106,20 @@ describe("Phoenix material package", () => {
     await importPhoenixMaterialPackage(material, "sample.phoenix-material.json");
     await expect(importPhoenixMaterialPackage(material, "sample.phoenix-material.json")).rejects.toThrow("不會重複匯入");
     expect(await db.materialDefinitions.count()).toBe(1);
+  });
+
+  it("records campaign openings and restores the existing active chapter", async () => {
+    const material = samplePackage();
+    await importPhoenixMaterialPackage(material, "sample.phoenix-material.json");
+    const opened = await openMaterialCampaign(material.slug);
+
+    expect(opened?.progress.activeChapterKey).toBe(material.chapters[0].key);
+    expect(opened?.progress.lastOpenedAt).toBeTruthy();
+    expect(opened?.eventReceipts[0].event).toMatchObject({
+      type: "material.opened",
+      materialSlug: material.slug,
+    });
+    expect(await db.domainEvents.where("type").equals("material.opened").count()).toBe(1);
   });
 
   it("preserves matching chapter progress and starts new chapters at zero", async () => {

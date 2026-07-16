@@ -1,0 +1,136 @@
+.campaign {
+  margin: 0 auto;
+  max-width: 1680px;
+  min-width: 0;
+}
+
+.commandBar {
+  align-items: center;
+  background: rgba(9, 8, 9, 0.72);
+  border-bottom: 1px solid var(--command-line);
+  border-top: 1px solid var(--command-line);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  min-height: 48px;
+  padding: 7px 12px;
+}
+
+.commandMeta,
+.commandActions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.commandMeta a,
+.centerLink,
+.returnLink {
+  align-items: center;
+  color: var(--command-gold-soft);
+  display: inline-flex;
+  font: 0.58rem/1 var(--command-font-data);
+  gap: 6px;
+  letter-spacing: 0.08em;
+  min-height: 32px;
+  text-decoration: none;
+}
+
+.commandMeta span {
+  border-left: 1px solid var(--command-line);
+  color: var(--command-muted);
+  font: 0.54rem/1 var(--command-font-data);
+  padding-left: 8px;
+}
+
+.activeStatus {
+  align-items: center;
+  color: var(--command-gold-soft);
+  display: inline-flex;
+  font: 0.56rem/1 var(--command-font-data);
+  gap: 6px;
+  letter-spacing: 0.08em;
+}
+
+.activeButton {
+  border-color: var(--command-line-strong) !important;
+  border-radius: 2px !important;
+  color: var(--command-gold-soft) !important;
+}
+
+.centerLink {
+  border-left: 1px solid var(--command-line);
+  padding-left: 10px;
+}
+
+.experienceFrame {
+  background: rgba(7, 6, 7, 0.78);
+  border: 1px solid var(--command-line);
+  min-height: 650px;
+  overflow: hidden;
+}
+
+.campaign :global(button):focus-visible,
+.campaign :global(a):focus-visible {
+  outline: 2px solid var(--command-gold-soft);
+  outline-offset: 3px;
+}
+
+.statePanel {
+  align-items: center;
+  background: rgba(9, 8, 9, 0.7);
+  border: 1px solid var(--command-line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 8vh auto 0;
+  max-width: 760px;
+  min-height: 420px;
+  padding: 42px;
+  position: relative;
+  text-align: center;
+}
+
+.statePanel::before {
+  border: 1px solid rgba(198, 165, 106, 0.14);
+  content: "";
+  height: 190px;
+  position: absolute;
+  transform: rotate(45deg);
+  width: 190px;
+}
+
+.stateSeal {
+  align-items: center;
+  border: 1px solid var(--command-line-strong);
+  color: var(--command-gold);
+  display: flex;
+  height: 62px;
+  justify-content: center;
+  position: relative;
+  transform: rotate(45deg);
+  width: 62px;
+  z-index: 1;
+}
+
+.stateSeal svg { transform: rotate(-45deg); }
+.stateSeal .spinner { animation: spin 1.2s linear infinite; }
+.kicker { color: var(--command-rose-bright) !important; font: 0.6rem/1 var(--command-font-data); letter-spacing: 0.17em; margin: 28px 0 0 !important; position: relative; }
+.statePanel h1 { font-family: var(--command-font-display); font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 500; margin: 12px 0 0; position: relative; }
+.statePanel > p:not(.kicker) { color: var(--command-muted); font-size: 0.8rem; line-height: 1.8; margin: 14px 0 0; max-width: 54ch; position: relative; }
+.returnLink { border: 1px solid var(--command-line-strong); margin-top: 24px; padding: 0 14px; position: relative; }
+
+@keyframes spin { to { transform: rotate(315deg); } }
+
+@media (max-width: 760px) {
+  .commandBar { align-items: stretch; flex-direction: column; padding: 10px; }
+  .commandActions { justify-content: space-between; }
+  .experienceFrame { border-left: 0; border-right: 0; margin-left: -18px; margin-right: -18px; }
+  .statePanel { margin-top: 2vh; min-height: 390px; padding: 30px 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stateSeal .spinner { animation: none; }
+}

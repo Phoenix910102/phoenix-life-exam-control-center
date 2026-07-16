@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   BookOpen,
   Check,
@@ -233,6 +234,7 @@ function PackagePreview({
 }
 
 export default function MaterialsPage() {
+  const router = useRouter();
   const [isHydrated, setIsHydrated] = useState(false);
   const packageInputRef = useRef<HTMLInputElement>(null);
   const legacyInputRef = useRef<HTMLInputElement>(null);
@@ -659,6 +661,14 @@ export default function MaterialsPage() {
                   <p className="mt-1 text-sm text-muted-foreground">{formatLabels[selected.definition.format]} · {selected.definition.sourceFileName}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  {selected.definition.kind === "phoenix-package" && (
+                    <Button
+                      className={archiveStyles.continueCampaign}
+                      onClick={() => router.push(`/campaigns/${encodeURIComponent(selected.definition.slug)}`)}
+                    >
+                      <ChevronRight className="mr-2 h-4 w-4" />繼續戰役
+                    </Button>
+                  )}
                   {!selected.progress.isActive && <Button variant="outline" onClick={async () => { await setActiveMaterial(selected.definition.slug); await refresh(selected.definition.slug); notify("主線已切換", selected.definition.title); }}><Flag className="mr-2 h-4 w-4" />設為主線</Button>}
                   {selected.definition.kind === "legacy" && <Button variant="outline" onClick={openStandalone}><ExternalLink className="mr-2 h-4 w-4" />獨立閱讀</Button>}
                   <Button variant="outline" className="text-red-700" onClick={async () => { if (!window.confirm(`確定刪除「${selected.definition.title}」與它的進度？`)) return; await deleteMaterialBundle(selected.definition.slug); await refresh(); notify("教材已刪除"); }}>

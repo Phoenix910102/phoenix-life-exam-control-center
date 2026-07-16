@@ -16,6 +16,7 @@ const navigation = [
 ] as const;
 
 function isActivePath(pathname: string, href: string) {
+  if (href === "/materials" && pathname.startsWith("/campaigns/")) return true;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

@@ -211,6 +211,31 @@ export async function getMaterialBundle(slug: string): Promise<MaterialBundle | 
   return { definition, progress };
 }
 
+export async function openMaterialCampaign(slug: string) {
+  const openedAt = new Date().toISOString();
+  const next = await db.transaction("rw", db.materialDefinitions, db.materialProgress, async () => {
+    const definition = await db.materialDefinitions.get(slug);
+    if (!definition) return undefined;
+    const current = (await db.materialProgress.get(slug)) ?? emptyProgressForDefinition(definition);
+    const progress: MaterialProgress = {
+      ...current,
+      activeChapterKey: current.activeChapterKey ?? definition.chapters[0]?.key,
+      lastOpenedAt: openedAt,
+    };
+    await db.materialProgress.put(progress);
+    return { definition, progress };
+  });
+  if (!next) return undefined;
+  const eventReceipt = await processDomainEvent({
+    type: "material.opened",
+    materialSlug: slug,
+    chapterKey: next.progress.activeChapterKey,
+    occurredAt: openedAt,
+    payload: { version: next.definition.version },
+  });
+  return { ...next, eventReceipts: [eventReceipt] };
+}
+
 export async function importLegacyStudyMaterial(material: StudyMaterial) {
   const converted = legacyStudyMaterialToRecords(material);
   await db.transaction("rw", db.studyMaterials, db.materialDefinitions, db.materialProgress, async () => {

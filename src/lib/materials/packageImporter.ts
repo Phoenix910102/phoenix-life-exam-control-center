@@ -10,6 +10,7 @@ import {
   type MaterialDefinition,
   type MaterialProgress,
 } from "@/types/materialRecord";
+import { normalizeMaterialPresentation } from "@/lib/materials/presentation";
 
 export type MaterialImportStatus = "new" | "same-version" | "upgrade" | "downgrade";
 
@@ -159,6 +160,7 @@ export function materialPackageToDefinition(
   return materialDefinitionSchema.parse({
     kind: "phoenix-package",
     ...material,
+    presentation: normalizeMaterialPresentation(material.presentation),
     format: "phoenix-package",
     sourceFileName,
     mimeType: "application/json",

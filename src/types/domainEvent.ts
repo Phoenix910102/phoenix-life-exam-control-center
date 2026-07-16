@@ -3,6 +3,7 @@ import { z } from "zod";
 export const domainEventTypeSchema = z.enum([
   "material.imported",
   "material.updated",
+  "material.opened",
   "chapter.opened",
   "chapter.progress.changed",
   "chapter.completed",

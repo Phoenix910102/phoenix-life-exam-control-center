@@ -85,6 +85,34 @@ test("unlocks a campaign achievement after securing a chapter", async ({ page })
   await expect(page.getByText(/解鎖於/).first()).toBeVisible();
 });
 
+test("opens an imported Phoenix package as a dedicated immersive campaign", async ({ page }) => {
+  await page.goto("/materials");
+  await expect(page.getByTestId("materials-page")).toHaveAttribute("data-hydrated", "true");
+  const packageInput = page.locator('input[accept*=".phoenix-material.json"]');
+  await packageInput.setInputFiles({
+    name: "example-gradient-descent.phoenix-material.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(sampleJson)),
+  });
+  await page.getByRole("button", { name: "確認匯入教材" }).click();
+
+  await page.getByRole("button", { name: "繼續戰役" }).click();
+  await expect(page).toHaveURL(new RegExp(`/campaigns/${sampleJson.slug}$`));
+  await expect(page.getByTestId("campaign-experience")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "梯度下降：梯度指上坡，模型走下坡" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "教材模式" })).toBeVisible();
+  await expect(page.getByTestId("battlefield-3d")).toBeVisible();
+
+  await page.getByRole("link", { name: "教材戰役庫" }).click();
+  await expect(page).toHaveURL(/\/materials$/);
+});
+
+test("shows a campaign-specific missing state for an unknown material", async ({ page }) => {
+  await page.goto("/campaigns/not-imported");
+  await expect(page.getByRole("heading", { name: "找不到教材戰役" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "返回教材戰役庫" })).toBeVisible();
+});
+
 test("serves the criminal rose legacy prototype with its local assets", async ({ page }) => {
   await page.goto("/legacy/criminal-law-general-principles/");
   await expect(page).toHaveTitle("罪責之骨｜刑法總則上課系統");
