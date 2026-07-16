@@ -31,6 +31,7 @@ export type PhoenixMaterialBlockProps = {
 const blockPriority: Record<MaterialBlock["type"], number> = {
   position: 0,
   concept: 1,
+  "term-card": 2,
   callout: 2,
   comparison: 3,
   confusion: 3,
@@ -65,6 +66,34 @@ function ConceptBlock({ block }: { block: Extract<MaterialBlock, { type: "concep
     <section className="campaign-block-concept grid gap-3 border-b border-slate-200 px-5 py-7 md:grid-cols-[150px_minmax(0,1fr)]">
       <h4 className="font-serif text-lg font-semibold text-violet-950">{block.title}</h4>
       <p className="whitespace-pre-line text-[15px] leading-7 text-slate-700">{block.body}</p>
+    </section>
+  );
+}
+
+function TermCardBlock({ block }: { block: Extract<MaterialBlock, { type: "term-card" }> }) {
+  const levelLabels = {
+    core: "A 級核心",
+    frequent: "B 級常考",
+    index: "C 級索引",
+  };
+
+  return (
+    <section className="campaign-block-term-card">
+      <header className="campaign-term-card__header">
+        <div>
+          <p className="campaign-term-card__category">{block.category} · {levelLabels[block.level]}</p>
+          <h4>{block.term}</h4>
+          {block.english && <p className="campaign-term-card__english">{block.english}</p>}
+        </div>
+        <span className="campaign-term-card__marker" aria-hidden="true">TERM</span>
+      </header>
+      <p className="campaign-term-card__one-liner">{block.oneLiner}</p>
+      <dl className="campaign-term-card__fields">
+        <div><dt>判題信號</dt><dd>{block.questionSignal}</dd></div>
+        <div><dt>應用情況</dt><dd>{block.application}</dd></div>
+        <div><dt>考題例子</dt><dd>{block.examExample}</dd></div>
+        <div className="campaign-term-card__confusion"><dt>容易混</dt><dd>{block.confusion}</dd></div>
+      </dl>
     </section>
   );
 }
@@ -310,6 +339,7 @@ export function PhoenixMaterialBlock({
   switch (block.type) {
     case "position": return <PositionBlock block={block} />;
     case "concept": return <ConceptBlock block={block} />;
+    case "term-card": return <TermCardBlock block={block} />;
     case "comparison": return <ComparisonBlock block={block} />;
     case "confusion": return <ConfusionBlock block={block} />;
     case "flow": return <FlowBlock block={block} />;
@@ -420,13 +450,14 @@ export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt 
 }
 
 function getBlockCategory(block: MaterialBlock) {
-  if (["position", "concept", "flow"].includes(block.type)) return "concept";
+  if (["position", "concept", "term-card", "flow"].includes(block.type)) return "concept";
   if (["comparison", "confusion", "exam-signal", "callout"].includes(block.type)) return "comparison";
   if (["example", "quiz"].includes(block.type)) return "practice";
   return "memory";
 }
 
 function getBlockLabel(block: MaterialBlock, index: number) {
+  if (block.type === "term-card") return block.term;
   if (block.type === "concept" || block.type === "comparison" || block.type === "flow" || block.type === "callout") return block.title;
   if (block.type === "quiz") return block.title ?? "章節測驗";
   if (block.type === "position") return `${block.category}的位置`;

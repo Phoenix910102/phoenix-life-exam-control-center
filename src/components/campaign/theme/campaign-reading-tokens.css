@@ -146,6 +146,84 @@
   background: var(--campaign-paper-raised) !important;
 }
 
+.campaign-reading-surface .campaign-block-term-card {
+  background: var(--campaign-paper-raised) !important;
+  border-bottom: 1px solid var(--campaign-reading-line);
+  padding-bottom: clamp(24px, 4vw, 38px) !important;
+  padding-top: clamp(24px, 4vw, 38px) !important;
+}
+
+.campaign-term-card__header {
+  align-items: start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.campaign-term-card__category,
+.campaign-term-card__english {
+  color: var(--campaign-muted-ink) !important;
+  font-size: 0.76rem !important;
+  letter-spacing: 0.04em;
+  line-height: 1.45 !important;
+  margin: 0;
+}
+
+.campaign-term-card__header h4 {
+  font-size: 1.35rem;
+  margin: 4px 0 2px;
+}
+
+.campaign-term-card__marker {
+  border: 1px solid var(--campaign-reading-line);
+  color: var(--campaign-muted-ink);
+  font: 0.64rem/1.2 "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.14em;
+  padding: 5px 7px;
+}
+
+.campaign-term-card__one-liner {
+  border-left: 3px solid var(--campaign-reading-accent);
+  font-weight: 650;
+  margin: 18px 0 0;
+  padding: 3px 0 3px 14px;
+}
+
+.campaign-term-card__fields {
+  display: grid;
+  gap: 0;
+  margin: 20px 0 0;
+}
+
+.campaign-term-card__fields > div {
+  border-top: 1px solid var(--campaign-reading-line);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 92px minmax(0, 1fr);
+  padding: 12px 0;
+}
+
+.campaign-term-card__fields dt {
+  color: var(--campaign-reading-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.campaign-term-card__fields dd {
+  color: var(--campaign-ink);
+  font-size: 0.95rem;
+  line-height: 1.72;
+  margin: 0;
+}
+
+.campaign-term-card__confusion {
+  background: color-mix(in srgb, var(--campaign-reading-accent-soft) 55%, transparent);
+  margin: 0 -12px;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
 .campaign-reading-surface .campaign-block-signal,
 .campaign-reading-surface .campaign-block-memory {
   background: var(--campaign-reading-accent-soft) !important;
@@ -271,6 +349,8 @@
   .campaign-reading-surface li,
   .campaign-reading-surface td,
   .campaign-reading-surface label { font-size: 16px; line-height: 1.78; }
+  .campaign-term-card__fields > div { gap: 4px; grid-template-columns: 1fr; }
+  .campaign-term-card__marker { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

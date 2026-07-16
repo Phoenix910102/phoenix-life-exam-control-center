@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  BrainCircuit,
   BookOpen,
   Check,
   CheckCircle2,
@@ -411,6 +412,26 @@ export default function MaterialsPage() {
     }
   };
 
+  const previewAiapPackage = async () => {
+    try {
+      const response = await fetch("/api/materials/aiap", { headers: apiHeaders() });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.message ?? "AIAP 教材讀取失敗");
+      const material = body.package as MaterialPackage;
+      const existing = bundles.find((bundle) => bundle.definition.slug === material.slug)?.definition;
+      setCandidate({
+        package: material,
+        fileName: body.fileName as string,
+        status: getMaterialImportStatus(material, existing),
+        source: "local",
+      });
+      setSetAsActive(!activeMaterial);
+      setAllowDowngrade(false);
+    } catch (error) {
+      notify("AIAP 教材讀取失敗", error instanceof Error ? error.message : "請稍後再試");
+    }
+  };
+
   const selectRemoteCandidate = (item: RemoteCatalogItem) => {
     const existing = bundles.find((bundle) => bundle.definition.slug === item.package.slug)?.definition;
     setCandidate({
@@ -479,6 +500,9 @@ export default function MaterialsPage() {
           </p>
         </div>
         <div className={archiveStyles.entryRail}>
+          <Button className={archiveStyles.entryButton} variant="outline" onClick={previewAiapPackage}>
+            <BrainCircuit className="mr-2 h-4 w-4" />載入 AIAP 全科教材
+          </Button>
           <Button className={archiveStyles.entryButton} variant="outline" onClick={previewExamplePackage}>
             <Sparkles className="mr-2 h-4 w-4" />預覽 3D 範例
           </Button>
@@ -610,6 +634,9 @@ export default function MaterialsPage() {
             <p>匯入第一份 Phoenix 教材，或從 Rékaí 的教材收件匣接收新的戰役檔案。</p>
             <Button className={archiveStyles.entryButton} variant="outline" onClick={previewExamplePackage}>
               <Sparkles className="mr-2 h-4 w-4" />預覽內建範例
+            </Button>
+            <Button className={archiveStyles.entryButton} variant="outline" onClick={previewAiapPackage}>
+              <BrainCircuit className="mr-2 h-4 w-4" />載入 AIAP 全科教材
             </Button>
           </div>
         </section>

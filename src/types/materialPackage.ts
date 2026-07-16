@@ -136,6 +136,22 @@ export const conceptBlockSchema = z
   })
   .strict();
 
+export const termCardBlockSchema = z
+  .object({
+    ...blockMetadata,
+    type: z.literal("term-card"),
+    term: requiredText("term"),
+    english: requiredText("english").optional(),
+    category: requiredText("category"),
+    level: z.enum(["core", "frequent", "index"]).default("index"),
+    oneLiner: requiredText("oneLiner"),
+    questionSignal: requiredText("questionSignal"),
+    application: requiredText("application"),
+    examExample: requiredText("examExample"),
+    confusion: requiredText("confusion"),
+  })
+  .strict();
+
 export const comparisonBlockSchema = z
   .object({
     ...blockMetadata,
@@ -243,6 +259,7 @@ export const quizBlockSchema = z
 export const materialBlockSchema = z.discriminatedUnion("type", [
   positionBlockSchema,
   conceptBlockSchema,
+  termCardBlockSchema,
   comparisonBlockSchema,
   confusionBlockSchema,
   flowBlockSchema,
