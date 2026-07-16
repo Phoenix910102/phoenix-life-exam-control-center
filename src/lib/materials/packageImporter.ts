@@ -190,7 +190,7 @@ export function createMaterialProgress(material: MaterialPackage, isActive = fal
   });
 }
 
-export function mergeMaterialProgress(material: MaterialPackage, existing?: MaterialProgress): MaterialProgress {
+export function mergeMaterialProgress(material: MaterialPackage, existing?: MaterialProgress, existingDefinition?: MaterialDefinition): MaterialProgress {
   if (!existing) return createMaterialProgress(material);
 
   const nextKeys = new Set(material.chapters.map((chapter) => chapter.key));
@@ -208,6 +208,17 @@ export function mergeMaterialProgress(material: MaterialPackage, existing?: Mate
     ? existing.activeChapterKey
     : material.chapters[0]?.key;
 
+  const questionKeyByPrompt = new Map((material.collections?.questions ?? []).map((question) => [question.prompt, question.key]));
+  const quizAttempts = existing.quizAttempts
+    .filter((attempt) => nextKeys.has(attempt.chapterKey))
+    .map((attempt) => {
+      if (attempt.questionKey || !existingDefinition) return attempt;
+      const chapter = existingDefinition.chapters.find((item) => item.key === attempt.chapterKey);
+      const block = chapter?.blocks[attempt.blockIndex];
+      const oldQuestion = block?.type === "quiz" ? block.questions[attempt.questionIndex] : undefined;
+      const questionKey = oldQuestion ? questionKeyByPrompt.get(oldQuestion.question) : undefined;
+      return questionKey ? { ...attempt, questionKey } : attempt;
+    });
   return materialProgressSchema.parse({
     ...existing,
     materialSlug: material.slug,
@@ -215,7 +226,7 @@ export function mergeMaterialProgress(material: MaterialPackage, existing?: Mate
     chapterProgress,
     completedChapterKeys,
     orphanedProgress,
-    quizAttempts: existing.quizAttempts.filter((attempt) => nextKeys.has(attempt.chapterKey)),
+    quizAttempts,
     overallProgress: calculateOverallProgress(chapterProgress, [...nextKeys]),
   });
 }

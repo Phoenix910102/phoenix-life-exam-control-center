@@ -1,0 +1,182 @@
+{
+  "generatedAt": "2026-07-16T14:33:48.401Z",
+  "originals": {
+    "snapshots": [
+      {
+        "file": "aiap-battle-rose.html",
+        "chapters": 15,
+        "terms": 305,
+        "levels": {
+          "A": 95,
+          "B": 67,
+          "C": 143
+        },
+        "categories": [
+          "00 基礎骨架",
+          "03 訓練與驗證",
+          "01 學習型態",
+          "01 任務類型",
+          "02 資料處理",
+          "05 評估指標",
+          "04 傳統模型",
+          "06 深度學習",
+          "07 LLM",
+          "08 生成式 AI",
+          "SP 微調與持續學習",
+          "10 部署與壓縮",
+          "10 MLOps",
+          "11 治理與安全",
+          "12 統計與分布",
+          "13 大數據工程",
+          "14 視覺化與分析工具"
+        ],
+        "sources": 37
+      },
+      {
+        "file": "aiap-hyperlinked-glossary.html",
+        "chapters": 15,
+        "terms": 305,
+        "levels": {
+          "A": 95,
+          "B": 67,
+          "C": 143
+        },
+        "categories": [
+          "00 基礎骨架",
+          "03 訓練與驗證",
+          "01 學習型態",
+          "01 任務類型",
+          "02 資料處理",
+          "05 評估指標",
+          "04 傳統模型",
+          "06 深度學習",
+          "07 LLM",
+          "08 生成式 AI",
+          "SP 微調與持續學習",
+          "10 部署與壓縮",
+          "10 MLOps",
+          "11 治理與安全",
+          "12 統計與分布",
+          "13 大數據工程",
+          "14 視覺化與分析工具"
+        ],
+        "sources": 37
+      },
+      {
+        "file": "aiap-chapter-progress.html",
+        "chapters": 15,
+        "terms": 305,
+        "levels": {
+          "A": 95,
+          "B": 67,
+          "C": 143
+        },
+        "categories": [
+          "00 基礎骨架",
+          "03 訓練與驗證",
+          "01 學習型態",
+          "01 任務類型",
+          "02 資料處理",
+          "05 評估指標",
+          "04 傳統模型",
+          "06 深度學習",
+          "07 LLM",
+          "08 生成式 AI",
+          "SP 微調與持續學習",
+          "10 部署與壓縮",
+          "10 MLOps",
+          "11 治理與安全",
+          "12 統計與分布",
+          "13 大數據工程",
+          "14 視覺化與分析工具"
+        ],
+        "sources": 37
+      },
+      {
+        "file": "aiap-progress-fixed.html",
+        "chapters": 15,
+        "terms": 305,
+        "levels": {
+          "A": 95,
+          "B": 67,
+          "C": 143
+        },
+        "categories": [
+          "00 基礎骨架",
+          "03 訓練與驗證",
+          "01 學習型態",
+          "01 任務類型",
+          "02 資料處理",
+          "05 評估指標",
+          "04 傳統模型",
+          "06 深度學習",
+          "07 LLM",
+          "08 生成式 AI",
+          "SP 微調與持續學習",
+          "10 部署與壓縮",
+          "10 MLOps",
+          "11 治理與安全",
+          "12 統計與分布",
+          "13 大數據工程",
+          "14 視覺化與分析工具"
+        ],
+        "sources": 37
+      }
+    ],
+    "canonical": "aiap-battle-rose.html",
+    "chapters": 15,
+    "glossaryTerms": 305,
+    "glossaryLevels": {
+      "A": 95,
+      "B": 67,
+      "C": 143
+    },
+    "glossaryCategories": 17,
+    "categoryNames": [
+      "00 基礎骨架",
+      "03 訓練與驗證",
+      "01 學習型態",
+      "01 任務類型",
+      "02 資料處理",
+      "05 評估指標",
+      "04 傳統模型",
+      "06 深度學習",
+      "07 LLM",
+      "08 生成式 AI",
+      "SP 微調與持續學習",
+      "10 部署與壓縮",
+      "10 MLOps",
+      "11 治理與安全",
+      "12 統計與分布",
+      "13 大數據工程",
+      "14 視覺化與分析工具"
+    ],
+    "bossBanks": 12,
+    "bossQuestions": 240,
+    "finalQuestions": 100,
+    "totalQuestions": 340,
+    "imageQuestions": 10,
+    "sources": 37
+  },
+  "currentPackage": {
+    "version": "1.0.0",
+    "chapters": 15,
+    "termCards": 305,
+    "quizQuestions": 90,
+    "imageQuestions": 0,
+    "sources": 37
+  },
+  "findings": {
+    "missingGlossaryTerms": 0,
+    "duplicatedGlossaryStorage": 305,
+    "missingQuestions": 250,
+    "missingImageQuestions": 10,
+    "unmappedBossQuestions": 240,
+    "notes": [
+      "The v1 package duplicates every glossary term inside chapter blocks.",
+      "The v1 converter skips every question with imageRef.",
+      "The v1 package only maps the final exam bank and does not preserve the boss-bank grouping.",
+      "Glossary category, chapter, question, related-term, and source relationships are flattened or absent."
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   materialPackageChapterSchema,
+  materialCollectionsSchema,
   materialPrerequisiteSchema,
   materialPresentationSchema,
   materialSourceSchema,
@@ -45,6 +46,7 @@ export const materialDefinitionSchema = z.object({
     })
     .optional(),
   generationProfile: z.string().min(1).optional(),
+  collections: materialCollectionsSchema.optional(),
   format: z.union([studyMaterialFormatSchema, z.literal("phoenix-package")]),
   sourceFileName: z.string().min(1),
   mimeType: z.string(),
@@ -59,8 +61,15 @@ export const materialQuizAttemptSchema = z.object({
   chapterKey: z.string().min(1),
   blockIndex: z.number().int().nonnegative(),
   questionIndex: z.number().int().nonnegative(),
+  questionKey: z.string().min(1).optional(),
   selectedIndex: z.number().int().nonnegative(),
   correct: z.boolean(),
+  confidence: z.enum(["certain", "hesitant", "guess", "changed", "unreadable"]).optional(),
+  hintLevel: z.number().int().min(0).max(6).optional(),
+  changedAnswer: z.boolean().optional(),
+  durationMs: z.number().int().nonnegative().optional(),
+  latestCorrect: z.boolean().optional(),
+  unresolved: z.boolean().optional(),
   attemptedAt: z.string().datetime(),
 });
 
@@ -69,8 +78,11 @@ export const materialProgressSchema = z.object({
   activeChapterKey: z.string().min(1).optional(),
   chapterProgress: z.record(z.string(), z.number().min(0).max(100)).default({}),
   completedChapterKeys: z.array(z.string()).default([]),
+  glossaryTermProgress: z.record(z.string(), z.enum(["unseen", "viewed", "learning", "mastered", "review"])).optional(),
+  favoriteTermKeys: z.array(z.string()).optional(),
   quizAttempts: z.array(materialQuizAttemptSchema).default([]),
   orphanedProgress: z.record(z.string(), z.number().min(0).max(100)).default({}),
+  totalActiveSeconds: z.number().int().nonnegative().optional(),
   lastOpenedAt: z.string().datetime().optional(),
   overallProgress: z.number().min(0).max(100).default(0),
   isActive: z.boolean().default(false),

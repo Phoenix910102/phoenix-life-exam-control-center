@@ -12,6 +12,7 @@ import {
   Tags,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TermReferences } from "@/components/campaign/CampaignCurriculum";
 import type { MaterialBlock } from "@/types/materialPackage";
 import type { MaterialDefinition, MaterialQuizAttempt } from "@/types/materialRecord";
 
@@ -25,6 +26,8 @@ export type PhoenixMaterialBlockProps = {
   block: MaterialBlock;
   blockIndex: number;
   chapterKey: string;
+  definition?: MaterialDefinition;
+  onChapterSelect?: (chapterKey: string) => void | Promise<void>;
   onQuizAttempt?: Props["onQuizAttempt"];
 };
 
@@ -32,6 +35,8 @@ const blockPriority: Record<MaterialBlock["type"], number> = {
   position: 0,
   concept: 1,
   "term-card": 2,
+  "term-reference": 2,
+  "question-bank-reference": 6,
   callout: 2,
   comparison: 3,
   confusion: 3,
@@ -334,12 +339,16 @@ export function PhoenixMaterialBlock({
   block,
   blockIndex,
   chapterKey,
+  definition,
+  onChapterSelect,
   onQuizAttempt,
 }: PhoenixMaterialBlockProps) {
   switch (block.type) {
     case "position": return <PositionBlock block={block} />;
     case "concept": return <ConceptBlock block={block} />;
     case "term-card": return <TermCardBlock block={block} />;
+    case "term-reference": return definition ? <TermReferences definition={definition} termRefs={block.termRefs} onChapterSelect={onChapterSelect} /> : null;
+    case "question-bank-reference": return <aside className="campaign-block-callout mx-5 my-6 border-l-4 border-violet-500 bg-violet-50/70 px-4 py-3 text-violet-950"><strong>{block.title}</strong><p className="mt-1 text-sm">切換到題庫模式，開啟 {block.bankRefs.length} 個關聯題庫。</p></aside>;
     case "comparison": return <ComparisonBlock block={block} />;
     case "confusion": return <ConfusionBlock block={block} />;
     case "flow": return <FlowBlock block={block} />;
@@ -444,6 +453,7 @@ export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt 
             block={block}
             blockIndex={index}
             chapterKey={chapter.key}
+            definition={definition}
             onQuizAttempt={onQuizAttempt}
           />
         </div>
@@ -453,7 +463,7 @@ export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt 
 }
 
 function getBlockCategory(block: MaterialBlock) {
-  if (["position", "concept", "term-card", "flow"].includes(block.type)) return "concept";
+  if (["position", "concept", "term-card", "term-reference", "flow"].includes(block.type)) return "concept";
   if (["comparison", "confusion", "exam-signal", "callout"].includes(block.type)) return "comparison";
   if (["example", "quiz"].includes(block.type)) return "practice";
   return "memory";
@@ -461,6 +471,8 @@ function getBlockCategory(block: MaterialBlock) {
 
 function getBlockLabel(block: MaterialBlock, index: number) {
   if (block.type === "term-card") return block.term;
+  if (block.type === "term-reference") return block.title;
+  if (block.type === "question-bank-reference") return block.title;
   if (block.type === "concept" || block.type === "comparison" || block.type === "flow" || block.type === "callout") return block.title;
   if (block.type === "quiz") return block.title ?? "章節測驗";
   if (block.type === "position") return `${block.category}的位置`;

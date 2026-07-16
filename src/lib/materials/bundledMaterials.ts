@@ -1,5 +1,5 @@
-import { importPhoenixMaterialPackage, openMaterialCampaign } from "@/lib/db/repository";
-import { parseMaterialPackage } from "@/lib/materials/packageImporter";
+import { getMaterialBundle, importPhoenixMaterialPackage, openMaterialCampaign } from "@/lib/db/repository";
+import { getMaterialImportStatus, parseMaterialPackage } from "@/lib/materials/packageImporter";
 import { apiHeaders } from "@/lib/utils/api";
 
 type BundledMaterialSource = {
@@ -31,13 +31,16 @@ async function installAndOpenBundledCampaign(slug: string) {
   const parsed = parseMaterialPackage(body.package);
   if (!parsed.success) throw new Error("內建教材沒有通過 Phoenix 教材協議驗證");
 
-  await importPhoenixMaterialPackage(parsed.package, body.fileName ?? source.fileName);
+  const existing = await getMaterialBundle(slug);
+  const status = getMaterialImportStatus(parsed.package, existing?.definition);
+  if (status === "new" || status === "upgrade") {
+    await importPhoenixMaterialPackage(parsed.package, body.fileName ?? source.fileName);
+  }
   return openMaterialCampaign(slug);
 }
 
 export async function openCampaignWithBundledSource(slug: string) {
-  const existing = await openMaterialCampaign(slug);
-  if (existing || !hasBundledMaterialSource(slug)) return existing;
+  if (!hasBundledMaterialSource(slug)) return openMaterialCampaign(slug);
 
   const pending = pendingCampaignInstalls.get(slug);
   if (pending) return pending;

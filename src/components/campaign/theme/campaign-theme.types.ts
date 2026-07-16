@@ -5,6 +5,7 @@ export const campaignReadingThemeValues = ["ivory-archive"] as const;
 export type CampaignReadingTheme = (typeof campaignReadingThemeValues)[number];
 
 export const campaignSurfaceModuleValues = [
+  "home",
   "battlefield",
   "roadmap",
   "reader",
@@ -13,6 +14,10 @@ export const campaignSurfaceModuleValues = [
   "diagnostic",
   "trap-field",
   "quiz",
+  "glossary",
+  "question-bank",
+  "source-library",
+  "quick-review",
 ] as const;
 export type CampaignSurfaceModule = (typeof campaignSurfaceModuleValues)[number];
 
@@ -28,6 +33,7 @@ export type ResolvedCampaignModuleSurface = Exclude<CampaignModuleSurface, "adap
 export type CampaignModuleSurfaceMap = Partial<Record<CampaignSurfaceModule, CampaignModuleSurface>>;
 
 export const defaultCampaignModuleSurfaces: Required<CampaignModuleSurfaceMap> = {
+  home: "rose-parchment",
   battlefield: "immersive-dark",
   roadmap: "immersive-dark",
   reader: "rose-parchment",
@@ -36,6 +42,10 @@ export const defaultCampaignModuleSurfaces: Required<CampaignModuleSurfaceMap> =
   diagnostic: "immersive-dark",
   "trap-field": "rose-dossier",
   quiz: "adaptive",
+  glossary: "rose-parchment",
+  "question-bank": "adaptive",
+  "source-library": "rose-dossier",
+  "quick-review": "rose-parchment",
 };
 
 export function resolveCampaignModuleSurface(

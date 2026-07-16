@@ -13,6 +13,7 @@ export const defaultPhoenixMaterialPresentation: MaterialPresentation = {
   moduleSurfaces: { ...defaultCampaignModuleSurfaces },
   renderOrder: "authored",
   modules: [
+    "home",
     "battlefield",
     "roadmap",
     "reader",
@@ -21,6 +22,10 @@ export const defaultPhoenixMaterialPresentation: MaterialPresentation = {
     "diagnostic",
     "trap-field",
     "quiz",
+    "glossary",
+    "question-bank",
+    "source-library",
+    "quick-review",
     "achievements",
     "floating-console",
   ],

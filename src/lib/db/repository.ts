@@ -268,7 +268,7 @@ export async function importPhoenixMaterialPackage(
     assertImportAllowed(status, options.allowDowngrade);
 
     const definition = materialPackageToDefinition(material, sourceFileName, existingDefinition);
-    const progress = mergeMaterialProgress(material, existingProgress);
+    const progress = mergeMaterialProgress(material, existingProgress, existingDefinition);
     if (options.setActive) {
       const allProgress = await db.materialProgress.toArray();
       await db.materialProgress.bulkPut(

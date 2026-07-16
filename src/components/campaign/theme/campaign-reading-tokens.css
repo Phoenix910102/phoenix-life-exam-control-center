@@ -12,6 +12,8 @@
     radial-gradient(circle at 50% 0%, rgba(181, 139, 78, 0.09), transparent 34%),
     linear-gradient(180deg, #251f1d 0%, #151110 46%, #0b0909 100%);
   --campaign-paper-texture:
+    url('/textures/parchment/stains.webp'),
+    url('/textures/parchment/fibers.webp'),
     radial-gradient(circle at 18% 12%, rgba(255, 252, 234, 0.72) 0, rgba(255, 252, 234, 0) 32%),
     radial-gradient(circle at 82% 76%, rgba(137, 93, 48, 0.08) 0, rgba(137, 93, 48, 0) 42%),
     repeating-linear-gradient(3deg, rgba(100, 72, 42, 0.022) 0 1px, transparent 1px 4px),
@@ -37,6 +39,8 @@
     radial-gradient(circle at 50% 0%, rgba(192, 151, 89, 0.08), transparent 32%),
     linear-gradient(180deg, #1d1817 0%, #100d0e 52%, #080708 100%);
   --campaign-paper-texture:
+    url('/textures/parchment/stains.webp'),
+    url('/textures/parchment/fibers.webp'),
     radial-gradient(circle at 16% 10%, rgba(255, 249, 226, 0.55) 0, rgba(255, 249, 226, 0) 34%),
     repeating-linear-gradient(2deg, rgba(92, 63, 36, 0.018) 0 1px, transparent 1px 5px);
   --campaign-paper-edge: rgba(72, 43, 24, 0.18);
@@ -57,6 +61,8 @@
     radial-gradient(circle at 50% 0%, rgba(133, 104, 76, 0.07), transparent 34%),
     linear-gradient(180deg, #1b1715 0%, #12100f 100%);
   --campaign-paper-texture:
+    url('/textures/parchment/stains.webp'),
+    url('/textures/parchment/fibers.webp'),
     radial-gradient(circle at 20% 15%, rgba(150, 126, 98, 0.05) 0, transparent 36%),
     repeating-linear-gradient(4deg, rgba(226, 207, 179, 0.012) 0 1px, transparent 1px 5px);
   --campaign-paper-edge: rgba(5, 4, 3, 0.34);
@@ -274,6 +280,7 @@
 
 .campaign-reading-surface::before {
   background:
+    url('/textures/parchment/edge-mask.webp') center / 100% 100% no-repeat,
     linear-gradient(90deg, rgba(105, 70, 38, 0.07), transparent 3.5%, transparent 96.5%, rgba(105, 70, 38, 0.07)),
     linear-gradient(rgba(255, 252, 233, 0.1), transparent 5%, transparent 95%, rgba(80, 49, 27, 0.07));
   content: "";

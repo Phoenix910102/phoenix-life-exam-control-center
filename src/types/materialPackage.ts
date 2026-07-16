@@ -31,6 +31,7 @@ export const campaignReadingThemeSchema = z.enum(campaignReadingThemeValues);
 export const campaignModuleSurfaceSchema = z.enum(campaignModuleSurfaceValues);
 export const materialModuleSurfacesSchema = z
   .object({
+    home: campaignModuleSurfaceSchema.optional(),
     battlefield: campaignModuleSurfaceSchema.optional(),
     roadmap: campaignModuleSurfaceSchema.optional(),
     reader: campaignModuleSurfaceSchema.optional(),
@@ -39,10 +40,15 @@ export const materialModuleSurfacesSchema = z
     diagnostic: campaignModuleSurfaceSchema.optional(),
     "trap-field": campaignModuleSurfaceSchema.optional(),
     quiz: campaignModuleSurfaceSchema.optional(),
+    glossary: campaignModuleSurfaceSchema.optional(),
+    "question-bank": campaignModuleSurfaceSchema.optional(),
+    "source-library": campaignModuleSurfaceSchema.optional(),
+    "quick-review": campaignModuleSurfaceSchema.optional(),
   })
   .strict()
   .default({});
 export const materialModuleSchema = z.enum([
+  "home",
   "battlefield",
   "roadmap",
   "reader",
@@ -53,6 +59,10 @@ export const materialModuleSchema = z.enum([
   "quiz",
   "achievements",
   "floating-console",
+  "glossary",
+  "question-bank",
+  "source-library",
+  "quick-review",
 ]);
 
 export const battlefield3dSchema = z
@@ -168,6 +178,25 @@ export const termCardBlockSchema = z
   })
   .strict();
 
+export const termReferenceBlockSchema = z
+  .object({
+    ...blockMetadata,
+    type: z.literal("term-reference"),
+    title: requiredText("title"),
+    termRefs: z.array(requiredText("termRef")).min(1, "termRefs 至少需要一項"),
+    display: z.enum(["inline", "rail", "featured"]),
+  })
+  .strict();
+
+export const questionBankReferenceBlockSchema = z
+  .object({
+    ...blockMetadata,
+    type: z.literal("question-bank-reference"),
+    title: requiredText("title"),
+    bankRefs: z.array(requiredText("bankRef")).min(1, "bankRefs 至少需要一項"),
+  })
+  .strict();
+
 export const comparisonBlockSchema = z
   .object({
     ...blockMetadata,
@@ -276,6 +305,8 @@ export const materialBlockSchema = z.discriminatedUnion("type", [
   positionBlockSchema,
   conceptBlockSchema,
   termCardBlockSchema,
+  termReferenceBlockSchema,
+  questionBankReferenceBlockSchema,
   comparisonBlockSchema,
   confusionBlockSchema,
   flowBlockSchema,
@@ -285,6 +316,78 @@ export const materialBlockSchema = z.discriminatedUnion("type", [
   calloutBlockSchema,
   quizBlockSchema,
 ]);
+
+export const glossaryTermSchema = z.object({
+  key: requiredText("glossaryTerm.key"),
+  term: requiredText("glossaryTerm.term"),
+  english: requiredText("glossaryTerm.english").optional(),
+  categoryKey: requiredText("glossaryTerm.categoryKey"),
+  level: z.enum(["core", "frequent", "index"]),
+  oneLiner: requiredText("glossaryTerm.oneLiner"),
+  questionSignal: requiredText("glossaryTerm.questionSignal"),
+  application: requiredText("glossaryTerm.application"),
+  examExample: requiredText("glossaryTerm.examExample"),
+  confusion: requiredText("glossaryTerm.confusion"),
+  chapterRefs: z.array(requiredText("glossaryTerm.chapterRef")),
+  relatedTermRefs: z.array(requiredText("glossaryTerm.relatedTermRef")),
+  sourceRefs: z.array(requiredText("glossaryTerm.sourceRef")),
+}).strict();
+
+export const glossaryCategorySchema = z.object({
+  key: requiredText("glossaryCategory.key"),
+  title: requiredText("glossaryCategory.title"),
+  order: z.number().int().nonnegative(),
+}).strict();
+
+export const materialQuestionSchema = z.object({
+  key: requiredText("materialQuestion.key"),
+  prompt: requiredText("materialQuestion.prompt"),
+  options: z.array(requiredText("materialQuestion.option")).min(2),
+  answer: z.number().int().nonnegative(),
+  explanation: requiredText("materialQuestion.explanation"),
+  chapterRefs: z.array(requiredText("materialQuestion.chapterRef")),
+  termRefs: z.array(requiredText("materialQuestion.termRef")),
+  sourceRefs: z.array(requiredText("materialQuestion.sourceRef")),
+  imageAsset: requiredText("materialQuestion.imageAsset").optional(),
+}).strict().superRefine((question, ctx) => {
+  if (question.answer >= question.options.length) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["answer"], message: "answer 超出 options 索引範圍" });
+  }
+});
+
+export const questionBankSchema = z.object({
+  key: requiredText("questionBank.key"),
+  title: requiredText("questionBank.title"),
+  kind: z.enum(["chapter", "boss", "final", "weakness"]),
+  questionRefs: z.array(requiredText("questionBank.questionRef")),
+}).strict();
+
+export const sourceRecordSchema = z.object({
+  key: requiredText("sourceRecord.key"),
+  title: requiredText("sourceRecord.title"),
+  citation: requiredText("sourceRecord.citation").optional(),
+  url: z.string().url().optional(),
+  kind: z.enum(["official", "paper", "book", "documentation"]),
+}).strict();
+
+export const learningPathSchema = z.object({
+  key: requiredText("learningPath.key"),
+  title: requiredText("learningPath.title"),
+  chapterRefs: z.array(requiredText("learningPath.chapterRef")),
+  termRefs: z.array(requiredText("learningPath.termRef")),
+  questionBankRefs: z.array(requiredText("learningPath.questionBankRef")),
+}).strict();
+
+export const materialCollectionsSchema = z.object({
+  glossary: z.object({
+    terms: z.array(glossaryTermSchema),
+    categories: z.array(glossaryCategorySchema),
+  }).strict().optional(),
+  questions: z.array(materialQuestionSchema).optional(),
+  questionBanks: z.array(questionBankSchema).optional(),
+  sourceLibrary: z.array(sourceRecordSchema).optional(),
+  learningPaths: z.array(learningPathSchema).optional(),
+}).strict();
 
 export const materialPackageChapterSchema = z
   .object({
@@ -347,6 +450,7 @@ export const materialPackageSchema = z
       .strict()
       .optional(),
     generationProfile: requiredText("generationProfile").optional(),
+    collections: materialCollectionsSchema.optional(),
     chapters: z.array(materialPackageChapterSchema).min(1, "chapters 至少需要一章"),
   })
   .strict()
@@ -391,9 +495,43 @@ export const materialPackageSchema = z
         });
       });
     });
+    const collections = material.collections;
+    if (!collections) return;
+    const chapterKeys = new Set(material.chapters.map((chapter) => chapter.key));
+    const termKeyList = collections.glossary?.terms.map((term) => term.key) ?? [];
+    const termKeys = new Set(termKeyList);
+    const categoryKeys = new Set(collections.glossary?.categories.map((category) => category.key) ?? []);
+    const questionKeyList = collections.questions?.map((question) => question.key) ?? [];
+    const questionKeys = new Set(questionKeyList);
+    const bankKeys = new Set(collections.questionBanks?.map((bank) => bank.key) ?? []);
+    const sourceKeys = new Set(collections.sourceLibrary?.map((source) => source.key) ?? []);
+    const checkUnique = (values: string[], path: (string | number)[], label: string) => {
+      if (new Set(values).size !== values.length) ctx.addIssue({ code: z.ZodIssueCode.custom, path, message: `${label} 包含重複 key` });
+    };
+    checkUnique(termKeyList, ["collections", "glossary", "terms"], "glossary terms");
+    checkUnique(questionKeyList, ["collections", "questions"], "questions");
+    collections.glossary?.terms.forEach((term, index) => {
+      if (!categoryKeys.has(term.categoryKey)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "glossary", "terms", index, "categoryKey"], message: "找不到 categoryKey" });
+      term.chapterRefs.forEach((key) => { if (!chapterKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "glossary", "terms", index, "chapterRefs"], message: `找不到章節 ${key}` }); });
+      term.relatedTermRefs.forEach((key) => { if (!termKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "glossary", "terms", index, "relatedTermRefs"], message: `找不到詞條 ${key}` }); });
+      term.sourceRefs.forEach((key) => { if (!sourceKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "glossary", "terms", index, "sourceRefs"], message: `找不到來源 ${key}` }); });
+    });
+    collections.questions?.forEach((question, index) => {
+      question.chapterRefs.forEach((key) => { if (!chapterKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "questions", index, "chapterRefs"], message: `找不到章節 ${key}` }); });
+      question.termRefs.forEach((key) => { if (!termKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "questions", index, "termRefs"], message: `找不到詞條 ${key}` }); });
+      question.sourceRefs.forEach((key) => { if (!sourceKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "questions", index, "sourceRefs"], message: `找不到來源 ${key}` }); });
+    });
+    collections.questionBanks?.forEach((bank, index) => bank.questionRefs.forEach((key) => { if (!questionKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["collections", "questionBanks", index, "questionRefs"], message: `找不到題目 ${key}` }); }));
+    material.chapters.forEach((chapter, chapterIndex) => chapter.blocks.forEach((block, blockIndex) => {
+      if (block.type === "term-reference") block.termRefs.forEach((key) => { if (!termKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["chapters", chapterIndex, "blocks", blockIndex, "termRefs"], message: `找不到詞條 ${key}` }); });
+      if (block.type === "question-bank-reference") block.bankRefs.forEach((key) => { if (!bankKeys.has(key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["chapters", chapterIndex, "blocks", blockIndex, "bankRefs"], message: `找不到題庫 ${key}` }); });
+    }));
   });
 
 export type MaterialPackage = z.infer<typeof materialPackageSchema>;
 export type MaterialPackageChapter = z.infer<typeof materialPackageChapterSchema>;
 export type MaterialBlock = z.infer<typeof materialBlockSchema>;
 export type MaterialQuizQuestion = z.infer<typeof materialQuizQuestionSchema>;
+export type GlossaryTerm = z.infer<typeof glossaryTermSchema>;
+export type MaterialQuestion = z.infer<typeof materialQuestionSchema>;
+export type MaterialCollections = z.infer<typeof materialCollectionsSchema>;

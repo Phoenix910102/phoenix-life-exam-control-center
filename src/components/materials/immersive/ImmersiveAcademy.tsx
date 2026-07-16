@@ -10,10 +10,16 @@ import {
   GitCompareArrows,
   GraduationCap,
   ListChecks,
+  LibraryBig,
+  Home,
+  FileQuestion,
+  Files,
+  Layers3,
   Map,
   ScanSearch,
 } from "lucide-react";
 import { ChromaKeyCharacters } from "@/components/command-center/ChromaKeyCharacters";
+import { CampaignGlossary, CampaignHome, CampaignQuestionBanks, QuickReviewDeck, SourceLibrary } from "@/components/campaign/CampaignCurriculum";
 import { ReadingModeToggle } from "@/components/campaign/theme/ReadingModeToggle";
 import { useCampaignTheme } from "@/components/campaign/theme/CampaignThemeProvider";
 import {
@@ -31,7 +37,7 @@ import { Battlefield3D } from "./3d/Battlefield3D";
 import { FloatingAcademyConsole } from "./FloatingAcademyConsole";
 import styles from "./ImmersiveAcademy.module.css";
 
-type Mode = "battlefield" | "reader" | "lesson" | "duel" | "diagnostic" | "trap-field" | "quiz";
+type Mode = "home" | "battlefield" | "reader" | "lesson" | "duel" | "diagnostic" | "trap-field" | "quiz" | "glossary" | "question-bank" | "source-library" | "quick-review";
 
 type Props = {
   definition: MaterialDefinition;
@@ -46,6 +52,7 @@ type Props = {
 };
 
 const modeDefinitions: Array<{ id: Mode; label: string; icon: typeof BookOpen }> = [
+  { id: "home", label: "總覽", icon: Home },
   { id: "battlefield", label: "戰場", icon: Map },
   { id: "reader", label: "閱讀", icon: BookOpen },
   { id: "lesson", label: "上課", icon: GraduationCap },
@@ -53,9 +60,14 @@ const modeDefinitions: Array<{ id: Mode; label: string; icon: typeof BookOpen }>
   { id: "diagnostic", label: "診斷", icon: ScanSearch },
   { id: "trap-field", label: "陷阱", icon: AlertTriangle },
   { id: "quiz", label: "測驗", icon: ListChecks },
+  { id: "glossary", label: "名詞庫", icon: LibraryBig },
+  { id: "question-bank", label: "題庫", icon: FileQuestion },
+  { id: "source-library", label: "來源", icon: Files },
+  { id: "quick-review", label: "快複習", icon: Layers3 },
 ];
 
 const modeCopy: Record<Mode, { title: string; description: string }> = {
+  home: { title: "戰役課程總覽", description: "從實際 collections 計算章節、詞庫、題庫與今日任務。" },
   battlefield: { title: "戰場總覽", description: "把章節進度、錯題壓力與測驗表現投影成可操作的學習局勢。" },
   reader: { title: "完整閱讀", description: "沿作者安排的節奏閱讀定位、概念、例題與記憶錨點。" },
   lesson: { title: "單點上課", description: "一次只處理一個內容區塊，避免同時展開過多概念。" },
@@ -63,6 +75,10 @@ const modeCopy: Record<Mode, { title: string; description: string }> = {
   diagnostic: { title: "卡點診斷", description: "先命名卡住的層級，再決定要補位置、定義、比較或題幹訊號。" },
   "trap-field": { title: "陷阱雷區", description: "只看題幹訊號、錯誤選項與高風險提醒。" },
   quiz: { title: "章節測驗", description: "完成題目後立即顯示解析，作答紀錄寫入教材進度。" },
+  glossary: { title: "完整名詞庫", description: "搜尋、篩選並沿章節、關聯詞與題目往返。" },
+  "question-bank": { title: "題庫戰情室", description: "Boss Quiz、Final Exam 與圖片題共用穩定 question key。" },
+  "source-library": { title: "來源庫", description: "查看教材引用的官方、研究與技術來源。" },
+  "quick-review": { title: "考前快速複習", description: "只展開 A 級核心詞與高頻判題信號。" },
 };
 
 const blockerOptions = [
@@ -101,7 +117,8 @@ export function ImmersiveAcademy({
     ...(definition.presentation?.modules ?? modeDefinitions.map((mode) => mode.id)),
   ]));
   const availableModes = modeDefinitions.filter((mode) => modules.includes(mode.id));
-  const [mode, setMode] = useState<Mode>(readingMode === "immersive" ? (availableModes[0]?.id ?? "reader") : "reader");
+  const [mode, setMode] = useState<Mode>(definition.collections ? "home" : "reader");
+  const [questionBankKind, setQuestionBankKind] = useState<"boss" | "final">("boss");
   const [lessonIndex, setLessonIndex] = useState(0);
   const [blocker, setBlocker] = useState<(typeof blockerOptions)[number][0]>("position");
   const chapter = definition.chapters.find((item) => item.key === chapterKey) ?? definition.chapters[0];
@@ -117,7 +134,7 @@ export function ImmersiveAcademy({
   );
 
   useEffect(() => {
-    if (readingMode !== "immersive" && mode !== "reader") {
+    if (readingMode !== "immersive" && !["home", "reader", "glossary", "question-bank", "source-library", "quick-review"].includes(mode)) {
       setMode("reader");
       setLessonIndex(0);
     }
@@ -169,8 +186,8 @@ export function ImmersiveAcademy({
         </nav>
       )}
 
-      <div className={`${styles.workbench} ${readingMode !== "immersive" ? styles.workbenchReading : ""} ${mode === "battlefield" ? styles.workbenchBattlefield : ""}`}>
-        {readingMode === "immersive" && (
+      <div className={`${styles.workbench} ${readingMode !== "immersive" && !definition.collections ? styles.workbenchReading : ""} ${mode === "battlefield" ? styles.workbenchBattlefield : ""}`}>
+        {(readingMode === "immersive" || definition.collections) && (
           <nav className={styles.rail} aria-label="教材模式">
             {availableModes.map(({ id, label, icon: Icon }) => (
               <button
@@ -224,6 +241,7 @@ export function ImmersiveAcademy({
           </div>
 
           <div className={`${styles.modeContent} campaign-module-body ${mode === "reader" ? "campaign-reading-stage" : ""}`}>
+            {mode === "home" && <CampaignHome definition={definition} progress={progress} chapterKey={chapter.key} onChapterSelect={onChapterSelect} onQuizAttempt={onQuizAttempt} onMode={(next, bankKind) => { if (bankKind) setQuestionBankKind(bankKind); switchMode(next as Mode); }} />}
             {mode === "battlefield" && (
               <Battlefield3D
                 definition={definition}
@@ -241,6 +259,8 @@ export function ImmersiveAcademy({
                 block={currentLesson}
                 blockIndex={lessonIndex}
                 chapterKey={chapter.key}
+                definition={definition}
+                onChapterSelect={onChapterSelect}
                 onQuizAttempt={onQuizAttempt}
               />
             )}
@@ -253,6 +273,8 @@ export function ImmersiveAcademy({
                         block={block}
                         blockIndex={index}
                         chapterKey={chapter.key}
+                        definition={definition}
+                        onChapterSelect={onChapterSelect}
                         key={block.key ?? `${block.type}-${index}`}
                         onQuizAttempt={onQuizAttempt}
                       />
@@ -277,6 +299,10 @@ export function ImmersiveAcademy({
                 </div>
               </div>
             )}
+            {mode === "glossary" && <CampaignGlossary definition={definition} progress={progress} chapterKey={chapter.key} onChapterSelect={onChapterSelect} onQuizAttempt={onQuizAttempt} />}
+            {mode === "question-bank" && <CampaignQuestionBanks key={questionBankKind} definition={definition} progress={progress} chapterKey={chapter.key} initialKind={questionBankKind} onChapterSelect={onChapterSelect} onQuizAttempt={onQuizAttempt} />}
+            {mode === "source-library" && <SourceLibrary definition={definition} />}
+            {mode === "quick-review" && <QuickReviewDeck definition={definition} />}
           </div>
         </div>
 
