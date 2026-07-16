@@ -23,7 +23,12 @@ const links = [
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/command-center") || pathname.startsWith("/arsenal")) {
+  if (
+    pathname.startsWith("/command-center")
+    || pathname.startsWith("/materials")
+    || pathname.startsWith("/campaigns")
+    || pathname.startsWith("/arsenal")
+  ) {
     return children;
   }
 

@@ -4,6 +4,8 @@ import sampleJson from "../../materials/generated/example-gradient-descent.phoen
 test("imports, reads, quizzes, and updates a Phoenix material without losing progress", async ({ page }) => {
   await page.goto("/materials");
   await expect(page.getByTestId("materials-page")).toHaveAttribute("data-hydrated", "true");
+  await expect(page.getByText("MATERIAL ARCHIVE", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "教材戰役庫", exact: true })).toBeVisible();
 
   const packageInput = page.locator('input[accept*=".phoenix-material.json"]');
   await packageInput.setInputFiles({

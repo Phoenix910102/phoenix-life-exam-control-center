@@ -24,6 +24,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { CommandSceneBackdrop } from "@/components/command-shell/CommandSceneBackdrop";
+import { CommandShell } from "@/components/command-shell/CommandShell";
 import { MaterialExperience } from "@/components/materials/MaterialExperience";
 import { notify } from "@/lib/notifications/toast";
 import { importStudyMaterial } from "@/lib/materials/importer";
@@ -50,6 +52,7 @@ import { apiHeaders } from "@/lib/utils/api";
 import type { MaterialPackage } from "@/types/materialPackage";
 import type { MaterialBundle, MaterialDefinition } from "@/types/materialRecord";
 import type { DomainEventReceipt } from "@/types/domainEvent";
+import archiveStyles from "./material-archive.module.css";
 
 const formatLabels: Record<MaterialDefinition["format"], string> = {
   "phoenix-package": "Phoenix 教材包",
@@ -455,32 +458,42 @@ export default function MaterialsPage() {
   };
 
   return (
-    <main className="space-y-7" data-hydrated={isHydrated} data-testid="materials-page">
-      <section className="flex flex-col gap-4 border-b border-border pb-5 md:flex-row md:items-end md:justify-between">
+    <CommandShell
+      identity={{
+        breadcrumb: "COMMAND CENTER / MATERIAL ARCHIVE",
+        eyebrow: "PHOENIX",
+        title: "MATERIAL ARCHIVE",
+        subtitle: "教材戰役庫 · 版本化知識收件匣",
+      }}
+      scene={<CommandSceneBackdrop variant="archive" />}
+    >
+      <div className={archiveStyles.archive} data-hydrated={isHydrated} data-testid="materials-page">
+      <section className={archiveStyles.intro}>
         <div>
-          <p className="text-sm font-medium text-primary">Phoenix × Rékaí Material Protocol</p>
-          <h2 className="mt-1 text-2xl font-semibold">教材協議與教材收件匣</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            一般檔案繼續留在本機；Rékaí 製作的版本化教材會先驗證、預覽，再依 slug 更新內容並保留章節進度。
+          <p className={archiveStyles.introKicker}>PHOENIX × RÉKAÍ MATERIAL PROTOCOL</p>
+          <h1>教材戰役庫</h1>
+          <p className={archiveStyles.introCopy}>
+            所有由 Rékaí 製作、更新與驗證的教材，都在這裡留下版本與戰役紀錄。一般檔案繼續保存在本機；版本化教材會先驗證、預覽，再依 slug 更新內容並保留進度。
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={previewExamplePackage}>
+        <div className={archiveStyles.entryRail}>
+          <Button className={archiveStyles.entryButton} variant="outline" onClick={previewExamplePackage}>
             <Sparkles className="mr-2 h-4 w-4" />預覽 3D 範例
           </Button>
-          <Button variant="outline" onClick={() => window.open("/legacy/criminal-law-general-principles/", "_blank", "noopener,noreferrer")}>
+          <Button className={archiveStyles.entryButton} variant="outline" onClick={() => window.open("/legacy/criminal-law-general-principles/", "_blank", "noopener,noreferrer")}>
             <ExternalLink className="mr-2 h-4 w-4" />罪責玫瑰原型
           </Button>
-          <Button variant="outline" onClick={checkRemoteInbox} disabled={isCheckingRemote}>
+          <Button className={archiveStyles.entryButton} variant="outline" onClick={checkRemoteInbox} disabled={isCheckingRemote}>
             <RefreshCw className={`mr-2 h-4 w-4 ${isCheckingRemote ? "animate-spin" : ""}`} />
             檢查 GitHub 收件匣
           </Button>
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className={archiveStyles.importGrid}>
         <div
-          className="border border-violet-300 bg-[linear-gradient(135deg,rgba(255,247,250,0.9),rgba(245,243,255,0.9))] p-5 transition hover:border-violet-500"
+          className={archiveStyles.importPanel}
+          data-kind="phoenix"
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {
             event.preventDefault();
@@ -488,11 +501,11 @@ export default function MaterialsPage() {
             if (file) preparePackage(file);
           }}
         >
-          <div className="flex items-start gap-3">
-            <div className="grid h-10 w-10 place-items-center bg-violet-950 text-white"><Sparkles className="h-5 w-5" /></div>
+          <div className={archiveStyles.importHeading}>
+            <div className={archiveStyles.importIcon}><Sparkles className="h-5 w-5" /></div>
             <div>
-              <h3 className="font-semibold text-violet-950">匯入 Phoenix 教材包</h3>
-              <p className="mt-1 text-sm leading-6 text-slate-600">拖放或選擇 <code>.phoenix-material.json</code>，先驗證與預覽，不會立刻寫入。</p>
+              <h2>匯入 Phoenix 教材包</h2>
+              <p>拖放或選擇 <code>.phoenix-material.json</code>，先驗證與預覽，不會立刻寫入。</p>
             </div>
           </div>
           <Input
@@ -502,17 +515,17 @@ export default function MaterialsPage() {
             accept=".phoenix-material.json,application/json"
             onChange={(event) => event.target.files?.[0] && preparePackage(event.target.files[0])}
           />
-          <Button className="mt-4" onClick={() => packageInputRef.current?.click()}>
+          <Button className={archiveStyles.importAction} onClick={() => packageInputRef.current?.click()}>
             <FileJson2 className="mr-2 h-4 w-4" />選擇 Phoenix 教材包
           </Button>
         </div>
 
-        <div className="border border-slate-300 bg-white/70 p-5 transition hover:border-slate-500">
-          <div className="flex items-start gap-3">
-            <div className="grid h-10 w-10 place-items-center bg-slate-800 text-white"><Upload className="h-5 w-5" /></div>
+        <div className={archiveStyles.importPanel} data-kind="legacy">
+          <div className={archiveStyles.importHeading}>
+            <div className={archiveStyles.importIcon}><Upload className="h-5 w-5" /></div>
             <div>
-              <h3 className="font-semibold text-slate-900">匯入一般檔案</h3>
-              <p className="mt-1 text-sm leading-6 text-slate-600">保留既有 HTML、PDF、Markdown、TXT 與一般 JSON 匯入流程。</p>
+              <h2>匯入一般檔案</h2>
+              <p>保留既有 HTML、PDF、Markdown、TXT 與一般 JSON 匯入流程。</p>
             </div>
           </div>
           <Input
@@ -523,13 +536,13 @@ export default function MaterialsPage() {
             accept=".html,.htm,.pdf,.md,.markdown,.txt,.json,text/html,application/pdf,text/plain,application/json"
             onChange={(event) => handleLegacyImport(event.target.files)}
           />
-          <Button className="mt-4" variant="outline" disabled={isImporting} onClick={() => legacyInputRef.current?.click()}>
+          <Button className={archiveStyles.importAction} variant="outline" disabled={isImporting} onClick={() => legacyInputRef.current?.click()}>
             <FolderOpen className="mr-2 h-4 w-4" />選擇一般教材
           </Button>
         </div>
       </section>
 
-      {candidate && (
+      {candidate && <div className={archiveStyles.previewSlot}>
         <PackagePreview
           candidate={candidate}
           setAsActive={setAsActive}
@@ -540,10 +553,10 @@ export default function MaterialsPage() {
           onCancel={() => setCandidate(undefined)}
           onConfirm={confirmPackageImport}
         />
-      )}
+      </div>}
 
       {(remoteCatalog || remoteMessage) && (
-        <section className="border-y border-violet-200 py-5">
+        <section className={archiveStyles.remotePanel}>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h3 className="flex items-center gap-2 font-semibold text-violet-950"><GitBranch className="h-4 w-4" />Rékaí 教材收件匣</h3>
@@ -573,38 +586,38 @@ export default function MaterialsPage() {
         </section>
       )}
 
-      <section className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-4">
+      <section className={archiveStyles.stats} aria-label="教材戰役統計">
         {[
           ["教材", bundles.length],
           ["章節", totalChapters],
           ["已完成", completedChapters],
           ["目前主線", activeMaterial?.definition.title ?? "未設定"],
         ].map(([label, value]) => (
-          <div className="bg-white px-4 py-3" key={String(label)}>
-            <p className="text-xs text-muted-foreground">{label}</p>
-            <p className="mt-1 truncate text-lg font-semibold">{value}</p>
+          <div className={archiveStyles.stat} key={String(label)}>
+            <p>{label}</p>
+            <strong>{value}</strong>
           </div>
         ))}
       </section>
 
       {bundles.length === 0 ? (
-        <section className="grid min-h-[360px] place-items-center border border-dashed border-border bg-white/60 p-8 text-center">
-          <div className="max-w-md">
-            <FolderOpen className="mx-auto h-10 w-10 text-primary" />
-            <h3 className="mt-4 text-lg font-semibold">教材收件匣還是空的</h3>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">可以匯入 preview.html，也可以先試用 repository 內的梯度下降 Phoenix 範例教材。</p>
-            <Button className="mt-4" variant="outline" onClick={previewExamplePackage}>
+        <section className={archiveStyles.emptyState}>
+          <div className={archiveStyles.emptyContent}>
+            <div className={archiveStyles.emptySeal}><FolderOpen className="h-7 w-7" /></div>
+            <h2><span>ARCHIVE SEALED</span>教材戰役庫尚未解封</h2>
+            <p>匯入第一份 Phoenix 教材，或從 Rékaí 的教材收件匣接收新的戰役檔案。</p>
+            <Button className={archiveStyles.entryButton} variant="outline" onClick={previewExamplePackage}>
               <Sparkles className="mr-2 h-4 w-4" />預覽內建範例
             </Button>
           </div>
         </section>
       ) : (
-        <div className={isImmersive ? "grid gap-6" : "grid gap-6 lg:grid-cols-[310px_minmax(0,1fr)]"}>
-          <aside className={isImmersive ? "grid gap-3 border-b border-border pb-5 md:grid-cols-[150px_minmax(0,1fr)]" : "space-y-3"}>
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">我的教材</h3><span className="text-xs text-muted-foreground">{bundles.length} 份</span>
+        <div className={isImmersive ? archiveStyles.campaignLayoutImmersive : archiveStyles.campaignLayout}>
+          <aside className={archiveStyles.campaignList}>
+            <div className={archiveStyles.campaignListHeader}>
+              <h2>CAMPAIGN DOSSIERS</h2><span>{bundles.length} 份</span>
             </div>
-            <div className={isImmersive ? "grid gap-2 md:grid-cols-2 xl:grid-cols-3" : "space-y-2"}>
+            <div className={archiveStyles.dossierGrid}>
               {bundles.map((bundle) => {
                 const { definition, progress } = bundle;
                 const remoteUpdate = remoteCatalog?.items.find(
@@ -612,23 +625,22 @@ export default function MaterialsPage() {
                 );
                 return (
                   <button
-                    className={`w-full border p-3 text-left transition ${definition.slug === selectedSlug ? "border-primary bg-primary/5 shadow-sm" : "border-border bg-white/80 hover:border-primary/40"}`}
+                    className={archiveStyles.dossier}
+                    data-active={definition.slug === selectedSlug}
                     key={definition.slug}
                     onClick={() => setSelectedSlug(definition.slug)}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold">{definition.title}</p>
-                        <p className="mt-1 text-xs text-muted-foreground">{definition.subject} · v{definition.version}</p>
-                      </div>
+                    <div className={archiveStyles.dossierTitle}>
+                      <strong>{definition.title}</strong>
                       {progress.isActive && <Flag className="h-4 w-4 shrink-0 fill-primary text-primary" />}
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {definition.kind === "phoenix-package" && <span className="bg-violet-950 px-1.5 py-0.5 text-[10px] font-semibold text-white">Rékaí 製作</span>}
-                      {remoteUpdate && <span className="bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-800">新版 v{remoteUpdate.package.version}</span>}
+                    <p className={archiveStyles.dossierMeta}>{definition.subject} · v{definition.version}</p>
+                    <div className={archiveStyles.dossierTags}>
+                      {definition.kind === "phoenix-package" && <span>RÉKAÍ</span>}
+                      {remoteUpdate && <span data-update="true">UPDATE v{remoteUpdate.package.version}</span>}
                     </div>
-                    <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${progress.overallProgress}%` }} /></div>
-                    <div className="mt-2 flex justify-between text-xs text-muted-foreground"><span>{progress.overallProgress}%</span><span>{formatDate(progress.lastOpenedAt)}</span></div>
+                    <div className={archiveStyles.dossierProgress}><i style={{ width: `${progress.overallProgress}%` }} /></div>
+                    <div className={archiveStyles.dossierFoot}><span>{progress.overallProgress}%</span><span>{formatDate(progress.lastOpenedAt)}</span></div>
                   </button>
                 );
               })}
@@ -636,11 +648,11 @@ export default function MaterialsPage() {
           </aside>
 
           {selected && activeChapter && (
-            <section className="min-w-0 space-y-5">
-              <div className="flex flex-col gap-4 border-b border-border pb-4 md:flex-row md:items-start md:justify-between">
+            <section className={archiveStyles.intelligence}>
+              <div className={archiveStyles.selectedHeader}>
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="truncate text-xl font-semibold">{selected.definition.title}</h3>
+                    <h2 className="truncate">{selected.definition.title}</h2>
                     {selected.progress.isActive && <span className="inline-flex items-center bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><Flag className="mr-1 h-3 w-3" />目前主線</span>}
                     {selected.definition.kind === "phoenix-package" && <span className="inline-flex items-center bg-violet-950 px-2 py-1 text-xs font-medium text-white"><Sparkles className="mr-1 h-3 w-3" />Rékaí 製作</span>}
                   </div>
@@ -655,7 +667,7 @@ export default function MaterialsPage() {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
+              <div className={`${archiveStyles.selectedBody} grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]`}>
                 <div>
                   <div className="flex items-center justify-between text-sm"><span className="font-medium">整體進度</span><strong>{selected.progress.overallProgress}%</strong></div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${selected.progress.overallProgress}%` }} /></div>
@@ -666,7 +678,7 @@ export default function MaterialsPage() {
               </div>
 
               <div className={isImmersive ? "block" : "grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]"}>
-                <div className="overflow-hidden border border-border bg-white shadow-sm">
+                <div className={archiveStyles.readerFrame}>
                   <div className="flex items-center justify-between border-b border-border px-4 py-3">
                     <div className="flex items-center gap-2 text-sm font-medium"><BookOpen className="h-4 w-4 text-primary" />教材閱讀器</div>
                     <span className="text-xs text-muted-foreground">{formatLabels[selected.definition.format]}</span>
@@ -733,6 +745,7 @@ export default function MaterialsPage() {
           )}
         </div>
       )}
-    </main>
+      </div>
+    </CommandShell>
   );
 }

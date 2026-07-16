@@ -1,0 +1,19 @@
+:root {
+  --command-bg: #0b090b;
+  --command-surface: rgba(18, 15, 18, 0.82);
+  --command-surface-soft: rgba(18, 15, 18, 0.58);
+  --command-gold: #c6a56a;
+  --command-gold-soft: #e0c892;
+  --command-rose: #8e293d;
+  --command-rose-bright: #c6536d;
+  --command-silver: #c5c8d0;
+  --command-purple: #7a5ac8;
+  --command-text: #f0ebe4;
+  --command-muted: #a9a0a0;
+  --command-line: rgba(198, 165, 106, 0.22);
+  --command-line-strong: rgba(198, 165, 106, 0.58);
+  --command-danger-line: rgba(198, 83, 109, 0.6);
+  --command-font-display: "Songti TC", "Noto Serif TC", serif;
+  --command-font-ui: "PingFang TC", "Noto Sans TC", sans-serif;
+  --command-font-data: SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}

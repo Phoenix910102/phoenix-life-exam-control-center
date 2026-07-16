@@ -20,4 +20,11 @@ test("command center keeps the primary actions visible on mobile", async ({ page
   await expect(page.getByTestId("current-mission")).toBeVisible();
   await expect(page.getByRole("button", { name: "進入戰役" })).toBeVisible();
   await expect(page.getByRole("button", { name: "軍需庫" })).toBeVisible();
+
+  await page.getByRole("button", { name: "開啟全域導航" }).click();
+  const mobileNavigation = page.getByRole("navigation", { name: "Phoenix 行動版全域導航" });
+  await expect(mobileNavigation).toBeVisible();
+  await expect(mobileNavigation.getByRole("link", { name: "教材戰役" })).toBeVisible();
+  await expect(mobileNavigation.getByRole("link", { name: "生活紀錄" })).toBeVisible();
+  await expect(mobileNavigation.getByRole("link", { name: "用藥協議" })).toBeVisible();
 });

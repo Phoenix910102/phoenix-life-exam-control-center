@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, BookOpen, Flower2, Warehouse } from "lucide-react";
+import { ArrowRight, BookOpen, Warehouse } from "lucide-react";
+import { CommandShell } from "@/components/command-shell/CommandShell";
 import { buildCommandCenterViewModel } from "@/lib/command-center/buildCommandCenterViewModel";
 import { mockCommandCenterData } from "@/lib/command-center/mockCommandCenterData";
-import { CommandNavigation } from "./CommandNavigation";
 import { CommandScene } from "./CommandScene";
 import { CurrencyDisplay } from "./CurrencyDisplay";
 import { CurrentMission } from "./CurrentMission";
@@ -36,41 +36,26 @@ export function CommandCenter() {
   const intro = reducedMotion ? { duration: 0.12 } : { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const };
 
   return (
-    <main className={styles.page} data-state={viewModel.characterState}>
-      <CommandScene characterState={viewModel.characterState} />
-      <div className={styles.frame} aria-hidden="true" />
-
-      <motion.header
-        animate={{ opacity: 1, y: 0 }}
-        className={styles.brand}
-        initial={{ opacity: 0, y: reducedMotion ? 0 : -12 }}
-        transition={{ ...intro, delay: reducedMotion ? 0 : 0.9 }}
-      >
-        <span className={styles.brandMark}><Flower2 size={24} /></span>
-        <div>
-          <b>PHOENIX</b>
-          <strong>COMMAND CENTER</strong>
-          <small>私人戰役與學習中樞</small>
-        </div>
-      </motion.header>
-
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className={styles.currencyPosition}
-        initial={{ opacity: 0, y: reducedMotion ? 0 : -10 }}
-        transition={{ ...intro, delay: reducedMotion ? 0 : 1.15 }}
-      >
-        <CurrencyDisplay currency={viewModel.currency} />
-      </motion.div>
-
-      <motion.div
-        animate={{ opacity: 1, x: 0 }}
-        className={styles.navPosition}
-        initial={{ opacity: 0, x: reducedMotion ? 0 : -14 }}
-        transition={{ ...intro, delay: reducedMotion ? 0 : 1.35 }}
-      >
-        <CommandNavigation />
-      </motion.div>
+    <CommandShell
+      className={styles.page}
+      contentMode="overlay"
+      hud={(
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: reducedMotion ? 0 : -10 }}
+          transition={{ ...intro, delay: reducedMotion ? 0 : 1.15 }}
+        >
+          <CurrencyDisplay currency={viewModel.currency} />
+        </motion.div>
+      )}
+      identity={{
+        eyebrow: "PHOENIX",
+        title: "COMMAND CENTER",
+        subtitle: "私人戰役與學習中樞",
+      }}
+      scene={<CommandScene characterState={viewModel.characterState} />}
+      state={viewModel.characterState}
+    >
 
       <motion.div
         animate={{ opacity: 1, y: 0 }}
@@ -132,6 +117,6 @@ export function CommandCenter() {
           />
         ) : null}
       </AnimatePresence>
-    </main>
+    </CommandShell>
   );
 }

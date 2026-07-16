@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import "@/styles/command-tokens.css";
 import { Toaster } from "sonner";
 import { AppShell } from "@/components/ui/app-shell";
 

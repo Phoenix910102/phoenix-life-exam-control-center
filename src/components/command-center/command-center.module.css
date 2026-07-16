@@ -1,13 +1,4 @@
 .page {
-  --command-bg: #0b090b;
-  --command-gold: #c6a56a;
-  --command-gold-soft: #e0c892;
-  --command-rose: #8e293d;
-  --command-rose-bright: #c6536d;
-  --command-silver: #c5c8d0;
-  --command-purple: #7a5ac8;
-  --command-text: #f0ebe4;
-  --command-muted: #a9a0a0;
   background: var(--command-bg);
   color: var(--command-text);
   font-family: "PingFang TC", "Noto Sans TC", sans-serif;
@@ -105,55 +96,6 @@
   z-index: 5;
 }
 
-.frame {
-  border: 1px solid rgba(198, 165, 106, 0.18);
-  inset: 14px;
-  pointer-events: none;
-  position: absolute;
-  z-index: 20;
-}
-
-.frame::before,
-.frame::after {
-  border-color: rgba(198, 165, 106, 0.7);
-  border-style: solid;
-  content: "";
-  height: 26px;
-  position: absolute;
-  width: 26px;
-}
-
-.frame::before { border-width: 1px 0 0 1px; left: -1px; top: -1px; }
-.frame::after { border-width: 0 1px 1px 0; bottom: -1px; right: -1px; }
-
-.brand {
-  align-items: center;
-  display: flex;
-  gap: 13px;
-  left: 42px;
-  position: absolute;
-  top: 35px;
-  z-index: 30;
-}
-
-.brandMark {
-  align-items: center;
-  border: 1px solid rgba(198, 165, 106, 0.54);
-  color: var(--command-gold);
-  display: flex;
-  height: 42px;
-  justify-content: center;
-  transform: rotate(45deg);
-  width: 42px;
-}
-
-.brandMark svg { transform: rotate(-45deg); }
-.brand div { display: grid; }
-.brand b { color: var(--command-gold-soft); font: 0.66rem/1 SFMono-Regular, Consolas, monospace; letter-spacing: 0.24em; }
-.brand strong { font-family: "Songti TC", "Noto Serif TC", serif; font-size: 1.02rem; font-weight: 500; letter-spacing: 0.08em; margin-top: 4px; }
-.brand small { color: var(--command-muted); font-size: 0.65rem; margin-top: 3px; }
-
-.currencyPosition { position: absolute; right: 40px; top: 31px; z-index: 30; }
 .currencyBar { align-items: stretch; display: flex; height: 48px; }
 .currencyItem,
 .bondItem {
@@ -176,24 +118,6 @@
 .bondItem strong { justify-self: end; }
 .bondItem i { background: rgba(255,255,255,0.09); grid-column: 1 / -1; height: 2px; overflow: hidden; }
 .bondItem i b { background: var(--command-purple); display: block; height: 100%; }
-
-.navPosition { left: 28px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 31; }
-.navigation { display: grid; gap: 8px; }
-.navigation a {
-  align-items: center;
-  border-left: 1px solid rgba(198, 165, 106, 0.18);
-  color: rgba(240, 235, 228, 0.55);
-  display: flex;
-  height: 42px;
-  justify-content: center;
-  position: relative;
-  text-decoration: none;
-  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
-  width: 46px;
-}
-.navigation a[data-active="true"], .navigation a:hover, .navigation a:focus-visible { background: rgba(198, 165, 106, 0.08); border-left-color: var(--command-gold); color: var(--command-gold-soft); }
-.navigation a span { background: rgba(9, 8, 9, 0.9); border: 1px solid rgba(198,165,106,0.22); font-size: 0.7rem; left: 52px; opacity: 0; padding: 6px 9px; pointer-events: none; position: absolute; transform: translateX(-4px); transition: opacity 150ms ease, transform 150ms ease; white-space: nowrap; }
-.navigation a:hover span, .navigation a:focus-visible span { opacity: 1; transform: translateX(0); }
 
 .missionPosition { bottom: 50px; left: clamp(82px, 6.5vw, 116px); position: absolute; width: min(480px, 38vw); z-index: 30; }
 .mission { backdrop-filter: blur(8px); background: linear-gradient(90deg, rgba(9, 8, 9, 0.84), rgba(9, 8, 9, 0.3)); border-left: 2px solid var(--command-rose-bright); padding: 18px 28px 17px 22px; }
@@ -254,19 +178,12 @@
   .dialogue { display: none; }
   .rewardPosition { bottom: 151px; right: 32px; }
   .actions { bottom: 40px; right: 32px; }
-  .currencyPosition { right: 30px; }
 }
 
 @media (max-width: 760px) {
   .page { height: auto; min-height: 100svh; overflow: hidden; }
-  .frame { inset: 8px; }
   .background { background-position: 58% center; }
   .background::after { background: linear-gradient(0deg, rgba(7,6,7,0.96) 0%, rgba(7,6,7,0.4) 44%, rgba(7,6,7,0.25) 100%); }
-  .brand { left: 22px; top: 20px; }
-  .brandMark { height: 34px; width: 34px; }
-  .brand strong { font-size: 0.82rem; }
-  .brand small { display: none; }
-  .currencyPosition { left: 18px; right: 18px; top: 82px; }
   .currencyBar { height: 42px; justify-content: stretch; width: 100%; }
   .currencyItem, .bondItem { flex: 1; min-width: 0; padding: 0 9px; }
   .currencyItem strong { font-size: 0.72rem; }
@@ -286,11 +203,6 @@
   .missionMeta { gap: 12px; }
   .actions { bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; left: 18px; right: 18px; }
   .actions button { height: 48px; min-width: 0; width: 100%; }
-  .navPosition { bottom: 20px; left: auto; right: 20px; top: 20px; transform: none; }
-  .navigation { display: flex; }
-  .navigation a { border: 0; display: none; height: 36px; width: 36px; }
-  .navigation a[data-active="true"] { display: flex; }
-  .navigation a span { display: none; }
   .dialogue { display: none; }
 }
 
@@ -311,6 +223,5 @@
   .characterStage { transform: none !important; transition: none; }
   .actions button,
   .actions button svg,
-  .navigation a,
   .characters { transition-duration: 0.01ms !important; }
 }
