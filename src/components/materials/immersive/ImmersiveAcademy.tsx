@@ -17,6 +17,10 @@ import { ChromaKeyCharacters } from "@/components/command-center/ChromaKeyCharac
 import { ReadingModeToggle } from "@/components/campaign/theme/ReadingModeToggle";
 import { useCampaignTheme } from "@/components/campaign/theme/CampaignThemeProvider";
 import {
+  resolveCampaignModuleSurface,
+  type CampaignSurfaceModule,
+} from "@/components/campaign/theme/campaign-theme.types";
+import {
   PhoenixMaterialBlock,
   PhoenixMaterialRenderer,
 } from "@/components/materials/PhoenixMaterialRenderer";
@@ -106,6 +110,11 @@ export function ImmersiveAcademy({
   const filtered = useMemo(() => filterBlocks(chapter.blocks, mode), [chapter.blocks, mode]);
   const currentLesson = chapter.blocks[Math.min(lessonIndex, chapter.blocks.length - 1)];
   const chapterProgress = progress.chapterProgress[chapter.key] ?? 0;
+  const moduleSurface = resolveCampaignModuleSurface(
+    mode as CampaignSurfaceModule,
+    readingMode,
+    definition.presentation?.moduleSurfaces,
+  );
 
   useEffect(() => {
     if (readingMode !== "immersive" && mode !== "reader") {
@@ -179,7 +188,11 @@ export function ImmersiveAcademy({
           </nav>
         )}
 
-        <div className={styles.content}>
+        <div
+          className={`${styles.content} campaign-module-surface`}
+          data-module-surface={moduleSurface}
+          data-module={mode}
+        >
           <div className={`${styles.modeHeader} campaign-reading-intro`}>
             <div>
               <p className={styles.modeHint}>{modeCopy[mode].title}</p>
@@ -210,7 +223,7 @@ export function ImmersiveAcademy({
             )}
           </div>
 
-          <div className={`${styles.modeContent} ${mode === "reader" ? "campaign-reading-stage" : ""}`}>
+          <div className={`${styles.modeContent} campaign-module-body ${mode === "reader" ? "campaign-reading-stage" : ""}`}>
             {mode === "battlefield" && (
               <Battlefield3D
                 definition={definition}

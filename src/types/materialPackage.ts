@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  campaignModuleSurfaceValues,
   campaignReadingModeValues,
   campaignReadingThemeValues,
 } from "@/components/campaign/theme/campaign-theme.types";
@@ -27,6 +28,20 @@ export const materialThemeSchema = z.enum([
 ]);
 export const campaignReadingModeSchema = z.enum(campaignReadingModeValues);
 export const campaignReadingThemeSchema = z.enum(campaignReadingThemeValues);
+export const campaignModuleSurfaceSchema = z.enum(campaignModuleSurfaceValues);
+export const materialModuleSurfacesSchema = z
+  .object({
+    battlefield: campaignModuleSurfaceSchema.optional(),
+    roadmap: campaignModuleSurfaceSchema.optional(),
+    reader: campaignModuleSurfaceSchema.optional(),
+    lesson: campaignModuleSurfaceSchema.optional(),
+    duel: campaignModuleSurfaceSchema.optional(),
+    diagnostic: campaignModuleSurfaceSchema.optional(),
+    "trap-field": campaignModuleSurfaceSchema.optional(),
+    quiz: campaignModuleSurfaceSchema.optional(),
+  })
+  .strict()
+  .default({});
 export const materialModuleSchema = z.enum([
   "battlefield",
   "roadmap",
@@ -67,6 +82,7 @@ export const materialPresentationSchema = z
     readingTheme: campaignReadingThemeSchema.default("ivory-archive"),
     defaultMode: campaignReadingModeSchema.default("reading"),
     availableModes: z.array(campaignReadingModeSchema).min(1).default([...campaignReadingModeValues]),
+    moduleSurfaces: materialModuleSurfacesSchema,
     renderOrder: z.enum(["authored", "phoenix-default"]).default("phoenix-default"),
     modules: z.array(materialModuleSchema).default(["reader", "quiz"]),
     battlefield3d: battlefield3dSchema.optional(),

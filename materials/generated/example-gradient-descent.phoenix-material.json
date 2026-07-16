@@ -24,6 +24,16 @@
     "readingTheme": "ivory-archive",
     "defaultMode": "reading",
     "availableModes": ["reading", "immersive", "night"],
+    "moduleSurfaces": {
+      "battlefield": "immersive-dark",
+      "roadmap": "immersive-dark",
+      "reader": "rose-parchment",
+      "lesson": "rose-parchment",
+      "duel": "immersive-dark",
+      "diagnostic": "immersive-dark",
+      "trap-field": "rose-dossier",
+      "quiz": "adaptive"
+    },
     "renderOrder": "authored",
     "modules": ["battlefield", "roadmap", "reader", "lesson", "duel", "diagnostic", "trap-field", "quiz", "achievements", "floating-console"],
     "battlefield3d": {

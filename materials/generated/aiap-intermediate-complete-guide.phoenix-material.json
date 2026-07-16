@@ -35,6 +35,16 @@
       "immersive",
       "night"
     ],
+    "moduleSurfaces": {
+      "battlefield": "immersive-dark",
+      "roadmap": "immersive-dark",
+      "reader": "rose-parchment",
+      "lesson": "rose-parchment",
+      "duel": "immersive-dark",
+      "diagnostic": "immersive-dark",
+      "trap-field": "rose-dossier",
+      "quiz": "adaptive"
+    },
     "renderOrder": "authored",
     "modules": [
       "battlefield",

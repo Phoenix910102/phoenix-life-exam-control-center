@@ -12,8 +12,12 @@ async function importSampleCampaign(page: Page) {
     buffer: Buffer.from(JSON.stringify(sampleJson)),
   });
   await page.getByRole("button", { name: "確認匯入教材" }).click();
-  await page.getByRole("button", { name: "繼續戰役" }).click();
-  await expect(page).toHaveURL(new RegExp(`${campaignUrl}$`));
+  const continueButton = page.getByRole("button", { name: "繼續戰役" });
+  await expect(continueButton).toBeEnabled();
+  await Promise.all([
+    page.waitForURL(new RegExp(`${campaignUrl}$`), { timeout: 15_000 }),
+    continueButton.click(),
+  ]);
   await expect(page.locator('[data-theme-hydrated="true"]')).toBeVisible();
 }
 
@@ -34,6 +38,7 @@ test("shares reading preference and keeps AIAP-style search and classification c
   await importSampleCampaign(page);
 
   await expect(page.getByTestId("campaign-reading-surface")).toBeVisible();
+  await expect(page.locator('[data-module="reader"]')).toHaveAttribute("data-module-surface", "rose-parchment");
   await expect(page.getByLabel("搜尋本章內容")).toBeVisible();
   await expect(page.getByLabel("篩選內容分類")).toBeVisible();
 
@@ -45,6 +50,7 @@ test("shares reading preference and keeps AIAP-style search and classification c
 
   await selectReadingMode(page, "夜讀");
   await expect(page.locator('[data-campaign-mode="night"]')).toBeVisible();
+  await expect(page.locator('[data-module="reader"]')).toHaveAttribute("data-module-surface", "night-manuscript");
   await page.reload();
   await expect(page.locator('[data-theme-hydrated="true"]')).toBeVisible();
   await expect(page.getByTestId("campaign-mode-toggle").getByRole("button", { name: "夜讀" })).toHaveAttribute("aria-pressed", "true");
@@ -53,6 +59,10 @@ test("shares reading preference and keeps AIAP-style search and classification c
   await expect(page.getByRole("navigation", { name: "教材模式" })).toBeVisible();
   await page.getByRole("button", { name: "診斷" }).click();
   await expect(page.getByText("卡點診斷", { exact: true })).toBeVisible();
+  await expect(page.locator('[data-module="diagnostic"]')).toHaveAttribute("data-module-surface", "immersive-dark");
+
+  await page.getByRole("button", { name: "陷阱" }).click();
+  await expect(page.locator('[data-module="trap-field"]')).toHaveAttribute("data-module-surface", "rose-dossier");
 
   await selectReadingMode(page, "紙本閱讀");
   await expect(page.getByTestId("campaign-reading-surface")).toBeVisible();

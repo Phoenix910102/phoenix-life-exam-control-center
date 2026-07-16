@@ -1,4 +1,5 @@
 import type { MaterialDefinition } from "@/types/materialRecord";
+import { defaultCampaignModuleSurfaces } from "@/components/campaign/theme/campaign-theme.types";
 
 export type MaterialPresentation = NonNullable<MaterialDefinition["presentation"]>;
 
@@ -9,6 +10,7 @@ export const defaultPhoenixMaterialPresentation: MaterialPresentation = {
   readingTheme: "ivory-archive",
   defaultMode: "reading",
   availableModes: ["reading", "immersive", "night"],
+  moduleSurfaces: { ...defaultCampaignModuleSurfaces },
   renderOrder: "authored",
   modules: [
     "battlefield",
@@ -37,6 +39,10 @@ export function normalizeMaterialPresentation(
     availableModes: presentation.availableModes?.length > 0
       ? presentation.availableModes
       : defaultPhoenixMaterialPresentation.availableModes,
+    moduleSurfaces: {
+      ...defaultCampaignModuleSurfaces,
+      ...presentation.moduleSurfaces,
+    },
     modules: presentation.modules?.length > 0
       ? presentation.modules
       : defaultPhoenixMaterialPresentation.modules,

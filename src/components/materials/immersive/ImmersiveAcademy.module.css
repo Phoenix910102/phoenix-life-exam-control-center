@@ -467,6 +467,10 @@
     grid-template-columns: 80px minmax(0, 1fr);
   }
 
+  .workbenchReading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .intel {
     grid-column: 1 / -1;
     display: grid;

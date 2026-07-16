@@ -225,7 +225,7 @@ function CalloutBlock({ block }: { block: Extract<MaterialBlock, { type: "callou
     important: "border-rose-500 bg-rose-50/75 text-rose-950",
   };
   return (
-    <aside className={`campaign-block-callout mx-5 my-6 border-l-4 px-4 py-3 ${tones[block.tone]}`}>
+    <aside className={`campaign-block-callout mx-5 my-6 border-l-4 px-4 py-3 ${tones[block.tone]}`} data-tone={block.tone}>
       <strong className="text-sm">{block.title}</strong>
       <p className="mt-1 text-sm leading-6">{block.body}</p>
     </aside>
@@ -361,6 +361,7 @@ export function PhoenixMaterialBlock({
 
 export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt }: Props) {
   const chapter = definition.chapters.find((item) => item.key === chapterKey) ?? definition.chapters[0];
+  const chapterNumber = Math.max(0, definition.chapters.findIndex((item) => item.key === chapter.key)) + 1;
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const blocks = useMemo(
@@ -385,8 +386,10 @@ export function PhoenixMaterialRenderer({ definition, chapterKey, onQuizAttempt 
   return (
     <article className="campaign-reading-surface overflow-hidden bg-[#fffdfb] text-slate-900" data-testid="campaign-reading-surface">
       <header className="campaign-chapter-header border-b border-rose-200 bg-[linear-gradient(120deg,#fff7f7_0%,#fbf7ff_60%,#fffdfb_100%)] px-5 py-7 md:px-8">
-        <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-violet-700">
-          <span>{definition.subject}</span><span className="text-rose-300">/</span><span>約 {chapter.estimatedMinutes} 分鐘</span>
+        <div className="campaign-chapter-folio">
+          <span>CHAPTER {String(chapterNumber).padStart(2, "0")}</span>
+          <span>{definition.subject}</span>
+          <span>約 {chapter.estimatedMinutes} 分鐘</span>
         </div>
         <h2 className="mt-2 max-w-3xl font-serif text-3xl font-semibold leading-tight text-violet-950">{chapter.title}</h2>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600">{chapter.summary}</p>

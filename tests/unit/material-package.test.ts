@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import sampleJson from "../../materials/generated/example-gradient-descent.phoenix-material.json";
+import { resolveCampaignModuleSurface } from "@/components/campaign/theme/campaign-theme.types";
 import { db } from "@/lib/db/client";
 import {
   assertImportAllowed,
@@ -62,6 +63,12 @@ describe("Phoenix material package", () => {
       renderOrder: "authored",
     });
     expect(definition.presentation?.availableModes).toEqual(["reading", "immersive", "night"]);
+    expect(definition.presentation?.moduleSurfaces).toMatchObject({
+      reader: "rose-parchment",
+      duel: "immersive-dark",
+      "trap-field": "rose-dossier",
+      quiz: "adaptive",
+    });
     expect(definition.presentation?.modules).toEqual(expect.arrayContaining([
       "battlefield",
       "reader",
@@ -89,6 +96,19 @@ describe("Phoenix material package", () => {
     const parsed = parseMaterialPackage(invalid);
     expect(parsed.success).toBe(false);
     if (!parsed.success) expect(parsed.errors.some((error) => error.path.includes("availableModes"))).toBe(true);
+  });
+
+  it("validates and resolves module-specific reading surfaces", () => {
+    const invalid = structuredClone(sampleJson);
+    invalid.presentation.moduleSurfaces.reader = "plain-white" as "rose-parchment";
+    const parsed = parseMaterialPackage(invalid);
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) expect(parsed.errors.some((error) => error.path.includes("moduleSurfaces.reader"))).toBe(true);
+
+    expect(resolveCampaignModuleSurface("reader", "reading")).toBe("rose-parchment");
+    expect(resolveCampaignModuleSurface("reader", "night")).toBe("night-manuscript");
+    expect(resolveCampaignModuleSurface("quiz", "immersive")).toBe("immersive-dark");
+    expect(resolveCampaignModuleSurface("trap-field", "immersive")).toBe("rose-dossier");
   });
 
   it("rejects schema errors with a field path", () => {
