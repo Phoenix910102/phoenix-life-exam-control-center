@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -38,6 +39,7 @@ export function CampaignThemeProvider({
     : (availableModes[0] ?? "reading");
   const [mode, setModeState] = useState<CampaignReadingMode>(defaultMode);
   const [hydrated, setHydrated] = useState(false);
+  const userSelectedMode = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -45,7 +47,9 @@ export function CampaignThemeProvider({
       .then((settings) => {
         if (!active) return;
         const savedMode = settings.campaign.readingMode;
-        setModeState(availableModes.includes(savedMode) ? savedMode : defaultMode);
+        if (!userSelectedMode.current) {
+          setModeState(availableModes.includes(savedMode) ? savedMode : defaultMode);
+        }
       })
       .finally(() => {
         if (active) setHydrated(true);
@@ -57,6 +61,7 @@ export function CampaignThemeProvider({
 
   const setMode = useCallback((nextMode: CampaignReadingMode) => {
     if (!availableModes.includes(nextMode)) return;
+    userSelectedMode.current = true;
     setModeState(nextMode);
     void upsertSettings({ campaign: { readingMode: nextMode } });
   }, [availableModes]);
