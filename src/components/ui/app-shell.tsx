@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
-import { BookOpen, ClipboardList, Gamepad2, HeartPulse, LayoutDashboard, Music2, Pill, Settings, Terminal, Trophy } from "lucide-react";
+import { BookOpen, ClipboardList, Gamepad2, HeartPulse, LayoutDashboard, Music2, Pill, Scale, Settings, Terminal, Trophy } from "lucide-react";
 
 const links = [
   ["/dashboard", "總覽", LayoutDashboard],
@@ -12,6 +12,7 @@ const links = [
   ["/meds", "用藥", Pill],
   ["/tasks", "任務", ClipboardList],
   ["/materials", "教材", BookOpen],
+  ["/law", "司律主線", Scale],
   ["/exams", "考試", Trophy],
   ["/games", "小遊戲", Gamepad2],
   ["/guzheng", "古箏聽音", Music2],
@@ -25,6 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   if (
     pathname.startsWith("/command-center")
+    || pathname.startsWith("/law")
     || pathname.startsWith("/materials")
     || pathname.startsWith("/campaigns")
     || pathname.startsWith("/arsenal")

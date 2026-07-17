@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, HeartPulse, Home, Menu, Pill, Settings, Trophy, X } from "lucide-react";
+import { BookOpen, HeartPulse, Home, Menu, Pill, Scale, Settings, Trophy, X } from "lucide-react";
 import styles from "./command-shell.module.css";
 
 const navigation = [
   ["/command-center", "中控台", Home],
+  ["/law", "司律主線", Scale],
   ["/materials", "教材戰役", BookOpen],
   ["/life", "生活紀錄", HeartPulse],
   ["/meds", "用藥協議", Pill],
