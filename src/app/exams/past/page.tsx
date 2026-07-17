@@ -82,8 +82,8 @@ function questionNumber(question: Question) {
 }
 
 function subjectShort(subject: string) {
-  if (subject.includes("第一科")) return "一科";
-  if (subject.includes("第二科")) return "二科";
+  if (subject.includes("第一科")) return subject.includes("初級") ? "初級一科" : "中級一科";
+  if (subject.includes("第二科")) return subject.includes("初級") ? "初級二科" : "中級二科";
   if (subject.includes("Python")) return "Python";
   return subject.replace("AIAP 中級", "").trim() || subject;
 }
@@ -123,8 +123,9 @@ export default function PastExamPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("bank") === "simulation") {
-      setBankId("simulation");
+    const requestedBank = params.get("bank");
+    if (aiapQuestionBanks.some((bank) => bank.id === requestedBank)) {
+      setBankId(requestedBank as AiapQuestionBankId);
     }
   }, []);
 
@@ -134,7 +135,7 @@ export default function PastExamPage() {
     setTopicFilter(ALL);
     setReport(null);
     setConfirmReset(false);
-    const nextUrl = nextBankId === "simulation" ? "/exams/past?bank=simulation" : "/exams/past";
+    const nextUrl = nextBankId === "official" ? "/exams/past" : `/exams/past?bank=${nextBankId}`;
     window.history.replaceState(null, "", nextUrl);
   };
 
@@ -435,7 +436,7 @@ export default function PastExamPage() {
 
           <div>
             <p className="mb-2 text-xs font-medium text-muted-foreground">題庫來源</p>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid gap-2 sm:grid-cols-3">
               {aiapQuestionBanks.map((bank) => (
                 <button
                   key={bank.id}
