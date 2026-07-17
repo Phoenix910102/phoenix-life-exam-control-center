@@ -16,6 +16,7 @@ import {
   FolderOpen,
   Gauge,
   GitBranch,
+  Landmark,
   Plus,
   RefreshCw,
   ShieldCheck,
@@ -432,6 +433,26 @@ export default function MaterialsPage() {
     }
   };
 
+  const previewCriminalProcedurePackage = async () => {
+    try {
+      const response = await fetch("/api/materials/criminal-procedure", { headers: apiHeaders() });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.message ?? "刑訴教材讀取失敗");
+      const material = body.package as MaterialPackage;
+      const existing = bundles.find((bundle) => bundle.definition.slug === material.slug)?.definition;
+      setCandidate({
+        package: material,
+        fileName: body.fileName as string,
+        status: getMaterialImportStatus(material, existing),
+        source: "local",
+      });
+      setSetAsActive(!activeMaterial);
+      setAllowDowngrade(false);
+    } catch (error) {
+      notify("刑訴教材讀取失敗", error instanceof Error ? error.message : "請稍後再試");
+    }
+  };
+
   const selectRemoteCandidate = (item: RemoteCatalogItem) => {
     const existing = bundles.find((bundle) => bundle.definition.slug === item.package.slug)?.definition;
     setCandidate({
@@ -500,6 +521,9 @@ export default function MaterialsPage() {
           </p>
         </div>
         <div className={archiveStyles.entryRail}>
+          <Button className={archiveStyles.entryButton} variant="outline" onClick={previewCriminalProcedurePackage}>
+            <Landmark className="mr-2 h-4 w-4" />載入刑訴全科教材
+          </Button>
           <Button className={archiveStyles.entryButton} variant="outline" onClick={previewAiapPackage}>
             <BrainCircuit className="mr-2 h-4 w-4" />載入 AIAP 全科教材
           </Button>
@@ -637,6 +661,9 @@ export default function MaterialsPage() {
             </Button>
             <Button className={archiveStyles.entryButton} variant="outline" onClick={previewAiapPackage}>
               <BrainCircuit className="mr-2 h-4 w-4" />載入 AIAP 全科教材
+            </Button>
+            <Button className={archiveStyles.entryButton} variant="outline" onClick={previewCriminalProcedurePackage}>
+              <Landmark className="mr-2 h-4 w-4" />載入刑訴全科教材
             </Button>
           </div>
         </section>

@@ -12,6 +12,10 @@ const bundledMaterialSources: Record<string, BundledMaterialSource> = {
     endpoint: "/api/materials/aiap",
     fileName: "aiap-intermediate-complete-guide.phoenix-material.json",
   },
+  "criminal-procedure-complete-phoenix": {
+    endpoint: "/api/materials/criminal-procedure",
+    fileName: "criminal-procedure-complete-phoenix.phoenix-material.json",
+  },
 };
 
 const pendingCampaignInstalls = new Map<string, ReturnType<typeof openMaterialCampaign>>();
