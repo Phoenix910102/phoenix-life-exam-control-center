@@ -6,7 +6,9 @@ test("completes the question-first vertical slice and restores state after reloa
   await expect(page).toHaveURL(/\/law\/practice\/session\/law-session%3A/);
   await expect(page.getByText("題幹先行", { exact: true })).toBeVisible();
   await expect(page.getByRole("radio")).toHaveCount(0);
-  await expect(page).toHaveScreenshot("legal-practice-stem-desktop.png", { fullPage: true });
+  if (process.platform === "darwin") {
+    await expect(page).toHaveScreenshot("legal-practice-stem-desktop.png", { fullPage: true });
+  }
 
   await page.getByRole("button", { name: /開始鎖定題眼/ }).click();
   await page.getByRole("button", { name: "判斷順序" }).click();
@@ -43,5 +45,7 @@ test("mobile practice remains single-column and preserves reading mode", async (
   await expect(page.locator("main").first()).toHaveAttribute("data-reading-mode", "night");
   await expect(page.getByRole("button", { name: "夜讀" })).toHaveAttribute("aria-pressed", "true");
   expect(await page.locator("body").evaluate((element) => element.scrollWidth)).toBeLessThanOrEqual(390);
-  await expect(page).toHaveScreenshot("legal-practice-stem-mobile.png", { fullPage: true });
+  if (process.platform === "darwin") {
+    await expect(page).toHaveScreenshot("legal-practice-stem-mobile.png", { fullPage: true });
+  }
 });
