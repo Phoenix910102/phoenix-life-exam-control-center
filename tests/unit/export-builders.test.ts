@@ -5,6 +5,7 @@ import { restoreFullBackup } from "@/lib/export/restore";
 import { importPhoenixMaterialPackage } from "@/lib/db/repository";
 import { parseMaterialPackage } from "@/lib/materials/packageImporter";
 import { confirmHydration } from "@/lib/care/repository";
+import { createLegalStudySession } from "@/lib/law/repository";
 import sampleJson from "../../materials/generated/example-gradient-descent.phoenix-material.json";
 
 describe("export builders", () => {
@@ -23,6 +24,16 @@ describe("export builders", () => {
     await db.studyMaterials.clear();
     await db.materialProgress.clear();
     await db.materialDefinitions.clear();
+    await db.legalQuestionDefinitions.clear();
+    await db.questionAttemptsV2.clear();
+    await db.questionLearningStates.clear();
+    await db.studySessions.clear();
+    await db.reviewQueue.clear();
+    await db.materialNotes.clear();
+    await db.materialBookmarks.clear();
+    await db.materialHighlights.clear();
+    await db.contentPatchDrafts.clear();
+    await db.contentReleases.clear();
     await db.tasks.add({
       id: "t1",
       title: "task",
@@ -57,6 +68,7 @@ describe("export builders", () => {
     const parsed = parseMaterialPackage(sampleJson);
     if (!parsed.success) throw new Error("sample package is invalid");
     await importPhoenixMaterialPackage(parsed.package, "example.phoenix-material.json");
+    const legalSession = await createLegalStudySession();
     await confirmHydration();
     const x = await buildFullBackup();
     expect(x.filename).toMatch(/^phoenix-backup-/);
@@ -67,6 +79,10 @@ describe("export builders", () => {
     expect(x.data.materialProgress).toHaveLength(1);
     expect(x.data.domainEvents.length).toBeGreaterThan(0);
     expect(x.data.careState?.hydration.countToday).toBe(1);
+    expect(x.data.legalQuestionDefinitions).toHaveLength(5);
+    expect(x.data.studySessions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ sessionId: legalSession.sessionId, layout: "aiap-soft-study" }),
+    ]));
 
     await db.tasks.clear();
     await db.questions.clear();
@@ -74,6 +90,8 @@ describe("export builders", () => {
     await db.materialProgress.clear();
     await db.domainEvents.clear();
     await db.careState.clear();
+    await db.legalQuestionDefinitions.clear();
+    await db.studySessions.clear();
     await restoreFullBackup(x.data);
     expect(await db.tasks.get("t1")).toBeDefined();
     expect(await db.questions.get("q-backup-1")).toMatchObject({ topic: "犯罪成立三階層" });
@@ -81,5 +99,7 @@ describe("export builders", () => {
     expect(await db.materialProgress.count()).toBe(1);
     expect(await db.domainEvents.count()).toBeGreaterThan(0);
     expect((await db.careState.get("singleton"))?.hydration.countToday).toBe(1);
+    expect(await db.legalQuestionDefinitions.count()).toBe(5);
+    expect(await db.studySessions.get(legalSession.sessionId)).toMatchObject({ layout: "aiap-soft-study" });
   });
 });

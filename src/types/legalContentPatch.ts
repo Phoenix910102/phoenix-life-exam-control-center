@@ -16,7 +16,7 @@ const contentHash = z.string().regex(/^sha256:[a-f0-9]{64}$/, "內容 hash 必�
 const semver = z.string().regex(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/, "版本必須是 semver");
 const nonEmptyText = z.string().trim().min(1, "內容不可空白");
 
-export const legalReviewStatusSchema = z.enum(["draft", "machine-checked", "human-reviewed", "published", "retired"]);
+export const legalReviewStatusSchema = z.enum(["draft", "machine-checked", "source-verified", "human-reviewed", "published", "retired"]);
 export const legalQuestionOriginSchema = z.enum(["official", "derived-from-official", "ai-generated", "user-authored"]);
 
 export const legalSourceRecordSchema = z

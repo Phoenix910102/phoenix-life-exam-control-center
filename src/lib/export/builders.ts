@@ -59,6 +59,16 @@ export async function buildFullBackup(): Promise<{ filename: string; data: Expor
     studyMaterials: await db.studyMaterials.toArray(),
     materialDefinitions: await db.materialDefinitions.toArray(),
     materialProgress: await db.materialProgress.toArray(),
+    legalQuestionDefinitions: await db.legalQuestionDefinitions.toArray(),
+    questionAttemptsV2: await db.questionAttemptsV2.toArray(),
+    questionLearningStates: await db.questionLearningStates.toArray(),
+    studySessions: await db.studySessions.toArray(),
+    reviewQueue: await db.reviewQueue.toArray(),
+    materialNotes: await db.materialNotes.toArray(),
+    materialBookmarks: await db.materialBookmarks.toArray(),
+    materialHighlights: await db.materialHighlights.toArray(),
+    contentPatchDrafts: await db.contentPatchDrafts.toArray(),
+    contentReleases: await db.contentReleases.toArray(),
     settings,
   };
 

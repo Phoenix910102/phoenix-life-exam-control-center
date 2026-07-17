@@ -4,9 +4,10 @@ import {
   exampleLegalContentPatch,
   parseAndAnalyzeLegalContentPatch,
 } from "@/lib/law/contentPatch";
+import { legalContentPatchSchema, type LegalContentPatch } from "@/types/legalContentPatch";
 
-function examplePatch() {
-  return structuredClone(exampleLegalContentPatch);
+function examplePatch(): LegalContentPatch {
+  return legalContentPatchSchema.parse(structuredClone(exampleLegalContentPatch));
 }
 
 describe("Phoenix legal content patch", () => {

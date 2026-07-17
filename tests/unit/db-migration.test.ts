@@ -10,7 +10,7 @@ afterEach(async () => {
 });
 
 describe("Dexie material migration", () => {
-  it("upgrades a real v2 database to v4 and preserves legacy progress", async () => {
+  it("upgrades a real v2 database to v5 and preserves legacy progress", async () => {
     const name = `phoenix-migration-${crypto.randomUUID()}`;
     databaseNames.push(name);
     const legacyDb = new Dexie(name);
@@ -62,7 +62,7 @@ describe("Dexie material migration", () => {
 
     const upgraded = new PhoenixDB(name);
     await upgraded.open();
-    expect(upgraded.verno).toBe(4);
+    expect(upgraded.verno).toBe(5);
     expect(await upgraded.studyMaterials.get(material.id)).toBeDefined();
     expect(await upgraded.materialDefinitions.get("legacy-criminal-law-v2")).toMatchObject({
       title: "罪責之骨",
@@ -80,6 +80,10 @@ describe("Dexie material migration", () => {
     expect(await upgraded.careState.count()).toBe(0);
     expect(await upgraded.achievementProgress.count()).toBe(0);
     expect(await upgraded.domainEvents.count()).toBe(0);
+    expect(await upgraded.legalQuestionDefinitions.count()).toBe(0);
+    expect(await upgraded.questionAttemptsV2.count()).toBe(0);
+    expect(await upgraded.studySessions.count()).toBe(0);
+    expect(await upgraded.contentReleases.count()).toBe(0);
     upgraded.close();
   });
 });

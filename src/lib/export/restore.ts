@@ -31,6 +31,16 @@ export async function restoreFullBackup(input: unknown) {
       db.studyMaterials,
       db.materialDefinitions,
       db.materialProgress,
+      db.legalQuestionDefinitions,
+      db.questionAttemptsV2,
+      db.questionLearningStates,
+      db.studySessions,
+      db.reviewQueue,
+      db.materialNotes,
+      db.materialBookmarks,
+      db.materialHighlights,
+      db.contentPatchDrafts,
+      db.contentReleases,
     ],
     async () => {
       await Promise.all([
@@ -48,6 +58,16 @@ export async function restoreFullBackup(input: unknown) {
         db.studyMaterials.clear(),
         db.materialDefinitions.clear(),
         db.materialProgress.clear(),
+        db.legalQuestionDefinitions.clear(),
+        db.questionAttemptsV2.clear(),
+        db.questionLearningStates.clear(),
+        db.studySessions.clear(),
+        db.reviewQueue.clear(),
+        db.materialNotes.clear(),
+        db.materialBookmarks.clear(),
+        db.materialHighlights.clear(),
+        db.contentPatchDrafts.clear(),
+        db.contentReleases.clear(),
       ]);
       await db.dailyLogs.bulkPut(data.dailyLogs);
       await db.tasks.bulkPut(data.tasks);
@@ -63,6 +83,16 @@ export async function restoreFullBackup(input: unknown) {
       await db.studyMaterials.bulkPut(data.studyMaterials);
       await db.materialDefinitions.bulkPut(definitions);
       await db.materialProgress.bulkPut(progress);
+      await db.legalQuestionDefinitions.bulkPut(data.legalQuestionDefinitions);
+      await db.questionAttemptsV2.bulkPut(data.questionAttemptsV2);
+      await db.questionLearningStates.bulkPut(data.questionLearningStates);
+      await db.studySessions.bulkPut(data.studySessions);
+      await db.reviewQueue.bulkPut(data.reviewQueue);
+      await db.materialNotes.bulkPut(data.materialNotes);
+      await db.materialBookmarks.bulkPut(data.materialBookmarks);
+      await db.materialHighlights.bulkPut(data.materialHighlights);
+      await db.contentPatchDrafts.bulkPut(data.contentPatchDrafts);
+      await db.contentReleases.bulkPut(data.contentReleases);
     },
   );
 
@@ -72,6 +102,9 @@ export async function restoreFullBackup(input: unknown) {
     materialProgress: progress.length,
     achievements: data.achievements.length,
     domainEvents: data.domainEvents.length,
+    legalQuestionDefinitions: data.legalQuestionDefinitions.length,
+    questionAttemptsV2: data.questionAttemptsV2.length,
+    studySessions: data.studySessions.length,
     restoredAt: new Date().toISOString(),
   };
 }

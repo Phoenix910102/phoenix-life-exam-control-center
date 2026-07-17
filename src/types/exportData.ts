@@ -11,6 +11,18 @@ import { materialDefinitionSchema, materialProgressSchema } from "./materialReco
 import { questionSchema } from "./question";
 import { careStateSchema } from "./careState";
 import { domainEventSchema } from "./domainEvent";
+import {
+  contentPatchDraftSchema,
+  contentReleaseSchema,
+  legalQuestionDefinitionV2Schema,
+  legalReviewQueueItemSchema,
+  materialBookmarkSchema,
+  materialHighlightSchema,
+  materialNoteSchema,
+  questionAttemptV2Schema,
+  questionLearningStateSchema,
+  questionSessionStateSchema,
+} from "./legalQuestion";
 
 export const exportDataSchema = z.object({
   meta: z.object({
@@ -36,6 +48,16 @@ export const exportDataSchema = z.object({
   studyMaterials: z.array(studyMaterialSchema).default([]),
   materialDefinitions: z.array(materialDefinitionSchema).default([]),
   materialProgress: z.array(materialProgressSchema).default([]),
+  legalQuestionDefinitions: z.array(legalQuestionDefinitionV2Schema).default([]),
+  questionAttemptsV2: z.array(questionAttemptV2Schema).default([]),
+  questionLearningStates: z.array(questionLearningStateSchema).default([]),
+  studySessions: z.array(questionSessionStateSchema).default([]),
+  reviewQueue: z.array(legalReviewQueueItemSchema).default([]),
+  materialNotes: z.array(materialNoteSchema).default([]),
+  materialBookmarks: z.array(materialBookmarkSchema).default([]),
+  materialHighlights: z.array(materialHighlightSchema).default([]),
+  contentPatchDrafts: z.array(contentPatchDraftSchema).default([]),
+  contentReleases: z.array(contentReleaseSchema).default([]),
   settings: appSettingsSchema,
 });
 
