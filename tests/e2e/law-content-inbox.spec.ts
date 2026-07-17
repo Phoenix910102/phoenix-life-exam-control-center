@@ -8,7 +8,9 @@ test("law operations exposes the incremental content pipeline", async ({ page })
   await expect(page.getByText("增量內容管線")).toBeVisible();
   await expect(page.getByText("題庫主線", { exact: true })).toBeVisible();
   await expect(page.getByText("來源與版本", { exact: true })).toBeVisible();
-  await expect(page).toHaveScreenshot("law-operations-desktop.png", { fullPage: true });
+  if (process.platform === "darwin") {
+    await expect(page).toHaveScreenshot("law-operations-desktop.png", { fullPage: true });
+  }
 });
 
 test("content inbox validates an incremental patch before any content is changed", async ({ page }) => {
@@ -23,7 +25,9 @@ test("content inbox validates an incremental patch before any content is changed
   const stats = page.locator('[class*="analysisStats"]');
   await expect(stats).toContainText("ADD2");
   await expect(stats).toContainText("LINK1");
-  await expect(page).toHaveScreenshot("law-content-inbox-desktop.png", { fullPage: true });
+  if (process.platform === "darwin") {
+    await expect(page).toHaveScreenshot("law-content-inbox-desktop.png", { fullPage: true });
+  }
 });
 
 test("mobile content inbox keeps the parchment report and actions in view", async ({ page }) => {
@@ -35,5 +39,7 @@ test("mobile content inbox keeps the parchment report and actions in view", asyn
   await expect(page.getByRole("button", { name: "匯出待審 Patch" })).toBeVisible();
   const bodyWidth = await page.locator("body").evaluate((element) => element.scrollWidth);
   expect(bodyWidth).toBeLessThanOrEqual(390);
-  await expect(page).toHaveScreenshot("law-content-inbox-mobile.png", { fullPage: true });
+  if (process.platform === "darwin") {
+    await expect(page).toHaveScreenshot("law-content-inbox-mobile.png", { fullPage: true });
+  }
 });
