@@ -21,7 +21,7 @@ Local-first personal control center for daily logs, tasks, medication reminders,
 ## Installation
 
 ```bash
-git clone <your-private-repository-url>
+git clone https://github.com/Phoenix910102/phoenix-life-exam-control-center.git
 cd phoenix-life-exam-control-center
 npm ci
 cp .env.example .env.local
@@ -93,7 +93,7 @@ tests/e2e/               Playwright browser tests
 
 ## Local Data And Migration
 
-Application records live in the browser's IndexedDB and are not stored in Git. Use the application's export/backup functions before moving to another computer, then import that data on the new Mac. Source code, static assets, tests, and documentation can be synchronized through the private GitHub repository.
+Application records live in the browser's IndexedDB and are not stored in Git. Use the application's export/backup functions before moving to another computer, then import that data on the new Mac. Source code, static assets, tests, and documentation can be synchronized through the public GitHub repository.
 
 ## Security Notes
 
