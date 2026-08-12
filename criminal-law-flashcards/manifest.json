@@ -1,0 +1,11 @@
+{
+  "name": "刑法考點星圖 111-114",
+  "format": "gzip+base64-chunks",
+  "parts": 9,
+  "source_file": "刑法考點星圖_111-114.html",
+  "source_bytes": 264998,
+  "source_sha256": "3edd9601f5aef72c91f7bf8aec8322ea373f7c1a332eb7f6ac53969cdd2da25c",
+  "payload_base64_bytes": 105272,
+  "payload_base64_sha256": "4110aaae6eb5ff6b485cfaf5361f23170bb0982a6d6f132a89bbf753fb8c50af",
+  "generated_at": "2026-07-30T07:24:00+08:00"
+}
